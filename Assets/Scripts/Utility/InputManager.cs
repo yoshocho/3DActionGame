@@ -41,42 +41,45 @@ public class InputManager : Singleton<InputManager>
 
     float m_avoidPushTimer = default;
 
+    PlayerInput m_inputActions;
+
     private void Reset()
     {
         m_avoidPushTime = 0.2f;
     }
-    Vector2 velo;
-    public void OnMove(InputAction.CallbackContext callbackContext)
+    
+    private void OnEnable()
     {
-        velo = callbackContext.ReadValue<Vector2>();
-        //velon = velo / velo;
-        //velo.x = callbackContext.ReadValue<float>();
+        m_inputActions = new PlayerInput();
+        m_inputActions.Enable();
+    }
+
+    private void OnDisable()
+    {
+        m_inputActions?.Disable();
     }
 
     private void Update()
     {
-        Debug.Log(velo);
-        m_inputDir = Vector3.forward * velo.y + Vector3.right * velo.x;
+        //Debug.Log(velo);
+        m_inputDir = m_inputActions.Player.Move.ReadValue<Vector2>();
+        m_inputDir = Vector3.forward * m_inputDir.y + Vector3.right * m_inputDir.x;
+
+        if (m_inputActions.Player.Avoid.WasPressedThisFrame())
+            m_avoidKey = KeyStatus.DOWN;
+
+        else if (m_inputActions.Player.Avoid.IsPressed()) 
+            m_avoidKey = KeyStatus.STAY;
+
+        else if (m_inputActions.Player.Avoid.WasReleasedThisFrame())
+            m_avoidKey = KeyStatus.UP;
+        else m_avoidKey = KeyStatus.NONE;
+
+        Debug.Log(m_avoidKey.ToString());
         //m_inputAxis = new Vector2(h,v);
         //m_inputDir = Vector3.forward * v + Vector3.right * h;
 
-        if (Gamepad.current.leftShoulder.wasPressedThisFrame || Keyboard.current.leftShiftKey.wasPressedThisFrame)
-        {
-            m_avoidKey = KeyStatus.DOWN;
-        }
-        else if(Gamepad.current.leftShoulder.isPressed || Keyboard.current.leftShiftKey.isPressed)
-        {
-            m_avoidKey = KeyStatus.STAY;
-        }
-        else if (Gamepad.current.leftShoulder.wasReleasedThisFrame || Keyboard.current.leftShiftKey.wasReleasedThisFrame)
-        {
-            m_avoidKey = KeyStatus.UP;
-        }
-        else
-        {
-            m_avoidKey = KeyStatus.NONE;
-        }
-
+        
         //if (Input.GetButtonDown("×button") || Input.GetKeyDown(KeyCode.Space))
         //{
         //    m_jumpKey = KeyStatus.DOWN;
