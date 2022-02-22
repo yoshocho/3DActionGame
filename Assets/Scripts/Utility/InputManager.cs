@@ -14,28 +14,10 @@ public enum KeyStatus
 
 public class InputManager : Singleton<InputManager>
 {
-    float m_horizontalKey = default;
-    public float HorizontalKey => m_horizontalKey;
-
-    float m_verticalKey = default;
-    public float VerticalKey => m_verticalKey;
-
-    Vector3 m_inputDir = default;
-    public Vector3 InputDir => m_inputDir;
-
-    KeyStatus m_jumpKey = KeyStatus.NONE;
-    public KeyStatus JumpKey => m_jumpKey;
-
-    KeyStatus m_attackKey = KeyStatus.NONE;
-    public KeyStatus AttackKey => m_attackKey;
-
-    KeyStatus m_avoidKey = KeyStatus.NONE;
-    public KeyStatus AvoidKey => m_avoidKey;
-
-    float m_longPushTime = 0.6f;
-
-    float m_longPushTimer = default;
-
+    public Vector3 InputDir { get; private set; } = default;
+    public KeyStatus JumpKey { get; private set; } = KeyStatus.NONE;
+    public KeyStatus AttackKey { get; private set; } = KeyStatus.NONE;
+    public KeyStatus AvoidKey { get; private set; } = KeyStatus.NONE;
     [SerializeField]
     float m_avoidPushTime = 0.2f;
 
@@ -43,43 +25,48 @@ public class InputManager : Singleton<InputManager>
 
     PlayerInput m_inputActions;
 
-    private void Reset()
-    {
-        m_avoidPushTime = 0.2f;
-    }
-    
     private void OnEnable()
     {
         m_inputActions = new PlayerInput();
         m_inputActions.Enable();
     }
 
-    private void OnDisable()
-    {
-        m_inputActions?.Disable();
-    }
-
     private void Update()
     {
         //Debug.Log(velo);
-        m_inputDir = m_inputActions.Player.Move.ReadValue<Vector2>();
-        m_inputDir = Vector3.forward * m_inputDir.y + Vector3.right * m_inputDir.x;
 
+        ///移動方向のベクトル
+        var axis = m_inputActions.Player.Move.ReadValue<Vector2>();
+        InputDir = Vector3.forward * axis.y + Vector3.right * axis.x;
+
+        ///回避ボタンの入力
         if (m_inputActions.Player.Avoid.WasPressedThisFrame())
-            m_avoidKey = KeyStatus.DOWN;
-
-        else if (m_inputActions.Player.Avoid.IsPressed()) 
-            m_avoidKey = KeyStatus.STAY;
-
+            AvoidKey = KeyStatus.DOWN;
+        else if (m_inputActions.Player.Avoid.IsPressed())
+            AvoidKey = KeyStatus.STAY;
         else if (m_inputActions.Player.Avoid.WasReleasedThisFrame())
-            m_avoidKey = KeyStatus.UP;
-        else m_avoidKey = KeyStatus.NONE;
+            AvoidKey = KeyStatus.UP;
+        else AvoidKey = KeyStatus.NONE;
 
-        Debug.Log(m_avoidKey.ToString());
-        //m_inputAxis = new Vector2(h,v);
-        //m_inputDir = Vector3.forward * v + Vector3.right * h;
+        ///ジャンプボタンの入力
+        if (m_inputActions.Player.Jump.WasPerformedThisFrame())
+            JumpKey = KeyStatus.DOWN;
+        else if (m_inputActions.Player.Jump.IsPressed())
+            JumpKey = KeyStatus.STAY;
+        else if (m_inputActions.Player.Jump.WasReleasedThisFrame())
+            JumpKey = KeyStatus.UP;
+        else JumpKey = KeyStatus.NONE;
 
-        
+        ///攻撃ボタンの入力
+        if (m_inputActions.Player.Attack.WasPerformedThisFrame())
+            AttackKey = KeyStatus.DOWN;
+        else if (m_inputActions.Player.Attack.IsPressed())
+            AttackKey = KeyStatus.STAY;
+        else if (m_inputActions.Player.Attack.WasReleasedThisFrame())
+            AttackKey = KeyStatus.UP;
+        else AttackKey = KeyStatus.NONE;
+
+
         //if (Input.GetButtonDown("×button") || Input.GetKeyDown(KeyCode.Space))
         //{
         //    m_jumpKey = KeyStatus.DOWN;
@@ -108,26 +95,6 @@ public class InputManager : Singleton<InputManager>
         //    m_jumpKey = KeyStatus.NONE;
         //}
 
-
-        //if (Input.GetButtonDown("Circlebutton") || Input.GetMouseButtonDown(0))
-        //{
-        //    m_attackKey = KeyStatus.DOWN;
-        //    Debug.Log("攻撃キーDown");
-        //}
-        //else if (Input.GetButton("Circlebutton") || Input.GetMouseButton(0))
-        //{
-        //    m_attackKey = KeyStatus.STAY;
-        //    Debug.Log("攻撃キーStay");
-        //}
-        //else if (Input.GetButtonUp("Circlebutton") || Input.GetMouseButtonUp(0))
-        //{
-        //    m_attackKey = KeyStatus.UP;
-        //    Debug.Log("攻撃キーUp");
-        //}
-        //else
-        //{
-        //    m_attackKey = KeyStatus.NONE;
-        //}
         /////回避キー
         //if (Input.GetButtonDown("L1button") || Input.GetKeyDown(KeyCode.LeftShift))
         //{
@@ -170,4 +137,13 @@ public class InputManager : Singleton<InputManager>
         //}
     }
 
+    private void OnDisable()
+    {
+        m_inputActions?.Disable();
+    }
+
+    private void OnDestroy()
+    {
+        m_inputActions.Dispose();
+    }
 }

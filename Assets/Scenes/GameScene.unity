@@ -335,7 +335,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.5098041, y: 1}
+    m_SensorSize: {x: 1.5139319, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -389,7 +389,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_CollideAgainst:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 64
   m_IgnoreTag: 
   m_TransparentLayers:
     serializedVersion: 2
@@ -838,7 +838,7 @@ MonoBehaviour:
   m_VerticalAxis:
     Value: 20
     m_SpeedMode: 0
-    m_MaxSpeed: 300
+    m_MaxSpeed: 60
     m_AccelTime: 0.1
     m_DecelTime: 0.1
     m_InputAxisName: Mouse Y
@@ -999,6 +999,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 4566468747283132793, guid: 7b712f3cde1f6e34ab649c4607b80ec0,
+        type: 3}
+      propertyPath: m_isGroundLength
+      value: 0.77
+      objectReference: {fileID: 0}
+    - target: {fileID: 4761925422354590750, guid: 7b712f3cde1f6e34ab649c4607b80ec0,
+        type: 3}
+      propertyPath: collideWithGround
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7b712f3cde1f6e34ab649c4607b80ec0, type: 3}

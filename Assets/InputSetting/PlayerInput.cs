@@ -53,6 +53,24 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Jump"",
+                    ""type"": ""Button"",
+                    ""id"": ""172fccf3-2066-47b2-bcec-f5fac2237a1e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Attack"",
+                    ""type"": ""Button"",
+                    ""id"": ""d41fc875-4794-47ae-a17b-4ac042c4bbe7"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -165,6 +183,50 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""action"": ""CameraAxis"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5c96fb8e-8300-445d-ae99-aa6c4bc226bc"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5024fef2-5596-4601-b2f3-21b787e2b1f2"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a5a608dc-0b03-480e-b812-e2b4cca6fc04"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1d9cca26-ceb3-4218-90e1-798d36c7f36f"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -176,6 +238,8 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Avoid = m_Player.FindAction("Avoid", throwIfNotFound: true);
         m_Player_CameraAxis = m_Player.FindAction("CameraAxis", throwIfNotFound: true);
+        m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
+        m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -238,6 +302,8 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Avoid;
     private readonly InputAction m_Player_CameraAxis;
+    private readonly InputAction m_Player_Jump;
+    private readonly InputAction m_Player_Attack;
     public struct PlayerActions
     {
         private @PlayerInput m_Wrapper;
@@ -245,6 +311,8 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         public InputAction @Move => m_Wrapper.m_Player_Move;
         public InputAction @Avoid => m_Wrapper.m_Player_Avoid;
         public InputAction @CameraAxis => m_Wrapper.m_Player_CameraAxis;
+        public InputAction @Jump => m_Wrapper.m_Player_Jump;
+        public InputAction @Attack => m_Wrapper.m_Player_Attack;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -263,6 +331,12 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @CameraAxis.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCameraAxis;
                 @CameraAxis.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCameraAxis;
                 @CameraAxis.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCameraAxis;
+                @Jump.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
+                @Jump.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
+                @Jump.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
+                @Attack.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack;
+                @Attack.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack;
+                @Attack.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -276,6 +350,12 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @CameraAxis.started += instance.OnCameraAxis;
                 @CameraAxis.performed += instance.OnCameraAxis;
                 @CameraAxis.canceled += instance.OnCameraAxis;
+                @Jump.started += instance.OnJump;
+                @Jump.performed += instance.OnJump;
+                @Jump.canceled += instance.OnJump;
+                @Attack.started += instance.OnAttack;
+                @Attack.performed += instance.OnAttack;
+                @Attack.canceled += instance.OnAttack;
             }
         }
     }
@@ -285,5 +365,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnAvoid(InputAction.CallbackContext context);
         void OnCameraAxis(InputAction.CallbackContext context);
+        void OnJump(InputAction.CallbackContext context);
+        void OnAttack(InputAction.CallbackContext context);
     }
 }
