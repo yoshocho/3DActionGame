@@ -184,29 +184,6 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
         m_selfTrans.rotation = rot;
     }
 
-    float time;
-    float velo;
-    float dis;
-    float d;
-
-    void SimpleMove()
-    {
-        //s = d / t * Time.deltaTime;
-         d += velo * time * Time.deltaTime;
-        ////t = d / s * Time.deltaTime; 
-        
-        if (dis > d)
-        {
-            var velocity = Vector3.Scale(m_currentVelocity, new Vector3(velo, 1f, velo));
-            m_controller.Move(Time.deltaTime * velocity);
-
-        }
-        else
-        {
-            m_currentVelocity = Vector3.zero;
-        }
-    }
-
     void MoveForward(float time, float speed)
     {
         //StartCoroutine(MoveForwardAsync(time,speed));
@@ -220,7 +197,6 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     //        m_currentVelocity += transform.forward * speed * Time.deltaTime;
     //        yield return null;
     //    }
-
     //}
 
     void CheckAir()
@@ -247,6 +223,14 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
         Debug.DrawLine(start, end, color);
         bool isGround = Physics.Linecast(start, end, m_groundLayer);
         return isGround;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Vector3 start = new Vector3(transform.position.x, transform.position.y + 0.7f, transform.position.z);
+        Vector3 end = start + Vector3.down * m_isGroundLength;
+        Color color = new Color(1, 0, 0);
+        Debug.DrawLine(start, end, color);
     }
 
     void ApplyGravity()

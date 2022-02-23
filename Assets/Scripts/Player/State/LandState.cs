@@ -17,7 +17,7 @@ public partial class PlayerStateMachine : MonoBehaviour
 
         public override void OnUpdate(PlayerStateMachine owner)
         {
-            if (owner.m_inputDir.sqrMagnitude > 0.2f)
+            if (owner.m_inputDir.sqrMagnitude > 0.1f)
             {
                 Debug.Log("Land -> Walk");
                 owner.ChangeState(owner.m_walkState);
@@ -34,7 +34,7 @@ public partial class PlayerStateMachine : MonoBehaviour
                 owner.m_currentVelocity.x = 0f;
                 owner.m_currentVelocity.z = 0f;
             }
-            if (Input.GetButtonDown("L1button"))
+            if (owner.m_inputManager.AvoidKey == KeyStatus.DOWN)
             {
                 Debug.Log("Land -> Jump");
                 owner.ChangeState(owner.m_avoidState);

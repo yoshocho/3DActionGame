@@ -8,14 +8,9 @@ public partial class PlayerStateMachine : MonoBehaviour
     {
         public override void OnEnter(PlayerStateMachine owner, PlayerStateBase prevState)
         {
-            if (prevState is RunState || prevState is WalkState)
-            {
-                owner.PlayAnimation("WalkEnd", 0.1f, owner.m_currentAnimLayer);
-            }
-            else
-            {
-                owner.PlayAnimation("Idle", 0.1f, owner.m_currentAnimLayer);
-            }
+            if (prevState is WalkState) owner.PlayAnimation("WalkEnd", 0.2f);
+            else if(prevState is RunState) owner.PlayAnimation("RunEnd", 0.2f);
+            else owner.PlayAnimation("Idle", 0.1f);
             owner.m_currentVelocity.x = 0f;
             owner.m_currentVelocity.z = 0f;
             Debug.Log("InIdle");

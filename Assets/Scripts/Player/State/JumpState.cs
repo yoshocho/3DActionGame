@@ -8,7 +8,9 @@ public partial class PlayerStateMachine : MonoBehaviour
         public override void OnEnter(PlayerStateMachine owner, PlayerStateBase prevState)
         {
             owner.PlayAnimation("Jump",0.1f,owner.m_currentAnimLayer);
-            owner.m_currentVelocity.y = owner.m_jumpPower;
+            owner.m_moveForward.y = 0;
+            if (owner.m_inputDir.sqrMagnitude > 0.1) owner.m_targetRot = Quaternion.LookRotation(owner.m_moveForward);
+            owner.m_currentVelocity = new Vector3(owner.m_moveForward.x, owner.m_jumpPower, owner.m_moveForward.z);
             owner.m_currentJumpStep -= 1;
         }
 
@@ -27,7 +29,7 @@ public partial class PlayerStateMachine : MonoBehaviour
             {
                 owner.ChangeState(owner.m_fallState);
             }
-            if (owner.m_inputManager.AvoidKey == KeyStatus.DOWN)
+            if (owner.m_inputManager.AvoidKey == KeyStatus.DOWN && owner.m_currentAirDushCount < owner.m_airDushCount)
             {
                 owner.ChangeState(owner.m_avoidState);
             }
