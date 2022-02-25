@@ -27,11 +27,10 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     [SerializeField] float m_avoidEndTime = 0.6f;
     [Tooltip("接地判定での中心からの距離")]
     [SerializeField] float m_isGroundLength = 1.05f;
+    [Tooltip("接地判定の範囲")]
+    [SerializeField] float m_isGroundRadius = 0.18f;
     [Tooltip("地面のレイヤー")]
     [SerializeField] LayerMask m_groundLayer;
-
-    [SerializeField]
-    int m_currentAnimLayer = 0;
     #endregion
 
     #region status
@@ -55,14 +54,15 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     public IObservable<Unit> PlayerDeath => playerDeath;
     #endregion
 
-    [SerializeField] Collider m_atkTrigeer = default;
     Transform m_selfTrans;
-
     CharacterController m_controller;
     Animator m_anim;
     AttackAssistController m_attackAssist;
     InputManager m_inputManager;
     WeaponHolder m_weaponHolder;
+    HitCtrl m_hitCtrl;
+    [SerializeField] ActionControl m_actionCtrl;
+    [SerializeField] AnimationCtrl m_animCtrl;
 
 
     float m_currentRotateSpeed = 10f;
@@ -81,13 +81,12 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     JumpState m_jumpState = new JumpState();
     FallState m_fallState = new FallState();
     LandState m_landState = new LandState();
-    //LaunchState m_launchState = new LaunchState();
     #endregion
 
-    #region
-    [SerializeField] ActionControl m_actionCtrl;
-    [SerializeField] AnimationCtrl m_animCtrl;
-    HitCtrl m_hitCtrl;
+    
+    
+    
+    #region Attack
     /// <summary>アニメーションが再生中かどうか</summary>
     bool m_isAnimationPlaying = false;
     /// <summary>次の攻撃までの入力受付時間</summary>
@@ -101,11 +100,17 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     /// <summary></summary>
     bool m_actionKeeping = false;
 
-    [SerializeField]
+    bool m_poseKeep = false;
+
     List<Attack> m_currentAttackList = new List<Attack>();
+    List<Attack> m_currentAirialList = new List<Attack>();
+    List<Attack> m_currentSkillList = new List<Attack>();
+    [SerializeField]
+    WeaponType m_weaponType = WeaponType.HEAVY_SWORD;
     #endregion
 
-    [SerializeField]AnimationCurve m_lunchCurve = default;
+    [SerializeField]
+    AnimationCurve m_lunchCurve = default;
 
     /// <summary>
     /// 空中にいるかどうかのフラグ
@@ -123,16 +128,17 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
 
     float m_airKeepTimer;
 
-    int m_currentJumpStep = default;
-
     bool m_airAttackEnd = default;
 
     [SerializeField]
     int m_jumpStep = 2;
+    int m_currentJumpStep = default;
 
+    [SerializeField]
+    int m_airDushCount = 1;
+    int m_currentAirDushCount = default;
     bool m_stateKeep;
 
-    //Vector2 m_inputAxis = Vector2.zero;
     Vector3 m_moveForward = Vector3.zero;
     Vector3 m_currentVelocity = Vector3.zero;
     Vector3 m_inputDir = Vector3.zero;
@@ -142,7 +148,6 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
         m_anim = GetComponentInChildren<Animator>();
         m_controller = GetComponent<CharacterController>();
         m_attackAssist = GetComponent<AttackAssistController>();
-        m_hitCtrl = GetComponentInChildren<HitCtrl>();
         m_weaponHolder = GetComponentInChildren<WeaponHolder>();
         m_animCtrl.SetEventDelegate(EventCall);
         ChangeState(m_idleState);
@@ -156,8 +161,7 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
 
     void Update()
     {
-        m_moveForward = Camera.main.transform.TransformDirection(m_inputDir);
-        ApplyInputAxis();
+        ApplyAxis();
         ApplyMove();
         ApplyGravity();
         ApplyRotation();
@@ -166,8 +170,11 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
         m_currentState.OnUpdate(this);
     }
 
-    void ApplyInputAxis()
+    void ApplyAxis()
     {
+        m_moveForward = Camera.main.transform.TransformDirection(m_inputDir);
+        m_moveForward.y = 0.0f;
+        m_moveForward.Normalize();
         m_inputDir = m_inputManager.InputDir;
     }
 
@@ -218,10 +225,8 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     bool IsGround()
     {
         Vector3 start = new Vector3(transform.position.x, transform.position.y + 0.7f, transform.position.z);
-        Vector3 end = start + Vector3.down * m_isGroundLength;
-        Color color = new Color(1, 0, 0);
-        Debug.DrawLine(start, end, color);
-        bool isGround = Physics.Linecast(start, end, m_groundLayer);
+        Ray ray = new Ray(start, Vector3.down);
+        bool isGround = Physics.SphereCast(ray, m_isGroundRadius, m_isGroundLength, m_groundLayer);
         return isGround;
     }
 
@@ -230,7 +235,7 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
         Vector3 start = new Vector3(transform.position.x, transform.position.y + 0.7f, transform.position.z);
         Vector3 end = start + Vector3.down * m_isGroundLength;
         Color color = new Color(1, 0, 0);
-        Debug.DrawLine(start, end, color);
+        Gizmos.DrawWireSphere(end, m_isGroundRadius);
     }
 
     void ApplyGravity()
@@ -286,10 +291,10 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     
     void NextAction(int step, AttackLayer layer,List<Attack> comboList)
     {
-        //Debug.Log($"{step}/{layer}");
+        
         int actId = -1;
         Attack attack = comboList[0];
-        for (int i = 0; i < m_actionCtrl.Attacks.Count; i++)
+        for (int i = 0; i < comboList.Count; i++)
         {
             if (comboList[i].Step != step) continue;
             if (comboList[i].Layer != layer) continue;
@@ -308,7 +313,8 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
         {
             case ActionType.Animation:
                 AttackAssist();
-                m_hitCtrl.SetCtrl(m_actionCtrl, actId);
+                Debug.Log($"{step}/{layer}{comboList[actId].Name}");
+                m_hitCtrl.SetCtrl(m_actionCtrl, comboList[actId]);
                 m_isAnimationPlaying = true;
                 m_waitTimer = attack.WaitTime;
                 m_actionKeepingTimer = attack.KeepTime;
@@ -357,11 +363,13 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     }
     public void StartAttack()
     {
-        m_atkTrigeer.enabled = true;
+        //m_atkTrigeer.enabled = true;
+        m_weaponHolder.WeaponTriggerEnable();
     }
 
     public void AttackEnd()
     {
-        m_atkTrigeer.enabled = false;
+        //m_atkTrigeer.enabled = false;
+        m_weaponHolder.WeaponTriggerDisable();
     }
 }

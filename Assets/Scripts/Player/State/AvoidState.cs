@@ -18,12 +18,13 @@ public partial class PlayerStateMachine : MonoBehaviour
             if (owner.IsGround())
             {
                 m_avoidDir = owner.m_moveForward.normalized;
-                owner.PlayAnimation("Avoid", 0.2f,owner.m_currentAnimLayer);
+                owner.PlayAnimation("Avoid", 0.2f);
             }
             else
             {
-                owner.PlayAnimation("AirDasu", 0.0f, owner.m_currentAnimLayer);
+                owner.PlayAnimation("AirDasu", 0.0f);
                 m_avoidDir = new Vector3(owner.m_moveForward.x, 0.0f, owner.m_moveForward.z).normalized;
+                owner.m_currentAirDushCount++;
             }
             owner.m_justTrigger = true;
             owner.m_currentRotateSpeed = 1000.0f;

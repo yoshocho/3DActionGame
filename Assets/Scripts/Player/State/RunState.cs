@@ -9,7 +9,7 @@ public partial class PlayerStateMachine : MonoBehaviour
         public override void OnEnter(PlayerStateMachine owner, PlayerStateBase prevState)
         {
             owner.m_moveSpeed = owner.m_dashSpeed;
-            owner.PlayAnimation("Run",0.3f,owner.m_currentAnimLayer);
+            owner.PlayAnimation("Run",0.3f);
         }
 
         public override void OnExit(PlayerStateMachine owner, PlayerStateBase nextState)
@@ -33,6 +33,18 @@ public partial class PlayerStateMachine : MonoBehaviour
                 else
                 {
                     owner.ChangeState(owner.m_idleState);
+                }
+                if(owner.m_inputManager.AvoidKey is KeyStatus.DOWN)
+                {
+                    owner.ChangeState(owner.m_avoidState);
+                }
+                if(owner.m_inputManager.AttackKey is KeyStatus.DOWN)
+                {
+                    owner.ChangeState(owner.m_attackState);
+                }
+                if(owner.m_inputManager.JumpKey is KeyStatus.DOWN)
+                {
+                    owner.ChangeState(owner.m_jumpState);
                 }
             }
             else

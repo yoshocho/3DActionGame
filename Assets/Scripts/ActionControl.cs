@@ -26,30 +26,29 @@ public class Attack
     public float KeepTime = 1f;
     public float Power = 0.7f; 
     public float WaitTime = 0.5f;
+    public int Damage = 100;
     //public AnimationClip TargetAnim;
 }
 public class ActionControl : MonoBehaviour
 {
-
     /// <summary>コンボを繋げた時のイベント</summary>
     private Subject<Unit> comboSubject = new Subject<Unit>();
     public IObservable<Unit> OnCombo => comboSubject;
 
     [SerializeField]
-    List<Attack> m_attacts = new List<Attack>();
-    public List<Attack> Attacks => m_attacts;
+    List<Attack> m_heavySwordNormalCombo = new List<Attack>();
+    public List<Attack> HeavySwordNormalCombos => m_heavySwordNormalCombo;
     [SerializeField]
-    List<Attack> m_airialAttack = new List<Attack>();
-    public List<Attack> AirialAttacks => m_airialAttack;
+    List<Attack> m_heavySwordAirialCombo = new List<Attack>();
+    public List<Attack> HeavySwordAirialCombos => m_heavySwordAirialCombo;
     [SerializeField]
-    List<Attack> m_skillAttacks = new List<Attack>();
-    public List<Attack> SkillAttacks => m_skillAttacks;
+    List<Attack> m_heavySwordSkillList = new List<Attack>();
+    public List<Attack> HeavySwordSkillList => m_heavySwordSkillList;
     //[SerializeField] AnimationCtrl m_animCtrl = default;
     float m_stopTime = default;
     float m_frameTimer = default;
     float m_timeScale = default;
     bool m_isHitStop = default;
-
     
     HitCtrl m_hitCtrl;
     private void Awake()
@@ -57,7 +56,6 @@ public class ActionControl : MonoBehaviour
         m_hitCtrl = GetComponentInChildren<HitCtrl>();
         m_timeScale = Time.timeScale;
     }
-
 
     private void Update()
     {
@@ -78,10 +76,10 @@ public class ActionControl : MonoBehaviour
         }
     }
 
-    public void HitCallBack(IDamage enemys, int actId)
+    public void HitCallBack(IDamage enemys,Attack attack)
     {
-        enemys?.AddDamage(100);
-        HitStop(m_attacts[actId].Power);
+        enemys?.AddDamage(attack.Damage);
+        HitStop(attack.Power);
         comboSubject.OnNext(Unit.Default);
     }
 

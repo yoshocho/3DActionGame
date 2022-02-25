@@ -6,10 +6,10 @@ using System;
 
 public class HitCtrl : MonoBehaviour
 {
-    Collider m_atkTrigeer;
+    public Collider m_atkTrigeer;
     ActionControl m_actCtrl;
-    int m_actId;
-
+    //int m_actId;
+    Attack m_attack;
     Subject<GameObject> m_hitTarget = new Subject<GameObject>();
     public IObservable<GameObject> HitTarget => m_hitTarget;
     private void Awake()
@@ -23,10 +23,10 @@ public class HitCtrl : MonoBehaviour
         
     }
 
-    public void SetCtrl(ActionControl actCtrl, int actId)
+    public void SetCtrl(ActionControl actCtrl,Attack attack)
     {
         m_actCtrl = actCtrl;
-        m_actId = actId;
+        m_attack = attack;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -38,6 +38,6 @@ public class HitCtrl : MonoBehaviour
 
         EffectManager.PlayEffect("Hit",other.ClosestPoint(transform.position));
         var enemy = other.gameObject.GetComponent<IDamage>();
-        m_actCtrl.HitCallBack(enemy,m_actId);
+        m_actCtrl.HitCallBack(enemy,m_attack);
     }
 }

@@ -10,25 +10,37 @@ public partial class PlayerStateMachine : MonoBehaviour
         {
             owner.m_currentVelocity.x = 0f;
             owner.m_currentVelocity.z = 0f;
+
+            owner.m_weaponHolder.ChangeWeapon(owner.m_weaponType);
+            owner.m_hitCtrl = owner.m_weaponHolder.HitCtrl;
+
+            switch (owner.m_weaponType)
+            {
+                case WeaponType.HEAVY_SWORD: owner.m_currentAttackList = owner.m_actionCtrl.HeavySwordNormalCombos;
+                                             owner.m_currentSkillList = owner.m_actionCtrl.HeavySwordSkillList;
+                    break;
+                case WeaponType.LIGHT_SWORD: Debug.Log("設定中です"); break;
+                default: throw new System.ArgumentException("invalid enum value");
+            }
+
+
+            owner.m_poseKeep = true;
             if (owner.IsGround())
             {
                 if (prevState is AvoidState)
                 {
                     owner.m_stateKeep = true;
-                    owner.m_currentAttackList = owner.m_actionCtrl.Attacks;
-                    owner.NextAction(0, owner.m_actionCtrl.SkillAttacks[0].Layer,owner.m_actionCtrl.SkillAttacks);
+                    owner.NextAction(0, owner.m_currentSkillList[0].Layer, owner.m_currentSkillList);
                 }
                 else
                 {
-                    owner.m_currentAttackList = owner.m_actionCtrl.Attacks;
                     owner.NextAction(owner.m_comboStep, owner.m_currentAttackList[owner.m_comboStep].Layer, owner.m_currentAttackList);
                     owner.m_comboStep++;
                 }
-
             }
             else
             {
-                owner.m_currentAttackList = owner.m_actionCtrl.AirialAttacks;
+                owner.m_currentAttackList = owner.m_actionCtrl.HeavySwordAirialCombos;
                 owner.NextAction(owner.m_comboStep, owner.m_currentAttackList[owner.m_comboStep].Layer, owner.m_currentAttackList);
                 owner.m_comboStep++;
             }
@@ -38,12 +50,12 @@ public partial class PlayerStateMachine : MonoBehaviour
         {
             owner.AttackEnd();
             owner.m_stateKeep = false;
-            //owner.m_gravityScale = 1f;
             owner.m_waitTimer = 0.0f;
             owner.m_isAnimationPlaying = false;
             owner.m_reserveAction = false;
             owner.m_actionKeepingTimer = 0.0f;
             owner.m_comboStep = 0;
+            if(nextState is not IdleState) owner.m_weaponHolder.ResetHolder();
         }
 
         public override void OnUpdate(PlayerStateMachine owner)

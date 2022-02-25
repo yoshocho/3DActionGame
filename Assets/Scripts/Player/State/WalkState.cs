@@ -9,7 +9,7 @@ public partial class PlayerStateMachine : MonoBehaviour
         public override void OnEnter(PlayerStateMachine owner, PlayerStateBase prevState)
         {
             owner.m_moveSpeed = owner.m_walkSpeed;
-            owner.PlayAnimation("Walk" ,0.2f,owner.m_currentAnimLayer);
+            owner.PlayAnimation("Walk" ,0.2f);
         }
         public override void OnExit(PlayerStateMachine owner, PlayerStateBase nextState)
         {
@@ -20,10 +20,8 @@ public partial class PlayerStateMachine : MonoBehaviour
             {
                 if (owner.m_inputDir.sqrMagnitude > 0.1)
                 {
-                    var dir = owner.m_moveForward;
-                    dir.y = 0f;
-                    owner.m_targetRot = Quaternion.LookRotation(dir);
-                    owner.m_currentVelocity = new Vector3(dir.x ,owner.m_currentVelocity.y ,dir.z);
+                    owner.m_targetRot = Quaternion.LookRotation(owner.m_moveForward);
+                    owner.m_currentVelocity = new Vector3(owner.m_moveForward.x, owner.m_currentVelocity.y , owner.m_moveForward.z);
                     //owner.m_currentVelocity =
                     //    new Vector3(owner.m_selfTrans.forward.x, owner.m_currentVelocity.y, owner.m_selfTrans.forward.z);
                     if(owner.m_inputManager.AvoidKey == KeyStatus.DOWN)

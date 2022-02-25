@@ -7,7 +7,7 @@ public partial class PlayerStateMachine : MonoBehaviour
         public override void OnEnter(PlayerStateMachine owner, PlayerStateBase prevState)
         {
             owner.m_currentGravityScale = owner.m_gravityScale;
-            owner.PlayAnimation("Fall",0.1f,owner.m_currentAnimLayer);
+            owner.PlayAnimation("Fall",0.1f);
             Debug.Log("InFall");
         }
 
@@ -30,7 +30,7 @@ public partial class PlayerStateMachine : MonoBehaviour
             {
                 owner.ChangeState(owner.m_landState);
             }
-            if (owner.m_inputManager.AvoidKey == KeyStatus.DOWN)
+            if (owner.m_inputManager.AvoidKey == KeyStatus.DOWN && owner.m_currentAirDushCount < owner.m_airDushCount)
             {
                 owner.ChangeState(owner.m_avoidState);
             }

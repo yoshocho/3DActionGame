@@ -154,7 +154,7 @@
                 {
                     "name": "",
                     "id": "c1aa75fd-a75d-456c-806b-ff2b4e351b16",
-                    "path": "",
+                    "path": "<Mouse>/delta",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -203,6 +203,34 @@
                     "processors": "",
                     "groups": "",
                     "action": "Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Ui",
+            "id": "711cf282-d177-4078-8e74-b3cb5e80bb98",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "29563da1-0bf0-419a-bd0a-f36be112817f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "a388ab2d-6aef-46ff-9e8c-afe779b449c4",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

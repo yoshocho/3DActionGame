@@ -9,7 +9,8 @@ public partial class PlayerStateMachine : MonoBehaviour
         public override void OnEnter(PlayerStateMachine owner, PlayerStateBase prevState)
         {
             if (prevState is WalkState) owner.PlayAnimation("WalkEnd", 0.2f);
-            else if(prevState is RunState) owner.PlayAnimation("RunEnd", 0.2f);
+            else if(prevState is RunState　|| prevState is AvoidState) owner.PlayAnimation("RunEnd", 0.2f);
+            else if(prevState is AttackState) owner.PlayAnimation("AttackIdle", 0.1f);
             else owner.PlayAnimation("Idle", 0.1f);
             owner.m_currentVelocity.x = 0f;
             owner.m_currentVelocity.z = 0f;
@@ -18,7 +19,11 @@ public partial class PlayerStateMachine : MonoBehaviour
 
         public override void OnExit(PlayerStateMachine owner, PlayerStateBase nextState)
         {
-
+            if (owner.m_poseKeep)
+            {
+                owner.m_weaponHolder.ResetHolder();
+                owner.m_poseKeep = false;
+            }
         }
 
         public override void OnUpdate(PlayerStateMachine owner)

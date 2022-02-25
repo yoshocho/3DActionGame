@@ -176,7 +176,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""c1aa75fd-a75d-456c-806b-ff2b4e351b16"",
-                    ""path"": """",
+                    ""path"": ""<Mouse>/delta"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -229,6 +229,34 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Ui"",
+            ""id"": ""711cf282-d177-4078-8e74-b3cb5e80bb98"",
+            ""actions"": [
+                {
+                    ""name"": ""New action"",
+                    ""type"": ""Button"",
+                    ""id"": ""29563da1-0bf0-419a-bd0a-f36be112817f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""a388ab2d-6aef-46ff-9e8c-afe779b449c4"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""New action"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -240,6 +268,9 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         m_Player_CameraAxis = m_Player.FindAction("CameraAxis", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
+        // Ui
+        m_Ui = asset.FindActionMap("Ui", throwIfNotFound: true);
+        m_Ui_Newaction = m_Ui.FindAction("New action", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -360,6 +391,39 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         }
     }
     public PlayerActions @Player => new PlayerActions(this);
+
+    // Ui
+    private readonly InputActionMap m_Ui;
+    private IUiActions m_UiActionsCallbackInterface;
+    private readonly InputAction m_Ui_Newaction;
+    public struct UiActions
+    {
+        private @PlayerInput m_Wrapper;
+        public UiActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Newaction => m_Wrapper.m_Ui_Newaction;
+        public InputActionMap Get() { return m_Wrapper.m_Ui; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(UiActions set) { return set.Get(); }
+        public void SetCallbacks(IUiActions instance)
+        {
+            if (m_Wrapper.m_UiActionsCallbackInterface != null)
+            {
+                @Newaction.started -= m_Wrapper.m_UiActionsCallbackInterface.OnNewaction;
+                @Newaction.performed -= m_Wrapper.m_UiActionsCallbackInterface.OnNewaction;
+                @Newaction.canceled -= m_Wrapper.m_UiActionsCallbackInterface.OnNewaction;
+            }
+            m_Wrapper.m_UiActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Newaction.started += instance.OnNewaction;
+                @Newaction.performed += instance.OnNewaction;
+                @Newaction.canceled += instance.OnNewaction;
+            }
+        }
+    }
+    public UiActions @Ui => new UiActions(this);
     public interface IPlayerActions
     {
         void OnMove(InputAction.CallbackContext context);
@@ -367,5 +431,9 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         void OnCameraAxis(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
+    }
+    public interface IUiActions
+    {
+        void OnNewaction(InputAction.CallbackContext context);
     }
 }

@@ -6,9 +6,9 @@ public partial class PlayerStateMachine : MonoBehaviour
     {
         public override void OnEnter(PlayerStateMachine owner, PlayerStateBase prevState)
         {
-            
-            owner.PlayAnimation("Land",0.1f, owner.m_currentAnimLayer);
+            owner.PlayAnimation("Land",0.1f);
             owner.m_currentJumpStep = owner.m_jumpStep;
+            owner.m_currentAirDushCount = 0;
         }
 
         public override void OnExit(PlayerStateMachine owner, PlayerStateBase nextState)

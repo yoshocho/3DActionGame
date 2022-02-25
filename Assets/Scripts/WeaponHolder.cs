@@ -23,24 +23,53 @@ public class WeaponHolder : MonoBehaviour
 
     GameObject m_currentWeapon = default;
 
+    public HitCtrl HitCtrl { get; private set; } = default;
 
     private void Start()
     {
-        SetWeapon(0);
+        //SetWeapon(1);
     }
 
-    public void SetWeapon(int weaponId)
+    public void ChangeWeapon(WeaponType type)
+    {
+        switch (type)
+        {
+            case WeaponType.HEAVY_SWORD:
+                SetWeapon(0);
+                break;
+            case WeaponType.LIGHT_SWORD:
+                SetWeapon(1);
+                break;
+            default:
+                break;
+        }
+    }
+
+    void SetWeapon(int weaponId)
     {
         m_currentWeapon = m_weaponList[weaponId];
-        m_weaponList[weaponId].transform.SetParent(m_currentHolder.transform);
-        m_weaponList[weaponId].transform.localPosition = Vector3.zero;
-        m_weaponList[weaponId].transform.localRotation = Quaternion.identity;   
+        HitCtrl = m_weaponList[weaponId].GetComponent<HitCtrl>();
+        SetPosition(m_weaponList[weaponId].transform, m_currentHolder.transform);
     }
     public void ResetHolder()
     {
-        m_currentWeapon.transform.SetParent(m_heavySwordHolder.transform);
-        m_currentWeapon.transform.localPosition = Vector3.zero;
-        m_currentWeapon.transform.localRotation = Quaternion.identity;
+        
+        SetPosition(m_currentWeapon.transform, m_heavySwordHolder.transform);
     }
 
+    public void WeaponTriggerEnable()
+    {
+        this.HitCtrl.m_atkTrigeer.enabled = true;
+    }
+    public void WeaponTriggerDisable()
+    {
+        this.HitCtrl.m_atkTrigeer.enabled = false;
+    }
+
+    void SetPosition(Transform weapon,Transform to)
+    {
+        weapon.SetParent(to);
+        weapon.localPosition = Vector3.zero;
+        weapon.localRotation = Quaternion.identity;
+    }
 }

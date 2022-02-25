@@ -7,7 +7,7 @@ public partial class PlayerStateMachine : MonoBehaviour
        
         public override void OnEnter(PlayerStateMachine owner, PlayerStateBase prevState)
         {
-            owner.PlayAnimation("Jump",0.1f,owner.m_currentAnimLayer);
+            owner.PlayAnimation("Jump",0.1f);
             owner.m_moveForward.y = 0;
             if (owner.m_inputDir.sqrMagnitude > 0.1) owner.m_targetRot = Quaternion.LookRotation(owner.m_moveForward);
             owner.m_currentVelocity = new Vector3(owner.m_moveForward.x, owner.m_jumpPower, owner.m_moveForward.z);
