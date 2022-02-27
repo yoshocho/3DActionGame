@@ -97,9 +97,6 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     int m_comboStep = 0;
     /// <summary>アクションの持続時間</summary>
     float m_actionKeepingTimer = 0.0f;
-    /// <summary></summary>
-    bool m_actionKeeping = false;
-
     bool m_poseKeep = false;
 
     List<Attack> m_currentAttackList = new List<Attack>();
@@ -108,9 +105,6 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     [SerializeField]
     WeaponType m_weaponType = WeaponType.HEAVY_SWORD;
     #endregion
-
-    [SerializeField]
-    AnimationCurve m_lunchCurve = default;
 
     /// <summary>
     /// 空中にいるかどうかのフラグ
@@ -138,6 +132,8 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     int m_airDushCount = 1;
     int m_currentAirDushCount = default;
     bool m_stateKeep;
+
+    List<EnemyBase> m_targetEnemys = new List<EnemyBase>();
 
     Vector3 m_moveForward = Vector3.zero;
     Vector3 m_currentVelocity = Vector3.zero;
@@ -319,7 +315,7 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
             case ActionType.Animation:
                 AttackAssist();
                 Debug.Log($"{step}/{layer}{comboList[actId].Name}");
-                m_hitCtrl.SetCtrl(m_actionCtrl, comboList[actId]);
+                m_hitCtrl.SetCtrl(this, comboList[actId]);
                 m_isAnimationPlaying = true;
                 m_waitTimer = attack.WaitTime;
                 m_actionKeepingTimer = attack.KeepTime;
@@ -362,9 +358,23 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
         switch (eventId)
         {
             case 1:
+
                 Debug.Log("打ち上げ");
                 break;
         }
+    }
+
+    public void HitCallBack(EnemyBase enemy, Attack attack)
+    {
+        //enemys?.AddDamage(attack.Damage);
+        enemy?.AddDamage(attack.Damage);
+        m_actionCtrl.HitStop(attack.Power);
+
+        if (!m_targetEnemys.Contains(enemy))
+        {
+            m_targetEnemys.Add(enemy);
+        }
+        //comboSubject.OnNext(Unit.Default);
     }
     public void StartAttack()
     {

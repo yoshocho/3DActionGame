@@ -53,7 +53,7 @@ public class ActionControl : MonoBehaviour
     HitCtrl m_hitCtrl;
     private void Awake()
     {
-        m_hitCtrl = GetComponentInChildren<HitCtrl>();
+        //m_hitCtrl = GetComponentInChildren<HitCtrl>();
         m_timeScale = Time.timeScale;
     }
 
@@ -76,14 +76,7 @@ public class ActionControl : MonoBehaviour
         }
     }
 
-    public void HitCallBack(IDamage enemys,Attack attack)
-    {
-        enemys?.AddDamage(attack.Damage);
-        HitStop(attack.Power);
-        comboSubject.OnNext(Unit.Default);
-    }
-
-    void HitStop(float power)
+    public void HitStop(float power)
     {
         m_stopTime = power * 1.0f / 24.0f;
 
