@@ -21,10 +21,10 @@ public partial class PlayerStateMachine : MonoBehaviour
 
         public override void OnUpdate(PlayerStateMachine owner)
         {
-            if (owner.IsGround())
-            {
-                owner.ChangeState(owner.m_landState);
-            }
+            //if (owner.IsGround())
+            //{
+            //    owner.ChangeState(owner.m_landState);
+            //}
             if (owner.m_currentVelocity.y < 0f)
             {
                 owner.ChangeState(owner.m_fallState);

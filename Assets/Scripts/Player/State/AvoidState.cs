@@ -35,7 +35,7 @@ public partial class PlayerStateMachine : MonoBehaviour
         {
             //owner.m_avoidEndTime = 0.6f;
             //owner.m_airDasuTime = 0.5f;
-            owner.m_justTime = owner.m_currntJustTime;
+            owner.m_justTime = owner.m_currentJustTime;
             owner.m_currentGravityScale = owner.m_gravityScale;
             owner.m_justTrigger = false;
             owner.m_currentRotateSpeed = owner.m_rotateSpeed;
@@ -51,7 +51,7 @@ public partial class PlayerStateMachine : MonoBehaviour
             if (owner.m_justTime < 0.0f)
             {
                 owner.m_justTrigger = false;
-                owner.m_justTime = owner.m_currntJustTime;
+                owner.m_justTime = owner.m_currentJustTime;
             }
             if (owner.IsGround())
             {
@@ -63,20 +63,19 @@ public partial class PlayerStateMachine : MonoBehaviour
                 {
                     owner.m_inputDir.y = 0.0f;
 
-                    if (owner.m_inputDir == Vector3.zero) m_avoidDir = owner.m_selfTrans.forward * owner.m_avoidDistance;
+                    if (owner.m_inputDir == Vector3.zero) m_avoidDir = owner.m_selfTrans.forward * owner.m_avoidSpeed;
                     m_avoidDir.y = 0.0f;
                     owner.m_targetRot = Quaternion.LookRotation(m_avoidDir);
 
-                    if (!owner.IsGround())
-                    {
-                        owner.m_currentGravityScale = 0.0f;
-                        owner.m_currentVelocity = m_avoidDir * owner.m_airDasuSpeed;
-                        //Debug.Log(owner.m_currentVelocity);
-                    }
-                    else
-                    {
-                        owner.m_currentVelocity = new Vector3(m_avoidDir.x, 0.0f, m_avoidDir.z) * owner.m_avoidDistance;
-                    }
+                    //if (!owner.IsGround())
+                    //{
+                        //owner.m_currentGravityScale = 0.0f;
+                        //owner.m_currentVelocity = m_avoidDir * owner.m_airDasuSpeed;
+                    //}
+                    //else
+                    //{
+                        owner.m_currentVelocity = new Vector3(m_avoidDir.x, 0.0f, m_avoidDir.z) * owner.m_avoidSpeed;
+                    //}
                     if (owner.m_inputManager.AttackKey == KeyStatus.DOWN)
                     {
                         owner.ChangeState(owner.m_attackState);

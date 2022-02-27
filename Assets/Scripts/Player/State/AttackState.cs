@@ -18,12 +18,11 @@ public partial class PlayerStateMachine : MonoBehaviour
             {
                 case WeaponType.HEAVY_SWORD: owner.m_currentAttackList = owner.m_actionCtrl.HeavySwordNormalCombos;
                                              owner.m_currentSkillList = owner.m_actionCtrl.HeavySwordSkillList;
+                                             owner.m_currentAirialAttackList = owner.m_actionCtrl.HeavySwordAirialCombos;
                     break;
                 case WeaponType.LIGHT_SWORD: Debug.Log("設定中です"); break;
                 default: throw new System.ArgumentException("invalid enum value");
             }
-
-
             owner.m_poseKeep = true;
             if (owner.IsGround())
             {
@@ -40,7 +39,7 @@ public partial class PlayerStateMachine : MonoBehaviour
             }
             else
             {
-                owner.m_currentAttackList = owner.m_actionCtrl.HeavySwordAirialCombos;
+                owner.m_currentAttackList = owner.m_currentAirialAttackList;
                 owner.NextAction(owner.m_comboStep, owner.m_currentAttackList[owner.m_comboStep].Layer, owner.m_currentAttackList);
                 owner.m_comboStep++;
             }

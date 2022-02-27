@@ -47,7 +47,7 @@ MonoBehaviour:
   radius: 0.11
   height: 0.09
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 1
+  shouldDrawGizmosThisFrame: 0
 --- !u!1 &46722125
 GameObject:
   m_ObjectHideFlags: 0
@@ -95,7 +95,7 @@ MonoBehaviour:
   radius: 0.04
   height: 0.2
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 1
+  shouldDrawGizmosThisFrame: 0
 --- !u!1 &193869937
 GameObject:
   m_ObjectHideFlags: 0
@@ -142,7 +142,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   radius: 0.078
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 1
+  shouldDrawGizmosThisFrame: 0
 --- !u!1 &272431496
 GameObject:
   m_ObjectHideFlags: 0
@@ -190,7 +190,7 @@ MonoBehaviour:
   radius: 0.06
   height: 0.3
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 1
+  shouldDrawGizmosThisFrame: 0
 --- !u!1 &337458228
 GameObject:
   m_ObjectHideFlags: 0
@@ -238,7 +238,7 @@ MonoBehaviour:
   radius: 0.04
   height: 0.2
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 1
+  shouldDrawGizmosThisFrame: 0
 --- !u!1 &345473139
 GameObject:
   m_ObjectHideFlags: 0
@@ -334,7 +334,7 @@ MonoBehaviour:
   radius: 0.04
   height: 0.12
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 1
+  shouldDrawGizmosThisFrame: 0
 --- !u!1 &694767123
 GameObject:
   m_ObjectHideFlags: 0
@@ -382,7 +382,7 @@ MonoBehaviour:
   radius: 0.05
   height: 0.45
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 1
+  shouldDrawGizmosThisFrame: 0
 --- !u!1 &739197005
 GameObject:
   m_ObjectHideFlags: 0
@@ -604,7 +604,7 @@ MonoBehaviour:
   radius: 0.05
   height: 0.18
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 1
+  shouldDrawGizmosThisFrame: 0
 --- !u!1 &916910369
 GameObject:
   m_ObjectHideFlags: 0
@@ -652,7 +652,7 @@ MonoBehaviour:
   radius: 0.05
   height: 0.18
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 1
+  shouldDrawGizmosThisFrame: 0
 --- !u!1 &942081592
 GameObject:
   m_ObjectHideFlags: 0
@@ -700,7 +700,7 @@ MonoBehaviour:
   radius: 0.04
   height: 0.12
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 1
+  shouldDrawGizmosThisFrame: 0
 --- !u!1 &1047898951
 GameObject:
   m_ObjectHideFlags: 0
@@ -796,7 +796,7 @@ MonoBehaviour:
   radius: 0.028
   height: 0.03
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 1
+  shouldDrawGizmosThisFrame: 0
 --- !u!1 &1098599690
 GameObject:
   m_ObjectHideFlags: 0
@@ -844,7 +844,7 @@ MonoBehaviour:
   radius: 0.05
   height: 0.45
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 1
+  shouldDrawGizmosThisFrame: 0
 --- !u!1 &1379430892
 GameObject:
   m_ObjectHideFlags: 0
@@ -924,7 +924,7 @@ MonoBehaviour:
   radius: 0.07
   height: 0.15
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 1
+  shouldDrawGizmosThisFrame: 0
 --- !u!1 &1554889627
 GameObject:
   m_ObjectHideFlags: 0
@@ -972,7 +972,7 @@ MonoBehaviour:
   radius: 0.06
   height: 0.3
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 1
+  shouldDrawGizmosThisFrame: 0
 --- !u!1 &1599915917
 GameObject:
   m_ObjectHideFlags: 0
@@ -1020,7 +1020,7 @@ MonoBehaviour:
   radius: 0.028
   height: 0.03
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 1
+  shouldDrawGizmosThisFrame: 0
 --- !u!1 &1744346615
 GameObject:
   m_ObjectHideFlags: 0
@@ -1067,7 +1067,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   radius: 0.1
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 1
+  shouldDrawGizmosThisFrame: 0
 --- !u!1 &1894985695
 GameObject:
   m_ObjectHideFlags: 0
@@ -1179,7 +1179,7 @@ MonoBehaviour:
   radius: 0.13
   height: 0.18
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 1
+  shouldDrawGizmosThisFrame: 0
 --- !u!1 &2108080708
 GameObject:
   m_ObjectHideFlags: 0
@@ -2763,7 +2763,7 @@ CharacterController:
   serializedVersion: 2
   m_Height: 1.7
   m_Radius: 0.35
-  m_SlopeLimit: 45
+  m_SlopeLimit: 30
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
@@ -2786,10 +2786,10 @@ MonoBehaviour:
   m_gravityScale: 1.7
   m_jumpPower: 9
   m_justTime: 0.3
-  m_avoidDistance: 1.1
+  m_avoidTime: 0.81
   m_avoidEndTime: 0.6
-  m_isGroundLength: 0.57
-  m_isGroundRadius: 0.18
+  m_isGroundLength: 0.66
+  m_isGroundRadius: 0.25
   m_groundLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -2808,7 +2808,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   m_airDasuSpeed: 1.45
   m_airDasuTime: 0.25
-  m_airKeepTime: 1
+  m_airKeepTime: 0.35
   m_jumpStep: 2
   m_airDushCount: 1
 --- !u!114 &4566468747283132794
@@ -2883,17 +2883,35 @@ MonoBehaviour:
     Power: 2.75
     WaitTime: 0.44
     Damage: 100
-  m_heavySwordAirialCombo: []
+  m_heavySwordAirialCombo:
+  - Name: HeavySwordAirial1
+    Step: 0
+    Layer: 2
+    ActType: 0
+    ActionTargetName: HeavySwordAirial1
+    KeepTime: 0.62
+    Power: 2.66
+    WaitTime: 0.67
+    Damage: 150
+  - Name: HeavySwordAirial2
+    Step: 1
+    Layer: 2
+    ActType: 0
+    ActionTargetName: HeavySwordAirial2
+    KeepTime: 0.65
+    Power: 3.36
+    WaitTime: 0.46
+    Damage: 200
   m_heavySwordSkillList:
-  - Name: 
+  - Name: HeavySwordAvoidAttack
     Step: 0
     Layer: 0
     ActType: 0
-    ActionTargetName: 
-    KeepTime: 0
-    Power: 0
-    WaitTime: 0
-    Damage: 0
+    ActionTargetName: HeavySwordAvoidAttack
+    KeepTime: 1.06
+    Power: 2.24
+    WaitTime: 0.84
+    Damage: 120
   - Name: 
     Step: 0
     Layer: 0

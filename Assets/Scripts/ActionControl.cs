@@ -31,20 +31,20 @@ public class Attack
 }
 public class ActionControl : MonoBehaviour
 {
-    /// <summary>コンボを繋げた時のイベント</summary>
+    /// <summary>攻撃ヒット時のイベント</summary>
     private Subject<Unit> comboSubject = new Subject<Unit>();
     public IObservable<Unit> OnCombo => comboSubject;
 
-    [SerializeField]
+    [SerializeField,Tooltip("大剣の通常攻撃List")]
     List<Attack> m_heavySwordNormalCombo = new List<Attack>();
     public List<Attack> HeavySwordNormalCombos => m_heavySwordNormalCombo;
-    [SerializeField]
+    [SerializeField, Tooltip("大剣の空中攻撃List")]
     List<Attack> m_heavySwordAirialCombo = new List<Attack>();
     public List<Attack> HeavySwordAirialCombos => m_heavySwordAirialCombo;
-    [SerializeField]
+    [SerializeField, Tooltip("大剣のスキル攻撃List")]
     List<Attack> m_heavySwordSkillList = new List<Attack>();
     public List<Attack> HeavySwordSkillList => m_heavySwordSkillList;
-    //[SerializeField] AnimationCtrl m_animCtrl = default;
+
     float m_stopTime = default;
     float m_frameTimer = default;
     float m_timeScale = default;

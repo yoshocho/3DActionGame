@@ -21,8 +21,8 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     [SerializeField] float m_jumpPower = 10f;
     [Tooltip("ジャスト回避の無敵時間")]
     [SerializeField] float m_justTime = 0.3f;
-    [Tooltip("回避移動の距離")]
-    [SerializeField] float m_avoidDistance = 1.2f;
+    [Tooltip("回避移動のスピード")]
+    [SerializeField] float m_avoidSpeed = 1.2f;
     [Tooltip("回避移動の時間")]
     [SerializeField] float m_avoidEndTime = 0.6f;
     [Tooltip("接地判定での中心からの距離")]
@@ -42,7 +42,7 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     private IntReactiveProperty m_maxHp = new IntReactiveProperty(100);
     public IReadOnlyReactiveProperty<int> OnDamage => m_hp;
     public IReadOnlyReactiveProperty<int> MaxHp => m_maxHp;
-    
+
     #endregion
 
     #region Event
@@ -66,7 +66,7 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
 
 
     float m_currentRotateSpeed = 10f;
-    float m_currntJustTime = default;
+    float m_currentJustTime = default;
     float m_currentGravityScale = default;
     /// <summary>ジャスト回避のトリガー</summary>
     bool m_justTrigger = false;
@@ -83,9 +83,9 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     LandState m_landState = new LandState();
     #endregion
 
-    
-    
-    
+
+
+
     #region Attack
     /// <summary>アニメーションが再生中かどうか</summary>
     bool m_isAnimationPlaying = false;
@@ -103,7 +103,7 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     bool m_poseKeep = false;
 
     List<Attack> m_currentAttackList = new List<Attack>();
-    List<Attack> m_currentAirialList = new List<Attack>();
+    List<Attack> m_currentAirialAttackList = new List<Attack>();
     List<Attack> m_currentSkillList = new List<Attack>();
     [SerializeField]
     WeaponType m_weaponType = WeaponType.HEAVY_SWORD;
@@ -115,7 +115,7 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     /// <summary>
     /// 空中にいるかどうかのフラグ
     /// </summary>
-    bool m_inKeepAir = default; 
+    bool m_inKeepAir = default;
 
     [SerializeField]
     float m_airDasuSpeed = 1.0f;
@@ -154,7 +154,7 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
         m_inputManager = InputManager.Instance;
 
         m_selfTrans = transform;
-        m_currntJustTime = m_justTime;
+        m_currentJustTime = m_justTime;
         m_currentGravityScale = m_gravityScale;
         m_currentJumpStep = m_jumpStep;
     }
@@ -191,6 +191,14 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
         m_selfTrans.rotation = rot;
     }
 
+    void LookAt(Vector3 target)
+    {
+        var targetRot = Quaternion.LookRotation(target);
+        var rot = m_selfTrans.rotation;
+        rot = Quaternion.Slerp(rot,targetRot, 1000.0f);
+        m_selfTrans.rotation = rot;
+    }
+
     void MoveForward(float time, float speed)
     {
         //StartCoroutine(MoveForwardAsync(time,speed));
@@ -208,11 +216,9 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
 
     void CheckAir()
     {
-        //if (!m_inKeepAir) return;
         if (m_inKeepAir)
         {
             m_airKeepTimer -= Time.deltaTime;
-            m_currentVelocity = Vector3.zero;
         }
 
         if (m_airKeepTimer < 0.0)
@@ -221,7 +227,6 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
             m_inKeepAir = false;
         }
     }
-
     bool IsGround()
     {
         Vector3 start = new Vector3(transform.position.x, transform.position.y + 0.7f, transform.position.z);
@@ -240,11 +245,11 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
 
     void ApplyGravity()
     {
-        if (!IsGround() || !m_controller.isGrounded && !m_inKeepAir)
+        if (!(IsGround() || m_controller.isGrounded) && !m_inKeepAir)
         {
             m_currentVelocity.y += m_currentGravityScale * Physics.gravity.y * Time.deltaTime;
         }
-        else
+        else if (m_inKeepAir)
         {
             m_currentVelocity.y = 0f;
         }
@@ -252,13 +257,13 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
 
     void PlayAnimation(string stateName, float transitionTime = 0.2f, int layer = 0)
     {
-        m_anim.CrossFadeInFixedTime(stateName, transitionTime ,layer);
+        m_anim.CrossFadeInFixedTime(stateName, transitionTime, layer);
     }
 
     void ChangeState(PlayerStateBase nextState)
     {
-        m_currentState?.OnExit(this,nextState);
-        nextState?.OnEnter(this,m_currentState);
+        m_currentState?.OnExit(this, nextState);
+        nextState?.OnEnter(this, m_currentState);
         m_currentState = nextState;
     }
 
@@ -288,10 +293,10 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
         dir.y = 0.0f;
         m_targetRot = Quaternion.LookRotation(dir);
     }
-    
-    void NextAction(int step, AttackLayer layer,List<Attack> comboList)
+
+    void NextAction(int step, AttackLayer layer, List<Attack> comboList)
     {
-        
+
         int actId = -1;
         Attack attack = comboList[0];
         for (int i = 0; i < comboList.Count; i++)
@@ -342,10 +347,10 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
                 Debug.Log("AirialAttack");
                 m_inKeepAir = true;
                 m_airKeepTimer = 0.7f;
-                MoveForward(0.2f,1.0f);
+                MoveForward(0.2f, 1.0f);
                 //m_currentVelocity = transform.forward * 0.7f;
                 //m_controller.Move(m_currentVelocity);
-                
+
                 break;
             default:
                 break;
