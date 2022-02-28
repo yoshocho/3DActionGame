@@ -52,6 +52,10 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     /// <summary> プレイヤーが死んだ時のイベント</summary>
     private Subject<Unit> playerDeath = new Subject<Unit>();
     public IObservable<Unit> PlayerDeath => playerDeath;
+    /// <summary>攻撃ヒット時のイベント</summary>
+    private Subject<Unit> comboSubject = new Subject<Unit>();
+    public IObservable<Unit> OnCombo => comboSubject;
+
     #endregion
 
     Transform m_selfTrans;
@@ -358,7 +362,7 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
         switch (eventId)
         {
             case 1:
-
+                //m_targetEnemys.ForEach(e => e.
                 Debug.Log("打ち上げ");
                 break;
         }
@@ -366,15 +370,13 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
 
     public void HitCallBack(EnemyBase enemy, Attack attack)
     {
-        //enemys?.AddDamage(attack.Damage);
         enemy?.AddDamage(attack.Damage);
         m_actionCtrl.HitStop(attack.Power);
-
+        comboSubject.OnNext(Unit.Default);
         if (!m_targetEnemys.Contains(enemy))
         {
             m_targetEnemys.Add(enemy);
         }
-        //comboSubject.OnNext(Unit.Default);
     }
     public void StartAttack()
     {

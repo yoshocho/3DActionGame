@@ -47,7 +47,7 @@ MonoBehaviour:
   radius: 0.11
   height: 0.09
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 0
+  shouldDrawGizmosThisFrame: 1
 --- !u!1 &46722125
 GameObject:
   m_ObjectHideFlags: 0
@@ -95,7 +95,7 @@ MonoBehaviour:
   radius: 0.04
   height: 0.2
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 0
+  shouldDrawGizmosThisFrame: 1
 --- !u!1 &193869937
 GameObject:
   m_ObjectHideFlags: 0
@@ -142,7 +142,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   radius: 0.078
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 0
+  shouldDrawGizmosThisFrame: 1
 --- !u!1 &272431496
 GameObject:
   m_ObjectHideFlags: 0
@@ -190,7 +190,7 @@ MonoBehaviour:
   radius: 0.06
   height: 0.3
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 0
+  shouldDrawGizmosThisFrame: 1
 --- !u!1 &337458228
 GameObject:
   m_ObjectHideFlags: 0
@@ -238,7 +238,7 @@ MonoBehaviour:
   radius: 0.04
   height: 0.2
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 0
+  shouldDrawGizmosThisFrame: 1
 --- !u!1 &345473139
 GameObject:
   m_ObjectHideFlags: 0
@@ -334,7 +334,7 @@ MonoBehaviour:
   radius: 0.04
   height: 0.12
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 0
+  shouldDrawGizmosThisFrame: 1
 --- !u!1 &694767123
 GameObject:
   m_ObjectHideFlags: 0
@@ -382,7 +382,7 @@ MonoBehaviour:
   radius: 0.05
   height: 0.45
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 0
+  shouldDrawGizmosThisFrame: 1
 --- !u!1 &739197005
 GameObject:
   m_ObjectHideFlags: 0
@@ -604,7 +604,7 @@ MonoBehaviour:
   radius: 0.05
   height: 0.18
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 0
+  shouldDrawGizmosThisFrame: 1
 --- !u!1 &916910369
 GameObject:
   m_ObjectHideFlags: 0
@@ -652,7 +652,7 @@ MonoBehaviour:
   radius: 0.05
   height: 0.18
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 0
+  shouldDrawGizmosThisFrame: 1
 --- !u!1 &942081592
 GameObject:
   m_ObjectHideFlags: 0
@@ -700,7 +700,7 @@ MonoBehaviour:
   radius: 0.04
   height: 0.12
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 0
+  shouldDrawGizmosThisFrame: 1
 --- !u!1 &1047898951
 GameObject:
   m_ObjectHideFlags: 0
@@ -796,7 +796,7 @@ MonoBehaviour:
   radius: 0.028
   height: 0.03
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 0
+  shouldDrawGizmosThisFrame: 1
 --- !u!1 &1098599690
 GameObject:
   m_ObjectHideFlags: 0
@@ -844,7 +844,7 @@ MonoBehaviour:
   radius: 0.05
   height: 0.45
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 0
+  shouldDrawGizmosThisFrame: 1
 --- !u!1 &1379430892
 GameObject:
   m_ObjectHideFlags: 0
@@ -924,7 +924,7 @@ MonoBehaviour:
   radius: 0.07
   height: 0.15
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 0
+  shouldDrawGizmosThisFrame: 1
 --- !u!1 &1554889627
 GameObject:
   m_ObjectHideFlags: 0
@@ -972,7 +972,7 @@ MonoBehaviour:
   radius: 0.06
   height: 0.3
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 0
+  shouldDrawGizmosThisFrame: 1
 --- !u!1 &1599915917
 GameObject:
   m_ObjectHideFlags: 0
@@ -1020,7 +1020,7 @@ MonoBehaviour:
   radius: 0.028
   height: 0.03
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 0
+  shouldDrawGizmosThisFrame: 1
 --- !u!1 &1744346615
 GameObject:
   m_ObjectHideFlags: 0
@@ -1067,7 +1067,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   radius: 0.1
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 0
+  shouldDrawGizmosThisFrame: 1
 --- !u!1 &1894985695
 GameObject:
   m_ObjectHideFlags: 0
@@ -1179,7 +1179,7 @@ MonoBehaviour:
   radius: 0.13
   height: 0.18
   linkedRenderer: {fileID: 0}
-  shouldDrawGizmosThisFrame: 0
+  shouldDrawGizmosThisFrame: 1
 --- !u!1 &2108080708
 GameObject:
   m_ObjectHideFlags: 0
@@ -2786,8 +2786,8 @@ MonoBehaviour:
   m_gravityScale: 1.7
   m_jumpPower: 9
   m_justTime: 0.3
-  m_avoidTime: 0.81
-  m_avoidEndTime: 0.6
+  m_avoidSpeed: 1.2
+  m_avoidEndTime: 0.48
   m_isGroundLength: 0.66
   m_isGroundRadius: 0.25
   m_groundLayer:
@@ -2800,12 +2800,6 @@ MonoBehaviour:
   m_actionCtrl: {fileID: 4566468747283132796}
   m_animCtrl: {fileID: 4566468747283132797}
   m_weaponType: 0
-  m_lunchCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
   m_airDasuSpeed: 1.45
   m_airDasuTime: 0.25
   m_airKeepTime: 0.35
@@ -2846,7 +2840,7 @@ MonoBehaviour:
     KeepTime: 0.66
     Power: 2.4
     WaitTime: 0.54
-    Damage: 100
+    Damage: 94
   - Name: HeavySwordCombo2
     Step: 1
     Layer: 0
@@ -2855,7 +2849,7 @@ MonoBehaviour:
     KeepTime: 0.65
     Power: 2.1
     WaitTime: 0.52
-    Damage: 100
+    Damage: 99
   - Name: HeavySwordCombo3
     Step: 2
     Layer: 0
@@ -2864,7 +2858,7 @@ MonoBehaviour:
     KeepTime: 0.78
     Power: 2.38
     WaitTime: 0.64
-    Damage: 100
+    Damage: 102
   - Name: HeavySwordCombo4
     Step: 3
     Layer: 0
@@ -2873,7 +2867,7 @@ MonoBehaviour:
     KeepTime: 0.84
     Power: 2.17
     WaitTime: 0.54
-    Damage: 100
+    Damage: 98
   - Name: HeavySwordCombo5
     Step: 4
     Layer: 0
@@ -2882,7 +2876,7 @@ MonoBehaviour:
     KeepTime: 1.66
     Power: 2.75
     WaitTime: 0.44
-    Damage: 100
+    Damage: 120
   m_heavySwordAirialCombo:
   - Name: HeavySwordAirial1
     Step: 0

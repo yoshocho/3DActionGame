@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UniRx;
 using System;
 
 public enum AttackLayer
@@ -31,10 +30,6 @@ public class Attack
 }
 public class ActionControl : MonoBehaviour
 {
-    /// <summary>攻撃ヒット時のイベント</summary>
-    private Subject<Unit> comboSubject = new Subject<Unit>();
-    public IObservable<Unit> OnCombo => comboSubject;
-
     [SerializeField,Tooltip("大剣の通常攻撃List")]
     List<Attack> m_heavySwordNormalCombo = new List<Attack>();
     public List<Attack> HeavySwordNormalCombos => m_heavySwordNormalCombo;
@@ -44,6 +39,8 @@ public class ActionControl : MonoBehaviour
     [SerializeField, Tooltip("大剣のスキル攻撃List")]
     List<Attack> m_heavySwordSkillList = new List<Attack>();
     public List<Attack> HeavySwordSkillList => m_heavySwordSkillList;
+
+
 
     float m_stopTime = default;
     float m_frameTimer = default;
