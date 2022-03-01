@@ -285,13 +285,15 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
 
     void AttackAssist()
     {
-        if (m_attackAssist.Target != null)
+        if (m_attackAssist.Target)
         {
-            transform.LookAt(m_attackAssist.Target.transform);
+            var target = m_attackAssist.Target.transform.position;
+            target.y = m_selfTrans.position.y;
+            transform.LookAt(target);
         }
         var dir = m_selfTrans.forward;
         dir.y = 0.0f;
-        m_targetRot = Quaternion.LookRotation(dir);
+        m_targetRot = Quaternion.LookRotation(dir,Vector3.up);
     }
 
     void NextAction(int step, AttackLayer layer, List<Attack> comboList)
@@ -380,13 +382,11 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     }
     public void StartAttack()
     {
-        //m_atkTrigeer.enabled = true;
         m_weaponHolder.WeaponTriggerEnable();
     }
 
     public void AttackEnd()
     {
-        //m_atkTrigeer.enabled = false;
         m_weaponHolder.WeaponTriggerDisable();
     }
 }
