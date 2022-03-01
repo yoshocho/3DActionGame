@@ -19,7 +19,7 @@ public class NormalEnemyController : EnemyBase
     [SerializeField] float m_rotateSpeed = 10f;
     [SerializeField] float m_enemyDeathTime = 1.5f;
     [SerializeField] GameObject m_hitEf = default;
-    NormalEnemyState m_currentState = NormalEnemyState.Chase;
+    ConditionType m_currentState = ConditionType.Chase;
 
     protected override void StartSet()
     {
@@ -35,18 +35,18 @@ public class NormalEnemyController : EnemyBase
         m_distace = Vector3.Distance(transform.position, m_target);
         switch (m_currentState)
         {
-            case NormalEnemyState.Idel:
+            case ConditionType.Idel:
                 break;
-            case NormalEnemyState.Wait:
+            case ConditionType.Wait:
                 Wait();
                 break;
-            case NormalEnemyState.Chase:
+            case ConditionType.Chase:
                 Chase();
                 break;
-            case NormalEnemyState.Attack:
+            case ConditionType.Attack:
                 Attack();
                 break;
-            case NormalEnemyState.Death:
+            case ConditionType.Death:
                 Death();
                 break;
             default:
@@ -82,12 +82,12 @@ public class NormalEnemyController : EnemyBase
             if (m_distace < m_attackRange)
             {
                 m_attackCurrentTime = m_attackCoolTime;
-                ChangeState(NormalEnemyState.Attack);
+                ChangeState(ConditionType.Attack);
             }
             else
             {
                 m_attackCurrentTime = m_attackCoolTime;
-                ChangeState(NormalEnemyState.Chase);
+                ChangeState(ConditionType.Chase);
 
             }
         }
@@ -99,11 +99,11 @@ public class NormalEnemyController : EnemyBase
         {
             if (m_distace < m_attackRange)
             {
-                ChangeState(NormalEnemyState.Attack);
+                ChangeState(ConditionType.Attack);
             }
             else
             {
-                ChangeState(NormalEnemyState.Chase);
+                ChangeState(ConditionType.Chase);
             }
         }
     }
@@ -114,7 +114,7 @@ public class NormalEnemyController : EnemyBase
         transform.LookAt(targetPos);
         m_agent.speed = 0;     
         m_anim.SetTrigger("AttackTrigger");
-        ChangeState(NormalEnemyState.Wait);
+        ChangeState(ConditionType.Wait);
     }
     public override void SlowDown(float slowTime)
     {
@@ -136,7 +136,7 @@ public class NormalEnemyController : EnemyBase
         base.AddDamage(damage);
         if (m_currentHp.Value <= 0f)
         {
-            ChangeState(NormalEnemyState.Death);
+            ChangeState(ConditionType.Death);
         }
     }
     public void Death()
@@ -147,7 +147,7 @@ public class NormalEnemyController : EnemyBase
         Destroy(this.gameObject, m_enemyDeathTime);
     }
 
-    void ChangeState(NormalEnemyState state)
+    void ChangeState(ConditionType state)
     {
         m_currentState = state;
     }

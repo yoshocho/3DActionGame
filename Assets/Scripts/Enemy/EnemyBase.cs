@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System;
 using System.Collections;
 
-public enum NormalEnemyState
+public enum ConditionType
 {
     Idel,
     Wait,
@@ -17,7 +17,7 @@ public enum NormalEnemyState
 [RequireComponent(typeof (NavMeshAgent))]
 public class EnemyBase : MonoBehaviour, IDamage
 {
-    enum StateType
+    public enum StateType
     {
         Grounded,
         InAir,
@@ -35,16 +35,15 @@ public class EnemyBase : MonoBehaviour, IDamage
     protected float m_normalAnimSpeed;
     protected bool m_isSlow = false;
 
-
     public bool IsVisible { get; private set; } = default;
 
-    #region cash
-    protected CharacterController m_controller;
     protected Rigidbody m_rb = default;
     protected Animator m_anim = default;
     protected NavMeshAgent m_agent = default;
-    #endregion
 
+    StateType m_state;
+
+    public StateType State => m_state;
 
     void Start()
     {
@@ -52,14 +51,12 @@ public class EnemyBase : MonoBehaviour, IDamage
         BulletTimeSet();
     }
 
-    //private void Update()
-    //{
-        
-    //}
-
     void CheckState()
     {
-
+        if(Mathf.Abs(m_rb.velocity.y) < 0.001f)
+        {
+            m_state = StateType.Grounded;
+        }
     }
 
     protected virtual void StartSet()
