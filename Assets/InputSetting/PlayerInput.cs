@@ -71,6 +71,24 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""WeaponChange"",
+                    ""type"": ""Button"",
+                    ""id"": ""f3f785a0-347b-4dd7-b4df-179235e2cf4e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Lunch"",
+                    ""type"": ""Button"",
+                    ""id"": ""2bcc0626-5ed0-4af7-a1d7-db885d049d38"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -227,6 +245,50 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""action"": ""Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bbf0c47a-ac1c-4333-99c7-4f31601e464d"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""WeaponChange"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b6c40b39-5ad5-4ccf-9afa-afc3e37e8cc8"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""WeaponChange"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""da29b534-59b1-40df-8fd1-65cac88ae408"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Lunch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dd864c66-c28b-4af5-808f-ad42d021b505"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Lunch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -268,6 +330,8 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         m_Player_CameraAxis = m_Player.FindAction("CameraAxis", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
+        m_Player_WeaponChange = m_Player.FindAction("WeaponChange", throwIfNotFound: true);
+        m_Player_Lunch = m_Player.FindAction("Lunch", throwIfNotFound: true);
         // Ui
         m_Ui = asset.FindActionMap("Ui", throwIfNotFound: true);
         m_Ui_Newaction = m_Ui.FindAction("New action", throwIfNotFound: true);
@@ -335,6 +399,8 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_CameraAxis;
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Attack;
+    private readonly InputAction m_Player_WeaponChange;
+    private readonly InputAction m_Player_Lunch;
     public struct PlayerActions
     {
         private @PlayerInput m_Wrapper;
@@ -344,6 +410,8 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         public InputAction @CameraAxis => m_Wrapper.m_Player_CameraAxis;
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Attack => m_Wrapper.m_Player_Attack;
+        public InputAction @WeaponChange => m_Wrapper.m_Player_WeaponChange;
+        public InputAction @Lunch => m_Wrapper.m_Player_Lunch;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -368,6 +436,12 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @Attack.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack;
                 @Attack.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack;
                 @Attack.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack;
+                @WeaponChange.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnWeaponChange;
+                @WeaponChange.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnWeaponChange;
+                @WeaponChange.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnWeaponChange;
+                @Lunch.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLunch;
+                @Lunch.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLunch;
+                @Lunch.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLunch;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -387,6 +461,12 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @Attack.started += instance.OnAttack;
                 @Attack.performed += instance.OnAttack;
                 @Attack.canceled += instance.OnAttack;
+                @WeaponChange.started += instance.OnWeaponChange;
+                @WeaponChange.performed += instance.OnWeaponChange;
+                @WeaponChange.canceled += instance.OnWeaponChange;
+                @Lunch.started += instance.OnLunch;
+                @Lunch.performed += instance.OnLunch;
+                @Lunch.canceled += instance.OnLunch;
             }
         }
     }
@@ -431,6 +511,8 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         void OnCameraAxis(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
+        void OnWeaponChange(InputAction.CallbackContext context);
+        void OnLunch(InputAction.CallbackContext context);
     }
     public interface IUiActions
     {
