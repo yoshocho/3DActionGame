@@ -1410,6 +1410,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_atkTrigeer: {fileID: 1638542390}
+  WeaponType: 0
 --- !u!4 &1638542389 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2224810693702728220, guid: c815de03d6a426a4f902952bb3bd4893,
@@ -1505,12 +1506,12 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1491581609}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.3
-  m_Height: 1.7
+  m_Radius: 0.35
+  m_Height: 2.15
   m_Direction: 2
-  m_Center: {x: 0, y: 0, z: 0.53}
+  m_Center: {x: 0, y: 0, z: 1.26}
 --- !u!114 &1491581612
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1524,6 +1525,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_atkTrigeer: {fileID: 1491581611}
+  WeaponType: 1
 --- !u!4 &1491581610 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5605152085945800110, guid: 81d341b4a91924546be86295afeb3391,
@@ -2797,9 +2799,9 @@ MonoBehaviour:
     value: 1000
   m_maxHp:
     value: 1000
-  m_actionCtrl: {fileID: 4566468747283132796}
+  m_actionCtrl: {fileID: 0}
   m_animCtrl: {fileID: 4566468747283132797}
-  m_weaponType: 0
+  m_weaponType: 1
   m_airDasuSpeed: 1.45
   m_airDasuTime: 0.25
   m_airKeepTime: 0.35
@@ -2817,104 +2819,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31b09e4c20bf08a4295260e637785a34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_targetRange: 4
-  m_detectInterval: 0.7
---- !u!114 &4566468747283132796
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2511869523177681994}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 94beb96671fad334d9a06aa546bbcf97, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_heavySwordNormalCombo:
-  - Name: HeavySwordCombo1
-    Step: 0
-    Layer: 0
-    ActType: 0
-    ActionTargetName: HeavySwordCombo1
-    KeepTime: 0.66
-    Power: 2.4
-    WaitTime: 0.54
-    Damage: 94
-  - Name: HeavySwordCombo2
-    Step: 1
-    Layer: 0
-    ActType: 0
-    ActionTargetName: HeavySwordCombo2
-    KeepTime: 0.65
-    Power: 2.1
-    WaitTime: 0.52
-    Damage: 99
-  - Name: HeavySwordCombo3
-    Step: 2
-    Layer: 0
-    ActType: 0
-    ActionTargetName: HeavySwordCombo3
-    KeepTime: 0.78
-    Power: 2.38
-    WaitTime: 0.64
-    Damage: 102
-  - Name: HeavySwordCombo4
-    Step: 3
-    Layer: 0
-    ActType: 0
-    ActionTargetName: HeavySwordCombo4
-    KeepTime: 0.84
-    Power: 2.17
-    WaitTime: 0.54
-    Damage: 98
-  - Name: HeavySwordCombo5
-    Step: 4
-    Layer: 0
-    ActType: 0
-    ActionTargetName: HeavySwordCombo5
-    KeepTime: 1.66
-    Power: 2.75
-    WaitTime: 0.44
-    Damage: 120
-  m_heavySwordAirialCombo:
-  - Name: HeavySwordAirial1
-    Step: 0
-    Layer: 2
-    ActType: 0
-    ActionTargetName: HeavySwordAirial1
-    KeepTime: 0.62
-    Power: 2.66
-    WaitTime: 0.67
-    Damage: 150
-  - Name: HeavySwordAirial2
-    Step: 1
-    Layer: 2
-    ActType: 0
-    ActionTargetName: HeavySwordAirial2
-    KeepTime: 0.65
-    Power: 3.36
-    WaitTime: 0.46
-    Damage: 200
-  m_heavySwordSkillList:
-  - Name: HeavySwordAvoidAttack
-    Step: 0
-    Layer: 0
-    ActType: 0
-    ActionTargetName: HeavySwordAvoidAttack
-    KeepTime: 1.06
-    Power: 2.24
-    WaitTime: 0.84
-    Damage: 120
-  - Name: 
-    Step: 0
-    Layer: 0
-    ActType: 0
-    ActionTargetName: 
-    KeepTime: 0
-    Power: 0
-    WaitTime: 0
-    Damage: 0
+  m_targetRange: 4.5
+  m_detectInterval: 0.6
 --- !u!114 &4566468747283132797
 MonoBehaviour:
   m_ObjectHideFlags: 0

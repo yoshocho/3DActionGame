@@ -12,9 +12,7 @@ public class PlayerUiPresenter : MonoBehaviour
     PlayerUiView m_view = default;
     [SerializeField]
     ComboCountView m_comboView= default;
-    [SerializeField]
-    ActionControl m_actionControl = default;
-
+    
     [SerializeField] float m_chainTime = 1.5f;
     void Start()
     {
@@ -26,7 +24,7 @@ public class PlayerUiPresenter : MonoBehaviour
             .Subscribe(hp => m_view.ApllyHpBar(hp))
             .AddTo(this);
 
-        m_actionControl.OnCombo
+        m_player.OnCombo
             .Scan(0, (cc, _) => cc + 1)
             .Do(_ => m_comboView.TextEnabled())
             .Do(cc => m_comboView.SetComboText(cc))
