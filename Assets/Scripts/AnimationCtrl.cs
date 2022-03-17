@@ -4,39 +4,28 @@ using UnityEngine;
 
 public class AnimationCtrl : MonoBehaviour
 {
-    public struct AnimStack
-    {
-        public string stateName;
-        public float duration;
-    }
-
     public delegate void CallBack(int param);
-
-    [SerializeField] protected Animator m_anim;
-    [SerializeField] bool m_isActiveStart;
-
-    int m_targetLayer = 0;
-    float m_duration = 0.0f;
-
     CallBack m_eventCallBack;
-    CallBack m_pbkCallBack;
 
-    Queue<AnimStack> m_animQueue = new Queue<AnimStack>();
+
+    [SerializeField] Animator m_anim;
+    AnimatorOverrideController m_overrideController;
+
     private void Awake()
     {
-        m_anim = GetComponentInChildren<Animator>();
-        if (!m_isActiveStart)
-        {
-            DisActive();
-        }
+        if (!m_anim) m_anim = GetComponentInChildren<Animator>();
+
+        m_overrideController = new AnimatorOverrideController();
+        m_overrideController.runtimeAnimatorController = m_anim.runtimeAnimatorController;
+        m_anim.runtimeAnimatorController = m_overrideController;
     }
 
-    public virtual void Active()
+    public void Active()
     {
         m_anim.enabled = true;
     }
 
-    public virtual void DisActive()
+    public void DisActive()
     {
         m_anim.enabled = false;
     }
@@ -52,21 +41,31 @@ public class AnimationCtrl : MonoBehaviour
         m_anim.Update(0.0f);
     }
 
-    public virtual void Play(string stateName, float dur = 0.1f)
+    public void Play(string stateName, float dur = 0.1f)
     {
         Active();
         m_anim.CrossFadeInFixedTime(stateName,dur);
-        m_duration = dur;
     }
 
-    public void PlayQueue(string name, float dur = 0.0f)
+    public void ChangeClip(string stateName,AnimationClip clip)
     {
-        m_animQueue.Enqueue(new AnimStack(){stateName = name,duration = dur});
+        AnimatorStateInfo[] layerInfo = new AnimatorStateInfo[m_anim.layerCount];
+        for (int i = 0; i < m_anim.layerCount; i++)
+        {
+            layerInfo[i] = m_anim.GetCurrentAnimatorStateInfo(i);
+        }
+        
+        m_overrideController[stateName] = clip;
+        ForceUpdate();
+
+        for (int i = 0; i < m_anim.layerCount; i++)
+        {
+            m_anim.Play(layerInfo[i].nameHash,i,layerInfo[i].normalizedTime);
+        }
     }
 
     public bool IsPlayingAnimatin(int layer = 0)
     {
-        if (m_duration > 0.0)  return true;
         var state = m_anim.GetCurrentAnimatorStateInfo(layer);
         if (state.loop) return true;
         return state.normalizedTime < 1.0f;
@@ -77,42 +76,9 @@ public class AnimationCtrl : MonoBehaviour
         m_eventCallBack = cb;
     }
 
-    public void SetPlayBackDelegate(CallBack cb ,int target = 0)
-    {
-        m_pbkCallBack = cb;
-        m_targetLayer = target;
-    }
-
     public void AnimationEvent(int evtType)
     {
         m_eventCallBack?.Invoke(evtType);
     }
 
-    protected virtual void Update()
-    {
-        if (m_anim == null) return;
-
-        if (m_duration > 0.0f)
-        {
-            m_duration -= Time.deltaTime;
-        }
-        if (m_pbkCallBack != null)
-        {
-            if (!IsPlayingAnimatin(m_targetLayer))
-            {
-                CallBack back = m_pbkCallBack;
-                m_pbkCallBack = null;
-                back(m_targetLayer);
-            }
-        }
-        if (m_animQueue.Count > 0)
-        {
-            if (!IsPlayingAnimatin(0))
-            {
-                var anim = m_animQueue.Dequeue();
-                Debug.Log(anim.ToString()); ;
-                Play(anim.stateName, anim.duration);
-            }
-        }
-    }
 }
