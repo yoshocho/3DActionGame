@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Animations;
 using UnityEngine;
 
 public class AnimationCtrl : MonoBehaviour
@@ -8,16 +9,16 @@ public class AnimationCtrl : MonoBehaviour
     CallBack m_eventCallBack;
 
 
-    [SerializeField] Animator m_anim;
-    AnimatorOverrideController m_overrideController;
+    [SerializeField]
+    Animator m_anim;
+    [SerializeField]
+    AnimatorController m_animatorController;
 
     private void Awake()
     {
         if (!m_anim) m_anim = GetComponentInChildren<Animator>();
 
-        m_overrideController = new AnimatorOverrideController();
-        m_overrideController.runtimeAnimatorController = m_anim.runtimeAnimatorController;
-        m_anim.runtimeAnimatorController = m_overrideController;
+        m_animatorController = m_anim.runtimeAnimatorController as AnimatorController;
     }
 
     public void Active()
@@ -47,20 +48,17 @@ public class AnimationCtrl : MonoBehaviour
         m_anim.CrossFadeInFixedTime(stateName,dur);
     }
 
-    public void ChangeClip(string stateName,AnimationClip clip)
+    public void ChangeClip(string stateName, AnimationClip clip, int layerId = 0)
     {
-        AnimatorStateInfo[] layerInfo = new AnimatorStateInfo[m_anim.layerCount];
-        for (int i = 0; i < m_anim.layerCount; i++)
+        AnimatorControllerLayer layer = m_animatorController.layers[layerId];
+        var stateMachine = layer.stateMachine;
+        foreach (var state in stateMachine.states)
         {
-            layerInfo[i] = m_anim.GetCurrentAnimatorStateInfo(i);
-        }
-        
-        m_overrideController[stateName] = clip;
-        ForceUpdate();
-
-        for (int i = 0; i < m_anim.layerCount; i++)
-        {
-            m_anim.Play(layerInfo[i].nameHash,i,layerInfo[i].normalizedTime);
+            AnimatorState animState = state.state;
+            if(animState.name == stateName)
+            {
+                animState.motion = clip;
+            }
         }
     }
 

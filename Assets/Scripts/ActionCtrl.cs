@@ -6,15 +6,23 @@ namespace AttackSetting
 {
     public partial class ActionCtrl : MonoBehaviour
     {
-        [SerializeField]
-        List<Attack> m_attacks = new List<Attack>();
-
+        
         [SerializeField]
         AnimationCtrl m_animCtrl;
 
+        [SerializeField]
+        List<ActionData> m_lightSwordAttacks = new List<ActionData>();
 
-        float m_durationTime = 0.0f;
-        float m_keepTime = 0.0f;
+        float m_receiveTime = 0.0f;
+        float m_keepTimer = 0.0f;
+        int m_comboCount = 0;
+
+        ActionData m_currentAction;
+        public bool ReserveAction { get; private set; } = false;
+        public bool InKeepTime { get; private set; } = false;
+        public bool InReceiveTime { get; private set; } = false;
+
+        public bool CanRequest { get; private set; } = true;
 
         public const string AttackClipName = "Attack";
 
@@ -25,17 +33,80 @@ namespace AttackSetting
         }
         void Update()
         {
+            if(m_keepTimer > 0.0f)
+            {
+                m_keepTimer -= Time.deltaTime;
+                
+                CanRequest = true;
+                if(m_keepTimer <= 0.0f)
+                {
+                    m_keepTimer = 0.0f;
+                    CanRequest = false;
+                }
+            }
+            else if(m_receiveTime > 0.0f)
+            {
+                m_receiveTime -= Time.deltaTime;
+                
+                if (m_receiveTime <= 0.0f)
+                {
+                    m_receiveTime = 0.0f;
+                    
+                }
+            }
+
+            if(!ReserveAction && m_receiveTime <= 0.0f)
+            {
+                m_comboCount = 0;
+            }
+
+            //if (m_comboCount >= ÉRÉìÉ{êî)
+            //{
+            //    m_comboCount = 0;
+            //}
 
         }
 
-        public void RequestAction(AttackType attackType,int num)
+        public void RequestAction(AttackType attackType,int step = 0)
         {
 
+            if (!CanRequest) return;
+
+            ReserveAction = true;
+
+            switch (attackType)
+            {
+                case AttackType.Light:
+                    SetAction(m_lightSwordAttacks[m_comboCount]);
+                    break;
+                case AttackType.Heavy:
+                    break;
+                case AttackType.Airial:
+                    break;
+                case AttackType.Launch:
+                    break;
+                case AttackType.Counter:
+                    break;
+                default:
+                    break;
+            }
+
+            m_comboCount++;
         }
 
-        void SetAction(Attack attack)
+        public void EndAttack()
         {
+            TriggerOnEnable();
+            m_keepTimer = 0.0f;
+            m_receiveTime = 0.0f;
+            m_comboCount = 0;
+        }
 
+        void SetAction(ActionData attack)
+        {
+            m_currentAction = attack;
+            m_receiveTime = attack.ReceiveTime;
+            m_keepTimer = attack.KeepTime;
 
             m_animCtrl.ChangeClip(AttackClipName,attack.AnimSet.Clip);
             m_animCtrl.Play(AttackClipName, attack.AnimSet.Duration);
@@ -43,13 +114,8 @@ namespace AttackSetting
 
         public void HitCallBack(GameObject target)
         {
-
-        }
-
-        public void ResetCombo()
-        {
-            TriggerOnDisable();
-
+            if (target.tag != "Enemy") return;
+            target.gameObject.GetComponent<IDamage>()?.AddDamage(m_currentAction.Damage);
         }
 
         private void TriggerOnEnable()
