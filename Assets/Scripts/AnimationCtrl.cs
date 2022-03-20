@@ -11,14 +11,20 @@ public class AnimationCtrl : MonoBehaviour
 
     [SerializeField]
     Animator m_anim;
-    [SerializeField]
-    AnimatorController m_animatorController;
+    //[SerializeField]
+    //AnimatorController m_animatorController;
+
+    AnimatorOverrideController m_animatorOverrideController;
 
     private void Awake()
     {
         if (!m_anim) m_anim = GetComponentInChildren<Animator>();
 
-        m_animatorController = m_anim.runtimeAnimatorController as AnimatorController;
+        m_animatorOverrideController = new AnimatorOverrideController();
+        m_animatorOverrideController.runtimeAnimatorController = m_anim.runtimeAnimatorController;
+        m_anim.runtimeAnimatorController = m_animatorOverrideController;
+
+        //m_animatorController = m_anim.runtimeAnimatorController as AnimatorController;
     }
 
     public void Active()
@@ -48,17 +54,33 @@ public class AnimationCtrl : MonoBehaviour
         m_anim.CrossFadeInFixedTime(stateName,dur);
     }
 
-    public void ChangeClip(string stateName, AnimationClip clip, int layerId = 0)
+    //public void ChangeClip(string stateName, AnimationClip clip, int layerId = 0)
+    //{
+    //    AnimatorControllerLayer layer = m_animatorController.layers[layerId];
+    //    var stateMachine = layer.stateMachine;
+    //    foreach (var state in stateMachine.states)
+    //    {
+    //        AnimatorState animState = state.state;
+    //        if(animState.name == stateName)
+    //        {
+    //            animState.motion = clip;
+    //        }
+    //    }
+    //}
+
+    public void ChangeClip(string stateName,AnimationClip clip,int layerId = 0)
     {
-        AnimatorControllerLayer layer = m_animatorController.layers[layerId];
-        var stateMachine = layer.stateMachine;
-        foreach (var state in stateMachine.states)
+        
+        AnimatorStateInfo[] layerInfo = new AnimatorStateInfo[m_anim.layerCount];
+        for (int i = 0; i < m_anim.layerCount; i++)
         {
-            AnimatorState animState = state.state;
-            if(animState.name == stateName)
-            {
-                animState.motion = clip;
-            }
+            layerInfo[i] = m_anim.GetCurrentAnimatorStateInfo(i);
+        }
+        m_animatorOverrideController[stateName] = clip;
+        m_anim.Update(0.0f);
+        for (int i = 0; i < m_anim.layerCount; i++)
+        {
+            m_anim.Play(layerInfo[i].nameHash, i, layerInfo[i].normalizedTime);
         }
     }
 

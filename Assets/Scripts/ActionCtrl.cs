@@ -37,11 +37,11 @@ namespace AttackSetting
             {
                 m_keepTimer -= Time.deltaTime;
                 
-                CanRequest = true;
+                CanRequest = false;
                 if(m_keepTimer <= 0.0f)
                 {
                     m_keepTimer = 0.0f;
-                    CanRequest = false;
+                    CanRequest = true;
                 }
             }
             else if(m_receiveTime > 0.0f)
@@ -69,10 +69,9 @@ namespace AttackSetting
 
         public void RequestAction(AttackType attackType,int step = 0)
         {
+            ReserveAction = true;
 
             if (!CanRequest) return;
-
-            ReserveAction = true;
 
             switch (attackType)
             {
