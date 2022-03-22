@@ -6,10 +6,9 @@ namespace AttackSetting
 {
     public partial class ActionCtrl : MonoBehaviour
     {
-        
+
         [SerializeField]
         AnimationCtrl m_animCtrl;
-
         [SerializeField]
         List<ActionData> m_lightSwordAttacks = new List<ActionData>();
 
@@ -24,38 +23,44 @@ namespace AttackSetting
 
         public bool CanRequest { get; private set; } = true;
 
-        public const string AttackClipName = "Attack";
+        enum ClipName
+        {
+            First,
+            Second,
+        }
+
+        ClipName m_clipName = ClipName.First;
 
         void Start()
         {
-            if(!m_animCtrl)m_animCtrl = GetComponentInChildren<AnimationCtrl>();
+            if (!m_animCtrl) m_animCtrl = GetComponentInChildren<AnimationCtrl>();
 
         }
         void Update()
         {
-            if(m_keepTimer > 0.0f)
+            if (m_keepTimer > 0.0f)
             {
                 m_keepTimer -= Time.deltaTime;
-                
+
                 CanRequest = false;
-                if(m_keepTimer <= 0.0f)
+                if (m_keepTimer <= 0.0f)
                 {
                     m_keepTimer = 0.0f;
                     CanRequest = true;
                 }
             }
-            else if(m_receiveTime > 0.0f)
+            else if (m_receiveTime > 0.0f)
             {
                 m_receiveTime -= Time.deltaTime;
-                
+
                 if (m_receiveTime <= 0.0f)
                 {
                     m_receiveTime = 0.0f;
-                    
+
                 }
             }
 
-            if(!ReserveAction && m_receiveTime <= 0.0f)
+            if (!ReserveAction && m_receiveTime <= 0.0f)
             {
                 m_comboCount = 0;
             }
@@ -67,10 +72,9 @@ namespace AttackSetting
 
         }
 
-        public void RequestAction(AttackType attackType,int step = 0)
+        public void RequestAction(AttackType attackType, int step = 0)
         {
             ReserveAction = true;
-
             if (!CanRequest) return;
 
             switch (attackType)
@@ -107,8 +111,12 @@ namespace AttackSetting
             m_receiveTime = attack.ReceiveTime;
             m_keepTimer = attack.KeepTime;
 
-            m_animCtrl.ChangeClip(AttackClipName,attack.AnimSet.Clip);
-            m_animCtrl.Play(AttackClipName, attack.AnimSet.Duration);
+            m_animCtrl.ChangeClip(m_clipName.ToString(), attack.AnimSet.Clip);
+            m_animCtrl.Play(m_clipName.ToString(), attack.AnimSet.Duration);
+            if (m_clipName is ClipName.Second)
+                m_clipName = ClipName.First;
+            else
+                m_clipName = ClipName.Second;
         }
 
         public void HitCallBack(GameObject target)
@@ -119,11 +127,11 @@ namespace AttackSetting
 
         private void TriggerOnEnable()
         {
-            
+
         }
         private void TriggerOnDisable()
         {
-            
+
         }
     }
 }

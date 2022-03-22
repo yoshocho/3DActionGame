@@ -178,6 +178,9 @@ AnimatorStateMachine:
   - serializedVersion: 1
     m_State: {fileID: 6265121117989695930}
     m_Position: {x: 520, y: 470, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: 3850445081625943527}
+    m_Position: {x: 520, y: 410, z: 0}
   m_ChildStateMachines:
   - serializedVersion: 1
     m_StateMachine: {fileID: -1718841632964290413}
@@ -449,6 +452,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bb9f6937c5e0266448f9cd602bc1e6bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-4416771392679374178
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd842601a55e45e42a5b91079e9af421, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1102 &-4068545662356839347
@@ -1506,6 +1521,33 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!1102 &3850445081625943527
+AnimatorState:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Second
+  m_Speed: 1
+  m_CycleOffset: 0
+  m_Transitions: []
+  m_StateMachineBehaviours:
+  - {fileID: -4416771392679374178}
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: 7400000, guid: 258a625952167404c924c7bfa9dfe940, type: 2}
+  m_Tag: 
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 
 --- !u!114 &3966938383348350580
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1625,7 +1667,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack
+  m_Name: First
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []

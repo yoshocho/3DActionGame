@@ -13,8 +13,6 @@ namespace AttackSetting
         Counter,
     }
 
-
-
     public enum WeaponType
     {
         HeavySword,
@@ -27,14 +25,15 @@ namespace AttackSetting
     {
         public float ForwardPower;
         public float UpPower;
+        public float DownPower;
     }
 
     [System.Serializable]
     public class AnimationSetting
     {
-        [SerializeField]
+        [SerializeField,Header("アニメーション")]
         public AnimationClip Clip;
-        [Range(0, 0.5f)]
+        [Range(0, 0.5f),Header("ブレンド時間")]
         public float Duration;
         [Range(-0.5f, 2.0f)]
         public float Speed;
@@ -48,7 +47,9 @@ namespace AttackSetting
         public int Id;
         public float HitStopPower;
         public int Damage;
+        [Header("持続時間")]
         public float KeepTime;
+        [Header("持続時間後の入力受付時間")]
         public float ReceiveTime;
         public KnockBackPower KnockPower;
     }
