@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using AttackSetting;
 
 public interface IDamage
 {
@@ -8,5 +9,5 @@ public interface IDamage
     /// ダメージ処理
     /// </summary>
     /// <param name="damage">ダメージ数</param>
-    void AddDamage(int damage);
+    void AddDamage(int damage,AttackType attackType = default);
 }

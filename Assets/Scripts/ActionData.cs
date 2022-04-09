@@ -39,12 +39,23 @@ namespace AttackSetting
         public float Speed;
     }
 
+    [System.Serializable]
+    public class AtkEffect 
+    {
+        public GameObject HitEff;
+        public bool CameraShake;
+        public bool ControllerShake;
+        public bool ZoomIn;
+        public bool ZoomOut;
+    }
+
     [CreateAssetMenu(menuName = "ActionData")]
     public class ActionData : ScriptableObject
     {
         public AnimationSetting AnimSet;
+        public AtkEffect Effect;
         public AttackType AttackType;
-        public int Id;
+        //public int Id;
         public float HitStopPower;
         public int Damage;
         [Header("éùë±éûä‘")]

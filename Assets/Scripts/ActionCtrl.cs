@@ -113,15 +113,15 @@ namespace AttackSetting
 
             m_animCtrl.ChangeClip(m_clipName.ToString(), attack.AnimSet.Clip);
             m_animCtrl.Play(m_clipName.ToString(), attack.AnimSet.Duration);
+
             if (m_clipName is ClipName.Second)
                 m_clipName = ClipName.First;
             else
                 m_clipName = ClipName.Second;
         }
 
-        public void HitCallBack(GameObject target)
+        public void HitCallBack(Collider target)
         {
-            if (target.tag != "Enemy") return;
             target.gameObject.GetComponent<IDamage>()?.AddDamage(m_currentAction.Damage);
         }
 
