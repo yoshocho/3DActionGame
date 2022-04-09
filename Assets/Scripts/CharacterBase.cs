@@ -12,14 +12,12 @@ public class CharacterBase : MonoBehaviour
     float m_moveSpeed = default;
     [SerializeField]
     float m_ratateSpeed = default;
-    [SerializeField]
-    int m_atk = default;
-
+    
     public IReadOnlyReactiveProperty<int> Hp { get => m_status.hp; protected set { m_status.hp.Value = value.Value; } }
     public int MaxHp { get => m_status.maxHp; private set { m_status.maxHp = value; }}
     public float MoveSpeed { get => m_moveSpeed;protected set { m_moveSpeed = value; } }
     public float RotateSpeed { get => m_ratateSpeed; protected set { m_ratateSpeed = value; } }
-    public int Atk { get => m_atk; protected set { m_atk = value;} }
+    public int Atk { get => m_status.atk; protected set { m_status.atk = value;} }
 
     public bool IsDeath { get; protected set; } = false;
 
