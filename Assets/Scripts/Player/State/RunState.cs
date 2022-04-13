@@ -2,23 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public partial class PlayerStateMachine : MonoBehaviour
+public partial class Player : MonoBehaviour
 {
     public class RunState : PlayerStateBase
     {
-        public override void OnEnter(PlayerStateMachine owner, PlayerStateBase prevState)
+        public override void OnEnter(Player owner, PlayerStateBase prevState)
         {
             owner.m_moveSpeed = owner.m_dashSpeed;
             owner.PlayAnimation("Run",0.3f);
         }
 
-        public override void OnExit(PlayerStateMachine owner, PlayerStateBase nextState)
+        public override void OnExit(Player owner, PlayerStateBase nextState)
         {
             owner.m_moveSpeed = owner.m_walkSpeed;
             //owner.PlayAnimation("RunToIdel");
         }
 
-        public override void OnUpdate(PlayerStateMachine owner)
+        public override void OnUpdate(Player owner)
         {
             if (owner.IsGround())
             {
@@ -38,11 +38,13 @@ public partial class PlayerStateMachine : MonoBehaviour
                 {
                     owner.ChangeState(owner.m_avoidState);
                 }
-                if(owner.m_inputManager.AttackKey is KeyStatus.DOWN)
+                if (owner.m_inputManager.LunchKey is KeyStatus.STAY) owner.m_lunchAttack = true;
+                else owner.m_lunchAttack = false;
+                if (owner.m_inputManager.AttackKey is KeyStatus.DOWN)
                 {
                     owner.ChangeState(owner.m_attackState);
                 }
-                if(owner.m_inputManager.JumpKey is KeyStatus.DOWN)
+                if(owner.m_inputManager.JumpKey is KeyStatus.DOWN && owner.m_currentJumpStep >= 0)
                 {
                     owner.ChangeState(owner.m_jumpState);
                 }

@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 using System;
+using DG.Tweening;
+using AttackSetting;
+
 [RequireComponent(typeof(CharacterController), typeof(AttackAssistController))]
-public partial class PlayerStateMachine : MonoBehaviour, IDamage
+public partial class Player : MonoBehaviour, IDamage
 {
     #region parameter
     [Tooltip("移動スピード")]
@@ -69,12 +72,6 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     [SerializeField] AnimationCtrl m_animCtrl;
 
 
-    float m_currentRotateSpeed = 10f;
-    float m_currentJustTime = default;
-    float m_currentGravityScale = default;
-    /// <summary>ジャスト回避のトリガー</summary>
-    bool m_justTrigger = false;
-
     #region State
     PlayerStateBase m_currentState;
     IdleState m_idleState = new IdleState();
@@ -85,14 +82,10 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     JumpState m_jumpState = new JumpState();
     FallState m_fallState = new FallState();
     LandState m_landState = new LandState();
+    DeathState m_deathState = new DeathState();
     #endregion
 
-
-
-
     #region Attack
-    /// <summary>アニメーションが再生中かどうか</summary>
-    bool m_isAnimationPlaying = false;
     /// <summary>次の攻撃までの入力受付時間</summary>
     float m_waitTimer = 0.0f;
     /// <summary>攻撃のフラグ</summary> 
@@ -101,18 +94,22 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     int m_comboStep = 0;
     /// <summary>アクションの持続時間</summary>
     float m_actionKeepingTimer = 0.0f;
+
+    bool m_lunchEnd = false;
+
     bool m_poseKeep = false;
+
+    bool m_lunchAttack = false;
+
+    //[SerializeField] HitCtrl m_lunchTrigger;
 
     List<Attack> m_currentAttackList = new List<Attack>();
     List<Attack> m_currentAirialAttackList = new List<Attack>();
     List<Attack> m_currentSkillList = new List<Attack>();
     [SerializeField]
-    WeaponType m_weaponType = WeaponType.HEAVY_SWORD;
+    WeaponType m_weaponType = WeaponType.HEAVY;
     #endregion
 
-    /// <summary>
-    /// 空中にいるかどうかのフラグ
-    /// </summary>
     bool m_inKeepAir = default;
 
     [SerializeField]
@@ -137,6 +134,12 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     int m_currentAirDushCount = default;
     bool m_stateKeep;
 
+    float m_currentRotateSpeed = 10f;
+    float m_currentJustTime = default;
+    float m_currentGravityScale = default;
+    /// <summary>ジャスト回避のトリガー</summary>
+    bool m_justTrigger = false;
+
     List<EnemyBase> m_targetEnemys = new List<EnemyBase>();
 
     Vector3 m_moveForward = Vector3.zero;
@@ -152,7 +155,9 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
         m_animCtrl.SetEventDelegate(EventCall);
         ChangeState(m_idleState);
         m_inputManager = InputManager.Instance;
+        m_actionCtrl = ActionControl.Instance;
 
+        //m_lunchTrigger.enabled = false;
         m_selfTrans = transform;
         m_currentJustTime = m_justTime;
         m_currentGravityScale = m_gravityScale;
@@ -166,6 +171,7 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
         ApplyGravity();
         ApplyRotation();
         CheckAir();
+        if (m_inputManager.WeaponChangeKey is KeyStatus.DOWN) ChangeWeapon();
 
         m_currentState.OnUpdate(this);
     }
@@ -195,7 +201,7 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     {
         var targetRot = Quaternion.LookRotation(target);
         var rot = m_selfTrans.rotation;
-        rot = Quaternion.Slerp(rot,targetRot, 1000.0f);
+        rot = Quaternion.Slerp(rot, targetRot, 1000.0f);
         m_selfTrans.rotation = rot;
     }
 
@@ -220,11 +226,12 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
         {
             m_airKeepTimer -= Time.deltaTime;
         }
-
+        //Debug.Log(m_airKeepTimer);
         if (m_airKeepTimer < 0.0)
         {
-            m_airKeepTimer = m_airKeepTime;
             m_inKeepAir = false;
+            m_airKeepTimer = m_airKeepTime;
+            
         }
     }
     bool IsGround()
@@ -245,19 +252,20 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
 
     void ApplyGravity()
     {
-        if (!(IsGround() || m_controller.isGrounded) && !m_inKeepAir)
+        
+        if (m_inKeepAir)
+        {
+            m_currentVelocity.y = 0.0f;
+        }
+        else if (!(IsGround() || m_controller.isGrounded) && !m_inKeepAir)
         {
             m_currentVelocity.y += m_currentGravityScale * Physics.gravity.y * Time.deltaTime;
         }
-        else if (m_inKeepAir)
-        {
-            m_currentVelocity.y = 0f;
-        }
     }
 
-    void PlayAnimation(string stateName, float transitionTime = 0.2f, int layer = 0)
+    void PlayAnimation(string stateName, float transitionTime = 0.1f, int layer = 0,Action onAnimEnd = null)
     {
-        m_anim.CrossFadeInFixedTime(stateName, transitionTime, layer);
+        m_animCtrl.Play(stateName, transitionTime, layer, onAnimEnd);
     }
 
     void ChangeState(PlayerStateBase nextState)
@@ -267,7 +275,22 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
         m_currentState = nextState;
     }
 
-    public void AddDamage(int damage)
+    void ChangeWeapon()
+    {
+        if (m_weaponType is WeaponType.HEAVY)
+        {
+            m_weaponType = WeaponType.LIGHT;
+            ChangeAttacks(m_weaponType);
+        }
+        else
+        {
+            m_weaponType = WeaponType.HEAVY;
+            ChangeAttacks(m_weaponType);
+        }
+        m_comboStep = 0;
+    }
+
+    public void AddDamage(int damage,AttackType attackType = default)
     {
         if (m_justTrigger)
         {
@@ -279,6 +302,8 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
             if (m_hp.Value <= 0)
             {
                 playerDeath.OnNext(Unit.Default);
+                m_controller.enabled = false;
+                ChangeState(m_deathState);
             }
         }
     }
@@ -293,12 +318,11 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
         }
         var dir = m_selfTrans.forward;
         dir.y = 0.0f;
-        m_targetRot = Quaternion.LookRotation(dir,Vector3.up);
+        m_targetRot = Quaternion.LookRotation(dir, Vector3.up);
     }
 
     void NextAction(int step, AttackLayer layer, List<Attack> comboList)
     {
-
         int actId = -1;
         Attack attack = comboList[0];
         for (int i = 0; i < comboList.Count; i++)
@@ -315,21 +339,16 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
             Debug.LogWarning(string.Format("attack not found. {0}/1", step, layer));
             return;
         }
-
         switch (attack.ActType)
         {
             case ActionType.Animation:
                 AttackAssist();
-                Debug.Log($"{step}/{layer}{comboList[actId].Name}");
+                //Debug.Log($"{step}/{layer}{comboList[actId].Name}");
+                m_weaponHolder.ChangeWeapon(m_weaponType);
                 m_hitCtrl.SetCtrl(this, comboList[actId]);
-                m_isAnimationPlaying = true;
                 m_waitTimer = attack.WaitTime;
                 m_actionKeepingTimer = attack.KeepTime;
                 m_animCtrl.Play(attack.ActionTargetName, 0.2f);
-                m_animCtrl.SetPlayBackDelegate((int targetLayer) =>
-                {
-                    m_isAnimationPlaying = false;
-                });
                 break;
             case ActionType.CreateObject:
                 Debug.Log("CreateObject");
@@ -341,21 +360,44 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
         switch (attack.Layer)
         {
             case AttackLayer.InFight:
+                Debug.Log("InFight");
                 break;
             case AttackLayer.LongRange:
+                Debug.Log("LongRange");
                 break;
             case AttackLayer.Airial:
-                //var velo = transform.forward * 0.3f;
-                Debug.Log("AirialAttack");
                 m_inKeepAir = true;
-                m_airKeepTimer = 0.7f;
-                MoveForward(0.2f, 1.0f);
+                m_airKeepTimer = (attack.KeepTime + attack.WaitTime);
+                Debug.Log("空中");
+                //MoveForward(0.2f, 1.0f);
                 //m_currentVelocity = transform.forward * 0.7f;
                 //m_controller.Move(m_currentVelocity);
 
+                //transform.DOMove();
+                break;
+            case AttackLayer.Lunch:
+                m_airKeepTimer = (attack.KeepTime + attack.WaitTime);
                 break;
             default:
                 break;
+        }
+    }
+
+    void ChangeAttacks(WeaponType type)
+    {
+        switch (type)
+        {
+            case WeaponType.HEAVY:
+                m_currentAttackList = m_actionCtrl.HeavySwordNormalCombos;
+                m_currentSkillList = m_actionCtrl.HeavySwordSkillList;
+                m_currentAirialAttackList = m_actionCtrl.HeavySwordAirialCombos;
+                break;
+            case WeaponType.LIGHT:
+                m_currentAttackList = m_actionCtrl.LightSwordNormalCombo;
+                m_currentSkillList = m_actionCtrl.LightSwordSkillList;
+                m_currentAirialAttackList = m_actionCtrl.LightSwordAirialCombo;
+                break;
+            default: break;
         }
     }
 
@@ -364,8 +406,9 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
         switch (eventId)
         {
             case 1:
-                //m_targetEnemys.ForEach(e => e.
-                Debug.Log("打ち上げ");
+                
+                m_targetEnemys.ForEach(e => e.LaunchUp(4.0f));
+                m_selfTrans.DOMoveY(4.0f, 1.0f);
                 break;
         }
     }
@@ -373,6 +416,8 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     public void HitCallBack(EnemyBase enemy, Attack attack)
     {
         enemy?.AddDamage(attack.Damage);
+        enemy?.AirStayMaintenance(0.7f);
+        enemy?.OffGravity();
         m_actionCtrl.HitStop(attack.Power);
         comboSubject.OnNext(Unit.Default);
         if (!m_targetEnemys.Contains(enemy))
@@ -388,5 +433,15 @@ public partial class PlayerStateMachine : MonoBehaviour, IDamage
     public void AttackEnd()
     {
         m_weaponHolder.WeaponTriggerDisable();
+        //m_lunchTrigger.m_atkTrigeer.enabled = false;
     }
+    public void LunchAttack()
+    {
+        //m_lunchTrigger.enabled = true;
+    }
+
+    //public void AddDamage(int damage, AttackSetting.AttackType attackType = AttackSetting.AttackType.Light)
+    //{
+    //    throw new NotImplementedException();
+    //}
 }

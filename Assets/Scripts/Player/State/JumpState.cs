@@ -1,11 +1,10 @@
 ﻿using UnityEngine;
 
-public partial class PlayerStateMachine : MonoBehaviour
+public partial class Player : MonoBehaviour
 {
     public class JumpState : PlayerStateBase
     {
-       
-        public override void OnEnter(PlayerStateMachine owner, PlayerStateBase prevState)
+        public override void OnEnter(Player owner, PlayerStateBase prevState)
         {
             owner.PlayAnimation("Jump",0.1f);
             owner.m_moveForward.y = 0;
@@ -14,12 +13,12 @@ public partial class PlayerStateMachine : MonoBehaviour
             owner.m_currentJumpStep -= 1;
         }
 
-        public override void OnExit(PlayerStateMachine owner, PlayerStateBase nextState)
+        public override void OnExit(Player owner, PlayerStateBase nextState)
         {
             
         }
 
-        public override void OnUpdate(PlayerStateMachine owner)
+        public override void OnUpdate(Player owner)
         {
             //if (owner.IsGround())
             //{
