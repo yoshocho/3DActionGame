@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEditor.Animations;
 using UnityEngine;
-
+using System;
 public class AnimationCtrl : MonoBehaviour
 {
     public delegate void CallBack(int param);
@@ -48,10 +48,11 @@ public class AnimationCtrl : MonoBehaviour
         m_anim.Update(0.0f);
     }
 
-    public void Play(string stateName, float dur = 0.1f)
+    public void Play(string stateName, float dur = 0.1f,int layer = 0, Action onAnimEnd = null)
     {
         Active();
-        m_anim.CrossFadeInFixedTime(stateName,dur);
+        m_anim.CrossFadeInFixedTime(stateName,dur,layer);
+        StartCoroutine(WaitAnimation(0,onAnimEnd));
     }
 
     //public void ChangeClip(string stateName, AnimationClip clip, int layerId = 0)
@@ -89,6 +90,13 @@ public class AnimationCtrl : MonoBehaviour
         var state = m_anim.GetCurrentAnimatorStateInfo(layer);
         if (state.loop) return true;
         return state.normalizedTime < 1.0f;
+    }
+
+    public IEnumerator WaitAnimation(int layer = 0, Action onAnimEnd = null)
+    {
+        yield return null;
+        yield return new WaitUntil(() => !IsPlayingAnimatin(layer));
+        onAnimEnd?.Invoke();
     }
 
     public void SetEventDelegate(CallBack cb)
