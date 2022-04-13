@@ -4,39 +4,41 @@ using UnityEngine;
 using Cinemachine;
 using UnityEngine.UI;
 using UniRx;
-using Cysharp.Threading.Tasks;
-using System.Threading;
 using System;
-public class PlayerCameraController : MonoBehaviour
+public class CameraManager : MonoBehaviour
 {
+    public static CameraManager Instance { get; private set; } = default;
+
     [SerializeField]
     CinemachineVirtualCamera m_cam = default;
     [SerializeField]
     CinemachineFreeLook m_freeCam = default;
     [SerializeField]
-        float m_zoomSpeed = 1;
+    float m_zoomSpeed = 1;
     [SerializeField]
     private float m_cameraDistance = 8.5f;
     [SerializeField]
     private float m_scrollMin = 3f;
     [SerializeField]
     float m_zoomDistance = 4f;
-    [SerializeField]
-    HitCtrl m_hitCtrl = default;
-    private CinemachineFramingTransposer m_camDistance;
-    private CinemachinePOV m_camPov;
-
-    
+    CinemachineFramingTransposer m_camDistance;
+    CinemachinePOV m_camPov;
+    CinemachineImpulseSource m_impulseSource;
 
     bool m_isJust = default;
     float m_defaultDistance = default;
+    private void Awake()
+    {
+        Instance = this;
+    }
     void Start()
     {
         m_camDistance = m_cam.GetCinemachineComponent<CinemachineFramingTransposer>();
-        m_camPov = m_cam.GetCinemachineComponent<CinemachinePOV>();        
+        m_camPov = m_cam.GetCinemachineComponent<CinemachinePOV>();
+        m_impulseSource = m_cam.GetComponent<CinemachineImpulseSource>();
         m_camDistance.m_CameraDistance = m_cameraDistance;
         m_defaultDistance = m_camDistance.m_CameraDistance;
-        
+
         BulletTimeManager.Instance.JustSuccess
             .Subscribe(_ => StartCoroutine(OnjustCam()))
             .AddTo(this);
@@ -60,6 +62,14 @@ public class PlayerCameraController : MonoBehaviour
         m_isJust = false;
     }
 
+    public static IEnumerator ZoomIn() { yield return null; }
+
+    public static IEnumerator ZoomOut() { yield return null; }
+
+    public static void ShakeCam()
+    {
+         Instance.m_impulseSource.GenerateImpulse();
+    }
 
     //void Update()
     //{

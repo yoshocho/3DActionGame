@@ -12,6 +12,10 @@ namespace AttackSetting
         [SerializeField]
         List<ActionData> m_lightSwordAttacks = new List<ActionData>();
 
+        List<ComboData> m_comboDatas = new List<ComboData>();
+
+        NewHitCtrl m_hitCtrl;
+
         float m_receiveTime = 0.0f;
         float m_keepTimer = 0.0f;
         int m_comboCount = 0;
@@ -34,7 +38,7 @@ namespace AttackSetting
         void Start()
         {
             if (!m_animCtrl) m_animCtrl = GetComponentInChildren<AnimationCtrl>();
-
+            //m_hitCtrl = GetComponentInChildren<HitCtrl>();
         }
         void Update()
         {
@@ -47,6 +51,7 @@ namespace AttackSetting
                 {
                     m_keepTimer = 0.0f;
                     CanRequest = true;
+                    ReserveAction = false;
                 }
             }
             else if (m_receiveTime > 0.0f)
@@ -65,10 +70,10 @@ namespace AttackSetting
                 m_comboCount = 0;
             }
 
-            //if (m_comboCount >= ƒRƒ“ƒ{”)
-            //{
-            //    m_comboCount = 0;
-            //}
+            if (m_comboCount >= m_lightSwordAttacks.Count)
+            {
+                m_comboCount = 0;
+            }
 
         }
 
@@ -83,8 +88,11 @@ namespace AttackSetting
                     SetAction(m_lightSwordAttacks[m_comboCount]);
                     break;
                 case AttackType.Heavy:
+
                     break;
                 case AttackType.Airial:
+                    //var x = m_comboDatas.Find(v => v.Type == AttackType.Airial);
+                    //SetAction(x.ActionDatas[m_comboCount]);
                     break;
                 case AttackType.Launch:
                     break;
@@ -93,6 +101,8 @@ namespace AttackSetting
                 default:
                     break;
             }
+
+            // SetAction();
 
             m_comboCount++;
         }
@@ -111,6 +121,11 @@ namespace AttackSetting
             m_receiveTime = attack.ReceiveTime;
             m_keepTimer = attack.KeepTime;
 
+            if (attack.Effect.CameraShake) CameraManager.ShakeCam();
+            if (attack.Effect.ControllerShake) { }
+            if (attack.Effect.ZoomIn) CameraManager.ZoomIn();
+            if(attack.Effect.ZoomOut) CameraManager.ZoomOut();
+
             m_animCtrl.ChangeClip(m_clipName.ToString(), attack.AnimSet.Clip);
             m_animCtrl.Play(m_clipName.ToString(), attack.AnimSet.Duration);
 
@@ -123,6 +138,7 @@ namespace AttackSetting
         public void HitCallBack(Collider target)
         {
             target.gameObject.GetComponent<IDamage>()?.AddDamage(m_currentAction.Damage);
+            EffectManager.PlayEffect(m_currentAction.Effect.HitEff,target.ClosestPoint(transform.position));
         }
 
         private void TriggerOnEnable()
