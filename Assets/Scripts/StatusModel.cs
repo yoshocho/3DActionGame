@@ -9,4 +9,7 @@ public class StatusModel
     [SerializeField]
     public IntReactiveProperty hp = new IntReactiveProperty(default);
     public int maxHp = default;
+
+    [SerializeField]
+    public int atk = default;
 }

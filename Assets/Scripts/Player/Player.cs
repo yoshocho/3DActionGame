@@ -263,7 +263,7 @@ public partial class Player : MonoBehaviour, IDamage
         }
     }
 
-    void PlayAnimation(string stateName, float transitionTime = 0.1f, int layer = 0,Action onAnimEnd = null)
+    public void PlayAnimation(string stateName, float transitionTime = 0.1f, int layer = 0,Action onAnimEnd = null)
     {
         m_animCtrl.Play(stateName, transitionTime, layer, onAnimEnd);
     }
@@ -427,21 +427,12 @@ public partial class Player : MonoBehaviour, IDamage
     }
     public void StartAttack()
     {
-        m_weaponHolder.WeaponTriggerEnable();
+        m_weaponHolder.TriggerEnable();
     }
 
     public void AttackEnd()
     {
-        m_weaponHolder.WeaponTriggerDisable();
+        m_weaponHolder.TriggerDisable();
         //m_lunchTrigger.m_atkTrigeer.enabled = false;
     }
-    public void LunchAttack()
-    {
-        //m_lunchTrigger.enabled = true;
-    }
-
-    //public void AddDamage(int damage, AttackSetting.AttackType attackType = AttackSetting.AttackType.Light)
-    //{
-    //    throw new NotImplementedException();
-    //}
 }
