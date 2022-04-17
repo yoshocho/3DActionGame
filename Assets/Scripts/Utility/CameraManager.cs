@@ -35,7 +35,7 @@ public class CameraManager : MonoBehaviour
     {
         m_camDistance = m_cam.GetCinemachineComponent<CinemachineFramingTransposer>();
         m_camPov = m_cam.GetCinemachineComponent<CinemachinePOV>();
-        m_impulseSource = m_cam.GetComponent<CinemachineImpulseSource>();
+        m_impulseSource = GetComponent<CinemachineImpulseSource>();
         m_camDistance.m_CameraDistance = m_cameraDistance;
         m_defaultDistance = m_camDistance.m_CameraDistance;
 
