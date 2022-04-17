@@ -8,12 +8,9 @@ public class AnimationCtrl : MonoBehaviour
     public delegate void CallBack(int param);
     CallBack m_eventCallBack;
 
-
     [SerializeField]
     Animator m_anim;
-    //[SerializeField]
-    //AnimatorController m_animatorController;
-
+    
     AnimatorOverrideController m_animatorOverrideController;
 
     private void Awake()
@@ -52,22 +49,20 @@ public class AnimationCtrl : MonoBehaviour
     {
         Active();
         m_anim.CrossFadeInFixedTime(stateName,dur,layer);
-        StartCoroutine(WaitAnimation(0,onAnimEnd));
+        StartCoroutine(AnimEndCallBack(0,onAnimEnd));
     }
 
-    //public void ChangeClip(string stateName, AnimationClip clip, int layerId = 0)
+    //public void PlayEndCallBack(string stateName, float dur = 0.1f, int layer = 0, Action onAnimEnd = null)
     //{
-    //    AnimatorControllerLayer layer = m_animatorController.layers[layerId];
-    //    var stateMachine = layer.stateMachine;
-    //    foreach (var state in stateMachine.states)
-    //    {
-    //        AnimatorState animState = state.state;
-    //        if(animState.name == stateName)
-    //        {
-    //            animState.motion = clip;
-    //        }
-    //    }
+
     //}
+
+    public IEnumerator AnimEndCallBack(int layer = 0, Action onAnimEnd = null)
+    {
+        yield return null;
+        yield return new WaitUntil(() => !IsPlayingAnimatin(layer));
+        onAnimEnd?.Invoke();
+    }
 
     public void ChangeClip(string stateName,AnimationClip clip,int layerId = 0)
     {
@@ -90,13 +85,6 @@ public class AnimationCtrl : MonoBehaviour
         var state = m_anim.GetCurrentAnimatorStateInfo(layer);
         if (state.loop) return true;
         return state.normalizedTime < 1.0f;
-    }
-
-    public IEnumerator WaitAnimation(int layer = 0, Action onAnimEnd = null)
-    {
-        yield return null;
-        yield return new WaitUntil(() => !IsPlayingAnimatin(layer));
-        onAnimEnd?.Invoke();
     }
 
     public void SetEventDelegate(CallBack cb)
