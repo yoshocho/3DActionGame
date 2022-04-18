@@ -121,11 +121,7 @@ namespace AttackSetting
             m_receiveTime = attack.ReceiveTime;
             m_keepTimer = attack.KeepTime;
 
-            if (attack.Effect.CameraShake) CameraManager.ShakeCam();
-            if (attack.Effect.ControllerShake) { }
-            if (attack.Effect.ZoomIn) CameraManager.ZoomIn();
-            if(attack.Effect.ZoomOut) CameraManager.ZoomOut();
-
+            SetEf(attack);
             m_animCtrl.ChangeClip(m_clipName.ToString(), attack.AnimSet.Clip);
             m_animCtrl.Play(m_clipName.ToString(), attack.AnimSet.Duration);
 
@@ -138,7 +134,10 @@ namespace AttackSetting
         public void HitCallBack(Collider target)
         {
             target.gameObject.GetComponent<IDamage>()?.AddDamage(m_currentAction.Damage);
+            if(m_currentAction.Effect.HitEff)
             EffectManager.PlayEffect(m_currentAction.Effect.HitEff,target.ClosestPoint(transform.position));
+
+
         }
 
         private void TriggerOnEnable()

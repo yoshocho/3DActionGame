@@ -20,6 +20,13 @@ namespace AttackSetting
         Hand,
     }
 
+    public enum CamZoom 
+    {
+        Default,
+        In,
+        Out,
+    }
+
     [System.Serializable]
     public class KnockBackPower
     {
@@ -45,8 +52,7 @@ namespace AttackSetting
         public GameObject HitEff;
         public bool CameraShake;
         public bool ControllerShake;
-        public bool ZoomIn;
-        public bool ZoomOut;
+        public CamZoom ZoomSet;
     }
 
     [CreateAssetMenu(menuName = "ActionData")]
