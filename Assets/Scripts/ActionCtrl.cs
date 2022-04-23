@@ -4,6 +4,18 @@ using UnityEngine;
 
 namespace AttackSetting
 {
+    /// <summary>
+    /// �U���̃G�t�F�N�g�̃^�C�v
+    /// </summary>
+    public enum AttackEffect 
+    {
+        CameraShake,
+        ControllerShake,
+        ZoomIn,
+        ZoomOut,
+        SetEffect,
+    }
+
     public partial class ActionCtrl : MonoBehaviour
     {
 
