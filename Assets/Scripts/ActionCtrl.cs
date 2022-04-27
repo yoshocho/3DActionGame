@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+using System;
 
 namespace AttackSetting
 {
     /// <summary>
-    /// ï¿½Uï¿½ï¿½ï¿½ÌƒGï¿½tï¿½Fï¿½Nï¿½gï¿½Ìƒ^ï¿½Cï¿½v
+    /// UŒ‚‚ÌƒGƒtƒFƒNƒg‚Ìƒ^ƒCƒv
     /// </summary>
     public enum AttackEffect 
     {
@@ -16,29 +18,44 @@ namespace AttackSetting
         SetEffect,
     }
 
+    public enum OwerType 
+    {
+        Player,
+        Enemy,
+    }
+
+
     public partial class ActionCtrl : MonoBehaviour
     {
 
         [SerializeField]
         AnimationCtrl m_animCtrl;
         [SerializeField]
-        List<ActionData> m_lightSwordAttacks = new List<ActionData>();
-
         List<ComboData> m_comboDatas = new List<ComboData>();
+        public List<ComboData> CurrentAttacks => m_comboDatas;
+        public List<ComboData> SetAttacks { set => value = m_comboDatas; }
 
+        [SerializeField]
+        OwerType m_owerType;
+
+        ComboData m_currentCombo;
         NewHitCtrl m_hitCtrl;
 
-        float m_receiveTime = 0.0f;
+        float m_receiveTimer = 0.0f;
         float m_keepTimer = 0.0f;
         int m_comboCount = 0;
 
-        ActionData m_currentAction;
+        public ActionData CurrentAction { get; private set; }
         public bool ReserveAction { get; private set; } = false;
         public bool InKeepTime { get; private set; } = false;
         public bool InReceiveTime { get; private set; } = false;
 
-        public bool CanRequest { get; private set; } = true;
+        public bool ActionKeep { get; private set; } = false;
 
+        public bool ComboEnd { get; private set; } = false;
+        /// <summary>
+        /// UŒ‚‚ÌƒAƒjƒ[ƒVƒ‡ƒ“ƒNƒŠƒbƒv‚Ì–¼‘O
+        /// </summary>
         enum ClipName
         {
             First,
@@ -50,7 +67,7 @@ namespace AttackSetting
         void Start()
         {
             if (!m_animCtrl) m_animCtrl = GetComponentInChildren<AnimationCtrl>();
-            //m_hitCtrl = GetComponentInChildren<HitCtrl>();
+            
         }
         void Update()
         {
@@ -58,64 +75,71 @@ namespace AttackSetting
             {
                 m_keepTimer -= Time.deltaTime;
 
-                CanRequest = false;
+                ActionKeep = true;
+                ComboEnd = false;
                 if (m_keepTimer <= 0.0f)
                 {
                     m_keepTimer = 0.0f;
-                    CanRequest = true;
+                    ActionKeep = false;
                     ReserveAction = false;
                 }
             }
-            else if (m_receiveTime > 0.0f)
+            else if (m_receiveTimer > 0.0f)
             {
-                m_receiveTime -= Time.deltaTime;
+                m_receiveTimer -= Time.deltaTime;
 
-                if (m_receiveTime <= 0.0f)
+                if (m_receiveTimer <= 0.0f)
                 {
-                    m_receiveTime = 0.0f;
-
+                    m_receiveTimer = 0.0f;
                 }
             }
 
-            if (!ReserveAction && m_receiveTime <= 0.0f)
-            {
-                m_comboCount = 0;
-            }
-
-            if (m_comboCount >= m_lightSwordAttacks.Count)
+            if (!ReserveAction && m_receiveTimer <= 0.0f)
             {
                 m_comboCount = 0;
             }
 
         }
 
-        public void RequestAction(AttackType attackType, int step = 0)
+        public void RequestAction(AttackType attackType, int id = 0)
         {
             ReserveAction = true;
-            if (!CanRequest) return;
+            if (!m_comboDatas.Any()) return;
+            ActionData data = null;
+            if (m_comboCount > m_currentCombo.ComboCount)
+            {
+                m_comboCount = 0;
+                ComboEnd = true;
+            }
 
             switch (attackType)
             {
-                case AttackType.Light:
-                    SetAction(m_lightSwordAttacks[m_comboCount]);
+                case AttackType.Weak:
+                    m_currentCombo = m_comboDatas[0];
+                    data = m_comboDatas[0].ActionDatas[m_comboCount];
+                    break;
+                
+                case AttackType.Airial:
+                    if (m_comboDatas.Count > 1)
+                    {
+                        m_currentCombo = m_comboDatas[1];
+                        data = m_comboDatas[1].ActionDatas[m_comboCount];
+                    }
+                    break;
+                case AttackType.Counter:
+                    data =  m_comboDatas[0].ActionDatas[-1];
+
                     break;
                 case AttackType.Heavy:
 
                     break;
-                case AttackType.Airial:
-                    //var x = m_comboDatas.Find(v => v.Type == AttackType.Airial);
-                    //SetAction(x.ActionDatas[m_comboCount]);
-                    break;
                 case AttackType.Launch:
-                    break;
-                case AttackType.Counter:
+
                     break;
                 default:
                     break;
             }
-
-            // SetAction();
-
+            if(data) SetAction(data);
             m_comboCount++;
         }
 
@@ -123,38 +147,41 @@ namespace AttackSetting
         {
             TriggerOnEnable();
             m_keepTimer = 0.0f;
-            m_receiveTime = 0.0f;
+            m_receiveTimer = 0.0f;
             m_comboCount = 0;
         }
 
         void SetAction(ActionData attack)
         {
-            m_currentAction = attack;
-            m_receiveTime = attack.ReceiveTime;
+            CurrentAction = attack;
+            m_receiveTimer = attack.ReceiveTime;
             m_keepTimer = attack.KeepTime;
 
-            SetEf(attack);
             m_animCtrl.ChangeClip(m_clipName.ToString(), attack.AnimSet.Clip);
             m_animCtrl.Play(m_clipName.ToString(), attack.AnimSet.Duration);
 
-            if (m_clipName is ClipName.Second)
+            if (m_clipName is ClipName.Second)@//ƒuƒŒƒ“ƒh‚·‚é‚½‚ß‚É“ñ‚Â‚ÌƒXƒe[ƒg‚ğŒğŒİ‚ÉÄ¶‚·‚é
                 m_clipName = ClipName.First;
             else
                 m_clipName = ClipName.Second;
         }
 
+        /// <summary>
+        /// UŒ‚ƒqƒbƒg‚ÌŠÖ”
+        /// </summary>
+        /// <param name="target">ƒqƒbƒg‚µ‚½ƒRƒ‰ƒCƒ_[</param>
         public void HitCallBack(Collider target)
         {
-            target.gameObject.GetComponent<IDamage>()?.AddDamage(m_currentAction.Damage);
-            if(m_currentAction.Effect.HitEff)
-            EffectManager.PlayEffect(m_currentAction.Effect.HitEff,target.ClosestPoint(transform.position));
-
+            target.gameObject.GetComponent<IDamage>()?.AddDamage(CurrentAction.Damage);
+            EffectManager.HitStop(CurrentAction.HitStopPower);
+            if (CurrentAction.Effect.HitEff)
+            EffectManager.PlayEffect(CurrentAction.Effect.HitEff,target.ClosestPoint(transform.position));
 
         }
 
         private void TriggerOnEnable()
         {
-
+            //m_hitCtrl
         }
         private void TriggerOnDisable()
         {

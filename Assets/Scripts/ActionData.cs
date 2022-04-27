@@ -6,7 +6,7 @@ namespace AttackSetting
 {
     public enum AttackType
     {
-        Light,
+        Weak,
         Heavy,
         Airial,
         Launch,
@@ -15,9 +15,9 @@ namespace AttackSetting
 
     public enum WeaponType
     {
-        HeavySword,
-        LightSword,
         Hand,
+        LightSword,
+        HeavySword,
     }
 
     public enum CamZoom 
@@ -41,21 +41,27 @@ namespace AttackSetting
         [SerializeField,Header("アニメーション")]
         public AnimationClip Clip;
         [Range(0, 0.5f),Header("ブレンド時間")]
-        public float Duration;
+        public float Duration = 0.1f;
         [Range(-0.5f, 2.0f)]
-        public float Speed;
+        public float Speed = 1.0f;
+    }
+    [System.Serializable]
+    public class ControllerEf
+    {
+        public Vector2 ShakeVec;
+        public float Dur;
     }
 
     [System.Serializable]
-    public class AtkEffect 
+    public class AtkEffect
     {
         public GameObject HitEff;
         public bool CameraShake;
-        public bool ControllerShake;
+        public ControllerEf ControllerEf;
         public CamZoom ZoomSet;
     }
 
-    [CreateAssetMenu(menuName = "ActionData")]
+    [CreateAssetMenu(fileName = "ActionData", menuName = "ScriptableObjects/ActionData")]
     public class ActionData : ScriptableObject
     {
         public AnimationSetting AnimSet;
@@ -70,4 +76,13 @@ namespace AttackSetting
         public float ReceiveTime;
         public KnockBackPower KnockPower;
     }
+
+    [System.Serializable]
+    public class ComboData
+    {
+        public WeaponType WeaponType;
+        public int ComboCount;
+        public List<ActionData> ActionDatas = new List<ActionData>();
+    }
+
 }
