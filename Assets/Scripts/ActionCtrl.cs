@@ -9,7 +9,7 @@ namespace AttackSetting
     /// <summary>
     /// 攻撃のエフェクトのタイプ
     /// </summary>
-    public enum AttackEffect 
+    public enum AttackEffect
     {
         CameraShake,
         ControllerShake,
@@ -18,7 +18,7 @@ namespace AttackSetting
         SetEffect,
     }
 
-    public enum OwerType 
+    public enum OwerType
     {
         Player,
         Enemy,
@@ -38,6 +38,7 @@ namespace AttackSetting
         [SerializeField]
         OwerType m_owerType;
 
+        AttackType m_prevType;
         ComboData m_currentCombo;
         NewHitCtrl m_hitCtrl;
 
@@ -67,7 +68,7 @@ namespace AttackSetting
         void Start()
         {
             if (!m_animCtrl) m_animCtrl = GetComponentInChildren<AnimationCtrl>();
-            
+
         }
         void Update()
         {
@@ -106,6 +107,8 @@ namespace AttackSetting
             ReserveAction = true;
             if (!m_comboDatas.Any()) return;
             ActionData data = null;
+            if (m_prevType != attackType) m_comboCount = 0;
+            m_prevType = attackType;
             if (m_comboCount > m_currentCombo.ComboCount)
             {
                 m_comboCount = 0;
@@ -118,16 +121,14 @@ namespace AttackSetting
                     m_currentCombo = m_comboDatas[0];
                     data = m_comboDatas[0].ActionDatas[m_comboCount];
                     break;
-                
+
                 case AttackType.Airial:
-                    if (m_comboDatas.Count > 1)
-                    {
-                        m_currentCombo = m_comboDatas[1];
-                        data = m_comboDatas[1].ActionDatas[m_comboCount];
-                    }
+                    if (m_comboDatas.Count < 1) break;
+                    m_currentCombo = m_comboDatas[1];
+                    data = m_comboDatas[1].ActionDatas[m_comboCount];
                     break;
                 case AttackType.Counter:
-                    data =  m_comboDatas[0].ActionDatas[-1];
+                    data = m_comboDatas[0].ActionDatas[-1];
 
                     break;
                 case AttackType.Heavy:
@@ -139,7 +140,7 @@ namespace AttackSetting
                 default:
                     break;
             }
-            if(data) SetAction(data);
+            if (data) SetAction(data);
             m_comboCount++;
         }
 
@@ -175,7 +176,7 @@ namespace AttackSetting
             target.gameObject.GetComponent<IDamage>()?.AddDamage(CurrentAction.Damage);
             EffectManager.HitStop(CurrentAction.HitStopPower);
             if (CurrentAction.Effect.HitEff)
-            EffectManager.PlayEffect(CurrentAction.Effect.HitEff,target.ClosestPoint(transform.position));
+                EffectManager.PlayEffect(CurrentAction.Effect.HitEff, target.ClosestPoint(transform.position));
 
         }
 
