@@ -6,18 +6,18 @@ using System.Threading;
 using System;
 using UnityEngine.UI;
 
-public class FadeSystem : Singleton<FadeSystem>
+public class FadeSystem : SingleMonoBehaviour<FadeSystem>
 {
     [SerializeField] Image m_fadePanel = default;
 
     [SerializeField] CanvasGroup m_canvasGroup = default;
 
-    protected override void AddOption(GameObject go)
+    protected override void ForcedRun()
     {
-        base.AddOption(go);
+        base.ForcedRun();
 
         var canvasObj = new GameObject("Canvas");
-        canvasObj.transform.SetParent(go.transform);
+        canvasObj.transform.SetParent(transform);
 
         var canvas = canvasObj.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;

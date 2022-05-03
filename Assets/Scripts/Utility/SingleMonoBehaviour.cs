@@ -35,7 +35,7 @@ public class SingleMonoBehaviour<TOwer> : MonoBehaviour where TOwer :SingleMonoB
                 var go = new GameObject(typeof(TOwer).Name);
                 m_instance = go.AddComponent<TOwer>();
 
-                m_instance.SetUp();
+                m_instance.ForcedRun();
             }
         }
     }
@@ -61,7 +61,7 @@ public class SingleMonoBehaviour<TOwer> : MonoBehaviour where TOwer :SingleMonoB
     }
 
 
-    protected virtual void SetUp() { }
+    protected virtual void ForcedRun() { }
     
     public static bool IsAlive => Instance != null;
 

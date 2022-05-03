@@ -7,23 +7,41 @@ using System;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 
-public class SceneChanger : Singleton<SceneChanger>
+public class SceneChanger : SingleMonoBehaviour<SceneChanger>
 {
     [SerializeField,Tooltip("シーン遷移時のロードゲージ")]
     Slider m_loadGage = default;
     [SerializeField, Tooltip("シーン遷移のキャンバス")]
     Canvas m_loadCanvas = default;
 
+    float __fadeTime = 1.0f;
 
+    protected override void OnAwake()
+    {
+        base.OnAwake();
+        DontDestroyOnLoad(gameObject);
+    }
+    public void LoadScene(string sceneName)
+    {
+        SceneManager.LoadScene(sceneName);
+    }
+    /// <summary>
+    /// ボタン用の関数
+    /// </summary>
+    /// <param name="sceneName">遷移先のシーン名</param>
     public void LoadSceneOrFade(string sceneName)
     {
         LoadSceneAsync(sceneName,this.GetCancellationTokenOnDestroy()).Forget();
     }
-
-    protected override void AddOption(GameObject go)
+    public void LoadSceneOrFade(string sceneName,float fadeSpeed)
     {
-        base.AddOption(go);
-        DontDestroyOnLoad(go);
+        __fadeTime = fadeSpeed;
+        LoadSceneAsync(sceneName,this.GetCancellationTokenOnDestroy()).Forget();
+    }
+
+    protected override void ForcedRun()
+    {
+        base.ForcedRun();
     }
 
     /// <summary>
