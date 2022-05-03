@@ -1,23 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Animations;
 using UnityEngine;
-
+using System;
 public class AnimationCtrl : MonoBehaviour
 {
     public delegate void CallBack(int param);
     CallBack m_eventCallBack;
 
-
-    [SerializeField] Animator m_anim;
-    AnimatorOverrideController m_overrideController;
+    [SerializeField]
+    Animator m_anim;
+    
+    AnimatorOverrideController m_animatorOverrideController;
 
     private void Awake()
     {
         if (!m_anim) m_anim = GetComponentInChildren<Animator>();
 
-        m_overrideController = new AnimatorOverrideController();
-        m_overrideController.runtimeAnimatorController = m_anim.runtimeAnimatorController;
-        m_anim.runtimeAnimatorController = m_overrideController;
+        m_animatorOverrideController = new AnimatorOverrideController();
+        m_animatorOverrideController.runtimeAnimatorController = m_anim.runtimeAnimatorController;
+        m_anim.runtimeAnimatorController = m_animatorOverrideController;
+
+        //m_animatorController = m_anim.runtimeAnimatorController as AnimatorController;
     }
 
     public void Active()
@@ -41,26 +45,38 @@ public class AnimationCtrl : MonoBehaviour
         m_anim.Update(0.0f);
     }
 
-    public void Play(string stateName, float dur = 0.1f)
+    public void Play(string stateName, float dur = 0.1f,int layer = 0, Action onAnimEnd = null)
     {
         Active();
-        m_anim.CrossFadeInFixedTime(stateName,dur);
+        m_anim.CrossFadeInFixedTime(stateName,dur,layer);
+        StartCoroutine(AnimEndCallBack(0,onAnimEnd));
     }
 
-    public void ChangeClip(string stateName,AnimationClip clip)
+    //public void PlayEndCallBack(string stateName, float dur = 0.1f, int layer = 0, Action onAnimEnd = null)
+    //{
+
+    //}
+
+    public IEnumerator AnimEndCallBack(int layer = 0, Action onAnimEnd = null)
     {
+        yield return null;
+        yield return new WaitUntil(() => !IsPlayingAnimatin(layer));
+        onAnimEnd?.Invoke();
+    }
+
+    public void ChangeClip(string stateName,AnimationClip clip,int layerId = 0)
+    {
+        
         AnimatorStateInfo[] layerInfo = new AnimatorStateInfo[m_anim.layerCount];
         for (int i = 0; i < m_anim.layerCount; i++)
         {
             layerInfo[i] = m_anim.GetCurrentAnimatorStateInfo(i);
         }
-        
-        m_overrideController[stateName] = clip;
-        ForceUpdate();
-
+        m_animatorOverrideController[stateName] = clip;
+        m_anim.Update(0.0f);
         for (int i = 0; i < m_anim.layerCount; i++)
         {
-            m_anim.Play(layerInfo[i].nameHash,i,layerInfo[i].normalizedTime);
+            m_anim.Play(layerInfo[i].nameHash, i, layerInfo[i].normalizedTime);
         }
     }
 

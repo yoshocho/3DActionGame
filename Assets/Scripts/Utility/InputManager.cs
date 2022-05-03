@@ -90,6 +90,17 @@ public class InputManager : Singleton<InputManager>
 
     }
 
+    public IEnumerator ControllerShake(Vector2 shakeVec, float shakeTime)
+    {
+        if (Gamepad.current != null)
+        {
+            var gamePad = Gamepad.current;
+            gamePad.SetMotorSpeeds(shakeVec.x, shakeVec.y);
+            yield return new WaitForSeconds(shakeTime);
+            gamePad.SetMotorSpeeds(0.0f,0.0f);
+        }
+    }
+
     private void OnDisable()
     {
         m_inputActions?.Disable();

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Singleton<TOwer> : MonoBehaviour where TOwer :Singleton<TOwer>
+public class SingleMonoBehaviour<TOwer> : MonoBehaviour where TOwer :SingleMonoBehaviour<TOwer>
 {
     private static TOwer m_instance = null;
 
@@ -35,7 +35,7 @@ public class Singleton<TOwer> : MonoBehaviour where TOwer :Singleton<TOwer>
                 var go = new GameObject(typeof(TOwer).Name);
                 m_instance = go.AddComponent<TOwer>();
 
-                m_instance.AddOption(go);
+                m_instance.SetUp();
             }
         }
     }
@@ -53,13 +53,15 @@ public class Singleton<TOwer> : MonoBehaviour where TOwer :Singleton<TOwer>
             OnAwake();
             return true;
         }
-        else if (m_instance == this) return true;
+        else if (m_instance == this)
+            return true;
 
         Destroy(this);
         return false;
     }
 
-    protected virtual void AddOption(GameObject go) { }
+
+    protected virtual void SetUp() { }
     
     public static bool IsAlive => Instance != null;
 

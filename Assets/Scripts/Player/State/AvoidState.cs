@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public partial class PlayerStateMachine : MonoBehaviour
+public partial class Player : MonoBehaviour
 {
     public class AvoidState : PlayerStateBase
     {
@@ -11,7 +11,7 @@ public partial class PlayerStateMachine : MonoBehaviour
         float m_airDasuTime = default;
 
         float m_avoidEndTime = default;
-        public override void OnEnter(PlayerStateMachine owner, PlayerStateBase prevState)
+        public override void OnEnter(Player owner, PlayerStateBase prevState)
         {
             m_airDasuTime = owner.m_airDasuTime;
             m_avoidEndTime = owner.m_avoidEndTime;
@@ -31,7 +31,7 @@ public partial class PlayerStateMachine : MonoBehaviour
             Debug.Log("InAvoid");
         }
 
-        public override void OnExit(PlayerStateMachine owner, PlayerStateBase nextState)
+        public override void OnExit(Player owner, PlayerStateBase nextState)
         {
             //owner.m_avoidEndTime = 0.6f;
             //owner.m_airDasuTime = 0.5f;
@@ -43,7 +43,7 @@ public partial class PlayerStateMachine : MonoBehaviour
             owner.m_currentVelocity = Vector3.zero;
         }
 
-        public override void OnUpdate(PlayerStateMachine owner)
+        public override void OnUpdate(Player owner)
         {
             m_avoidEndTime -= Time.deltaTime;
             m_airDasuTime -= Time.deltaTime;
@@ -67,16 +67,13 @@ public partial class PlayerStateMachine : MonoBehaviour
                     m_avoidDir.y = 0.0f;
                     owner.m_targetRot = Quaternion.LookRotation(m_avoidDir);
 
-                    //if (!owner.IsGround())
-                    //{
-                        //owner.m_currentGravityScale = 0.0f;
-                        //owner.m_currentVelocity = m_avoidDir * owner.m_airDasuSpeed;
-                    //}
-                    //else
-                    //{
-                        owner.m_currentVelocity = new Vector3(m_avoidDir.x, 0.0f, m_avoidDir.z) * owner.m_avoidSpeed;
-                    //}
-                    if (owner.m_inputManager.AttackKey == KeyStatus.DOWN)
+                    owner.m_currentVelocity = new Vector3(m_avoidDir.x, 0.0f, m_avoidDir.z) * owner.m_avoidSpeed;
+
+                    if (owner.m_inputManager.LunchKey is KeyStatus.STAY)
+                        owner.m_lunchAttack = true;
+                    else owner.m_lunchAttack = false;
+
+                    if (owner.m_inputManager.AttackKey is KeyStatus.DOWN)
                     {
                         owner.ChangeState(owner.m_attackState);
                     }
@@ -100,7 +97,7 @@ public partial class PlayerStateMachine : MonoBehaviour
                 }
             }
         }
-        void StateCheck(PlayerStateMachine owner)
+        void StateCheck(Player owner)
         {
             if (owner.m_inputDir.sqrMagnitude > 0.1f)
             {
@@ -113,7 +110,7 @@ public partial class PlayerStateMachine : MonoBehaviour
                     owner.ChangeState(owner.m_walkState);
                 }
             }
-            else if(!owner.m_animCtrl.IsPlayingAnimatin())
+            else if (!owner.m_animCtrl.IsPlayingAnimatin())
             {
                 owner.ChangeState(owner.m_idleState);
             }

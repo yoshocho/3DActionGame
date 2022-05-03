@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b3f25612b989fc40af95cba7747b043, type: 3}
+  m_Name: LightSword5
+  m_EditorClassIdentifier: 
+  AnimSet:
+    Clip: {fileID: 7400000, guid: 5b56667eb8080f446bf25c3e937ff96e, type: 2}
+    Duration: 0.1
+    Speed: 0
+  Effect:
+    HitEff: {fileID: 0}
+    CameraShake: 1
+    ControllerShake: 0
+    ZoomIn: 0
+    ZoomOut: 0
+  AttackType: 0
+  HitStopPower: 1.82
+  Damage: 92
+  KeepTime: 0.89
+  ReceiveTime: 0.18
+  KnockPower:
+    ForwardPower: 0
+    UpPower: 0
+    DownPower: 0

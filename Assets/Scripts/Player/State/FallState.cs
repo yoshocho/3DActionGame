@@ -1,27 +1,24 @@
 ﻿using UnityEngine;
 
-public partial class PlayerStateMachine : MonoBehaviour
+public partial class Player : MonoBehaviour
 {
     public class FallState : PlayerStateBase
     {
-        public override void OnEnter(PlayerStateMachine owner, PlayerStateBase prevState)
+        public override void OnEnter(Player owner, PlayerStateBase prevState)
         {
             owner.m_currentGravityScale = owner.m_gravityScale;
             owner.PlayAnimation("Fall",0.1f);
             Debug.Log("InFall");
         }
 
-        public override void OnExit(PlayerStateMachine owner, PlayerStateBase nextState)
+        public override void OnExit(Player owner, PlayerStateBase nextState)
         {
 
         }
 
-        public override void OnUpdate(PlayerStateMachine owner)
+        public override void OnUpdate(Player owner)
         {
-            //owner.m_currentVelocity = new Vector3(owner.m_inputManager.InputDir.x * owner.m_jumpMoveSpeed
-            //    , Physics.gravity.y * owner.m_gravityScale,
-            //    owner.m_inputDir.z * owner.m_jumpMoveSpeed);
-
+           
             if (owner.m_inputManager.AttackKey == KeyStatus.DOWN && !owner.m_airAttackEnd)
             {
                 owner.ChangeState(owner.m_attackState);
