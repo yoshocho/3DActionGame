@@ -29,11 +29,17 @@ public partial class NewPlayer : CharacterBase
     [SerializeField]
     float _rotateSpeed = 10;
     [Tooltip("接地判定での中心からの距離")]
-    [SerializeField] float m_isGroundLength = 1.05f;
+    [SerializeField] float _isGroundLength = 1.05f;
     [Tooltip("接地判定の範囲")]
-    [SerializeField] float m_isGroundRadius = 0.18f;
+    [SerializeField] float _isGroundRadius = 0.18f;
     [Tooltip("地面のレイヤー")]
-    [SerializeField] LayerMask m_groundLayer;
+    [SerializeField] LayerMask _groundLayer;
+
+    [SerializeField]
+    bool _invincible = false;
+
+    [SerializeField]
+    List<AnimState> _animSets = new List<AnimState>();
 
     Transform _selfTrans;
     Vector3 _moveForward = Vector3.zero;
@@ -46,11 +52,14 @@ public partial class NewPlayer : CharacterBase
     AnimationCtrl _animCtrl;
     ActionCtrl _actionCtrl;
     StateMachine<NewPlayer> _stateMachine;
+
     bool _isAvoid = false;
-    bool _invincible = false;
+
     void Start()
     {
         _stateMachine = new StateMachine<NewPlayer>(this);
+        _stateMachine.AddAnyTransition<PlayerIdleState>((int)StateEvent.Idle);
+       // _stateMachine.AddAnyTransition<PlayerAttackState>((int)StateEvent.Attack);
 
         _selfTrans = transform;
         if(!_animCtrl)_animCtrl = GetComponentInChildren<AnimationCtrl>();
@@ -67,20 +76,33 @@ public partial class NewPlayer : CharacterBase
     }
     void ApplyAxis()
     {
-
+        _moveForward = Camera.main.transform.TransformDirection(_inputAxis);
+        _moveForward.y = 0.0f;
+        _moveForward.Normalize();
+        _inputAxis = InputManager.Instance.InputDir;
     }
     void ApplyMove()
     {
-
+        var velocity = Vector3.Scale(_currentVelocity, new Vector3(_moveSpeed, 1.0f, _moveSpeed));
+        Rigidbody.velocity = velocity;
     }
     void ApplyRotation()
     {
-
+      
     }
     void ApplyGravity()
     {
 
     }
+
+    bool IsGround()
+    {
+        Vector3 start = new Vector3(transform.position.x, transform.position.y + 0.7f, transform.position.z);
+        Ray ray = new Ray(start, Vector3.down);
+        bool isGround = Physics.SphereCast(ray, _isGroundRadius, _isGroundLength, _groundLayer);
+        return isGround;
+    }
+
     void ChangeState(StateEvent nextState)
     {
         _stateMachine.Dispatch((int)nextState);
