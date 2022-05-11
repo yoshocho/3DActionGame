@@ -9,15 +9,29 @@ public partial class NewPlayer : CharacterBase
     {
         protected override void OnEnter(State prevState)
         {
-            base.OnEnter(prevState);
+            owner.PlayAnimation("Fall",0.1f);
         }
         protected override void OnUpdate()
         {
-            base.OnUpdate();
+            if(owner._inputAxis.sqrMagnitude > 0.1f) 
+            {
+                owner._targetRot = Quaternion.LookRotation(owner._moveForward);
+                //アニメジャンプ
+            }
+            //制限
+            if (owner._inputManager.InputActions.Player.Jump.WasPressedThisFrame())
+                owner.ChangeState(StateEvent.Jump);
+            //制限
+            if (owner._inputManager.InputActions.Player.Avoid.WasPressedThisFrame())
+                owner.ChangeState(StateEvent.Avoid);
+            if (owner._inputManager.InputActions.Player.Attack.WasPressedThisFrame())
+                owner.ChangeState(StateEvent.Attack);
+
+
         }
         protected override void OnExit(State nextState)
         {
-            base.OnExit(nextState);
+            
         }
     }
 }

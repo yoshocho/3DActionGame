@@ -28,6 +28,8 @@ public partial class NewPlayer : CharacterBase
     float _runSpeed = 15;
     [SerializeField]
     float _rotateSpeed = 10;
+    [SerializeField]
+    float _jumpPower = 10;
     [Tooltip("Ú’n”»’è‚Å‚Ì’†S‚©‚ç‚Ì‹——£")]
     [SerializeField] float _isGroundLength = 1.05f;
     [Tooltip("Ú’n”»’è‚Ì”ÍˆÍ")]
@@ -47,20 +49,28 @@ public partial class NewPlayer : CharacterBase
     Vector3 _inputAxis = Vector3.zero;
     Quaternion _targetRot = Quaternion.identity;
 
-    float _moveSpeed;
+    InputManager _inputManager;
     [SerializeField]
     AnimationCtrl _animCtrl;
     ActionCtrl _actionCtrl;
     StateMachine<NewPlayer> _stateMachine;
 
     bool _isAvoid = false;
+    float _moveSpeed;
 
     void Start()
     {
         _stateMachine = new StateMachine<NewPlayer>(this);
         _stateMachine.AddAnyTransition<PlayerIdleState>((int)StateEvent.Idle);
-       // _stateMachine.AddAnyTransition<PlayerAttackState>((int)StateEvent.Attack);
+        _stateMachine.AddAnyTransition<PlayerFallState>((int)StateEvent.Walk);
+        _stateMachine.AddAnyTransition<PlayerAttackState>((int)StateEvent.Attack);
+        _stateMachine.AddAnyTransition<PlayerAvoidState>((int)StateEvent.Avoid);
+        _stateMachine.AddAnyTransition<PlayerRunState>((int)StateEvent.Run);
+        _stateMachine.AddAnyTransition<PlayerJumpState>((int)StateEvent.Jump);
+        _stateMachine.AddAnyTransition<PlayerFallState>((int)StateEvent.Fall);
+        _stateMachine.AddAnyTransition<PlayerLandState>((int)StateEvent.Land);
 
+        _inputManager = InputManager.Instance;
         _selfTrans = transform;
         if(!_animCtrl)_animCtrl = GetComponentInChildren<AnimationCtrl>();
         _actionCtrl = GetComponent<ActionCtrl>();
@@ -88,11 +98,16 @@ public partial class NewPlayer : CharacterBase
     }
     void ApplyRotation()
     {
-      
+        var rot = _selfTrans.rotation;
+        rot = Quaternion.Slerp(rot,_targetRot,_rotateSpeed * Time.deltaTime);
+        _selfTrans.rotation = rot;
     }
     void ApplyGravity()
     {
-
+        if (!IsGround())
+        {
+            _currentVelocity.y += _gravityScale * Physics.gravity.y * Time.deltaTime;
+        }
     }
 
     bool IsGround()
