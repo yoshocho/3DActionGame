@@ -21,15 +21,23 @@ public partial class NewPlayer : CharacterBase
     }
 
     [SerializeField]
-    float _gravityScale = 10;
-    [SerializeField]
     float _walkSpeed = 10;
     [SerializeField]
     float _runSpeed = 15;
     [SerializeField]
     float _rotateSpeed = 10;
     [SerializeField]
+    float _gravityScale = 10;
+    [SerializeField]
     float _jumpPower = 10;
+    [SerializeField]
+    int _jumpCount = 1;
+    [SerializeField]
+    int _airDushCount = 1;
+    [SerializeField]
+    float _avoidTime = 1.0f;
+    [SerializeField]
+    float _justTime = 0.3f;
     [Tooltip("ê⁄ínîªíËÇ≈ÇÃíÜêSÇ©ÇÁÇÃãóó£")]
     [SerializeField] float _isGroundLength = 1.05f;
     [Tooltip("ê⁄ínîªíËÇÃîÕàÕ")]
@@ -43,6 +51,7 @@ public partial class NewPlayer : CharacterBase
     [SerializeField]
     List<AnimState> _animSets = new List<AnimState>();
 
+    AttackType _currentType;
     Transform _selfTrans;
     Vector3 _moveForward = Vector3.zero;
     Vector3 _currentVelocity = Vector3.zero;
@@ -55,20 +64,21 @@ public partial class NewPlayer : CharacterBase
     ActionCtrl _actionCtrl;
     StateMachine<NewPlayer> _stateMachine;
 
-    bool _isAvoid = false;
+    bool _inAvoid = false;
     float _moveSpeed;
 
     void Start()
     {
         _stateMachine = new StateMachine<NewPlayer>(this);
         _stateMachine.AddAnyTransition<PlayerIdleState>((int)StateEvent.Idle);
-        _stateMachine.AddAnyTransition<PlayerFallState>((int)StateEvent.Walk);
+        _stateMachine.AddAnyTransition<PlayerWalkState>((int)StateEvent.Walk);
         _stateMachine.AddAnyTransition<PlayerAttackState>((int)StateEvent.Attack);
         _stateMachine.AddAnyTransition<PlayerAvoidState>((int)StateEvent.Avoid);
         _stateMachine.AddAnyTransition<PlayerRunState>((int)StateEvent.Run);
         _stateMachine.AddAnyTransition<PlayerJumpState>((int)StateEvent.Jump);
         _stateMachine.AddAnyTransition<PlayerFallState>((int)StateEvent.Fall);
         _stateMachine.AddAnyTransition<PlayerLandState>((int)StateEvent.Land);
+        _stateMachine.Start<PlayerIdleState>();
 
         _inputManager = InputManager.Instance;
         _selfTrans = transform;
@@ -118,6 +128,15 @@ public partial class NewPlayer : CharacterBase
         return isGround;
     }
 
+    private void OnDrawGizmos()
+    {
+        Vector3 start = new Vector3(transform.position.x, transform.position.y + 0.7f, transform.position.z);
+        Vector3 end = start + Vector3.down * _isGroundLength;
+        Color color = Color.magenta;
+        Gizmos.color = color;
+        Gizmos.DrawWireSphere(end, _isGroundRadius);
+    }
+
     void ChangeState(StateEvent nextState)
     {
         _stateMachine.Dispatch((int)nextState);
@@ -130,7 +149,7 @@ public partial class NewPlayer : CharacterBase
     {
         if (_invincible) return;
 
-        if (_isAvoid) 
+        if (_inAvoid) 
         {
 
             return;

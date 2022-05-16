@@ -9,15 +9,15 @@ public partial class NewPlayer : CharacterBase
     {
         protected override void OnEnter(State prevState)
         {
-            owner.PlayAnimation("Fall",0.1f);
+            Debug.Log("InFall");
+            owner.PlayAnimation("Fall", 0.1f);
         }
         protected override void OnUpdate()
         {
-            if(owner._inputAxis.sqrMagnitude > 0.1f) 
-            {
+            if (owner._inputAxis.sqrMagnitude > 0.1f)
                 owner._targetRot = Quaternion.LookRotation(owner._moveForward);
-                //アニメジャンプ
-            }
+            //アニメジャンプ
+
             //制限
             if (owner._inputManager.InputActions.Player.Jump.WasPressedThisFrame())
                 owner.ChangeState(StateEvent.Jump);
@@ -26,12 +26,12 @@ public partial class NewPlayer : CharacterBase
                 owner.ChangeState(StateEvent.Avoid);
             if (owner._inputManager.InputActions.Player.Attack.WasPressedThisFrame())
                 owner.ChangeState(StateEvent.Attack);
-
+            if (owner.IsGround()) owner.ChangeState(StateEvent.Land);
 
         }
         protected override void OnExit(State nextState)
         {
-            
+
         }
     }
 }

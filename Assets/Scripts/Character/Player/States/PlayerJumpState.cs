@@ -10,6 +10,7 @@ partial class NewPlayer : CharacterBase
         protected override void OnEnter(State prevState)
         {
             owner.PlayAnimation("Jump",0.1f);
+            Debug.Log("Jump");
             if (owner._inputAxis.magnitude > 0.1f) owner._targetRot = Quaternion.LookRotation(owner._moveForward);
             owner._currentVelocity = new Vector3(owner._moveForward.x,owner._jumpPower,owner._moveForward.z);
 
@@ -26,6 +27,8 @@ partial class NewPlayer : CharacterBase
                 owner.ChangeState(StateEvent.Attack);
             if (owner._inputManager.InputActions.Player.Jump.WasPressedThisFrame())
                 owner.ChangeState(StateEvent.Jump);
+
+            if (owner._currentVelocity.y < 0.0f) owner.ChangeState(StateEvent.Fall);
         }
         protected override void OnExit(State nextState)
         {

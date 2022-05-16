@@ -9,6 +9,8 @@ public partial class NewPlayer : CharacterBase
     {
         protected override void OnEnter(State prevState)
         {
+            Debug.Log("InLand");
+            owner._currentVelocity = Vector3.zero;
             owner.PlayAnimation("Land",0.1f);
 
         }

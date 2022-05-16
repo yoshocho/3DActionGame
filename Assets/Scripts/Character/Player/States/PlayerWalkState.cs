@@ -9,6 +9,7 @@ public partial class NewPlayer : CharacterBase
     {
         protected override void OnEnter(State prevState)
         {
+            Debug.Log("InWalk");
             owner.PlayAnimation("Walk",0.1f);
             owner._moveSpeed = owner._walkSpeed;
         }
