@@ -11,29 +11,29 @@ public partial class Player : MonoBehaviour, IDamage
 {
     #region parameter
     [Tooltip("移動スピード")]
-    float m_moveSpeed = default;
+    float _moveSpeed = default;
     [Tooltip("ダッシュの速さ")]
-    [SerializeField] float m_dashSpeed = 10f;
+    [SerializeField] float _dashSpeed = 10f;
     [Tooltip("歩くスピード")]
-    [SerializeField] float m_walkSpeed = 6f;
+    [SerializeField] float _walkSpeed = 6f;
     [Tooltip("playerの振り向きスピード")]
-    [SerializeField] float m_rotateSpeed = 10f;
+    [SerializeField] float _rotateSpeed = 10f;
     [Tooltip("重力の大きさ")]
-    [SerializeField] float m_gravityScale = 10f;
+    [SerializeField] float _gravityScale = 10f;
     [Tooltip("ジャンプ力")]
-    [SerializeField] float m_jumpPower = 10f;
+    [SerializeField] float _jumpPower = 10f;
     [Tooltip("ジャスト回避の無敵時間")]
-    [SerializeField] float m_justTime = 0.3f;
+    [SerializeField] float _justTime = 0.3f;
     [Tooltip("回避移動のスピード")]
-    [SerializeField] float m_avoidSpeed = 1.2f;
+    [SerializeField] float _avoidSpeed = 1.2f;
     [Tooltip("回避移動の時間")]
-    [SerializeField] float m_avoidEndTime = 0.6f;
+    [SerializeField] float _avoidEndTime = 0.6f;
     [Tooltip("接地判定での中心からの距離")]
-    [SerializeField] float m_isGroundLength = 1.05f;
+    [SerializeField] float _isGroundLength = 1.05f;
     [Tooltip("接地判定の範囲")]
-    [SerializeField] float m_isGroundRadius = 0.18f;
+    [SerializeField] float _isGroundRadius = 0.18f;
     [Tooltip("地面のレイヤー")]
-    [SerializeField] LayerMask m_groundLayer;
+    [SerializeField] LayerMask _groundLayer;
     #endregion
 
     #region status
@@ -61,28 +61,28 @@ public partial class Player : MonoBehaviour, IDamage
 
     #endregion
 
-    Transform m_selfTrans;
-    CharacterController m_controller;
-    Animator m_anim;
-    AttackAssistController m_attackAssist;
-    InputManager m_inputManager;
-    WeaponHolder m_weaponHolder;
-    HitCtrl m_hitCtrl;
-    [SerializeField] ActionControl m_actionCtrl;
-    [SerializeField] AnimationCtrl m_animCtrl;
+    Transform _selfTrans;
+    CharacterController _controller;
+    Animator _anim;
+    AttackAssistController _attackAssist;
+    InputManager _inputManager;
+    WeaponHolder _weaponHolder;
+    HitCtrl _hitCtrl;
+    [SerializeField] ActionControl _actionCtrl;
+    [SerializeField] AnimationCtrl _animCtrl;
 
 
     #region State
-    PlayerStateBase m_currentState;
-    IdleState m_idleState = new IdleState();
-    WalkState m_walkState = new WalkState();
-    AvoidState m_avoidState = new AvoidState();
-    AttackState m_attackState = new AttackState();
-    RunState m_runState = new RunState();
-    JumpState m_jumpState = new JumpState();
-    FallState m_fallState = new FallState();
-    LandState m_landState = new LandState();
-    DeathState m_deathState = new DeathState();
+    PlayerStateBase _currentState;
+    IdleState _idleState = new IdleState();
+    WalkState _walkState = new WalkState();
+    AvoidState _avoidState = new AvoidState();
+    AttackState _attackState = new AttackState();
+    RunState _runState = new RunState();
+    JumpState _jumpState = new JumpState();
+    FallState _fallState = new FallState();
+    LandState _landState = new LandState();
+    DeathState _deathState = new DeathState();
     #endregion
 
     #region Attack
@@ -110,58 +110,59 @@ public partial class Player : MonoBehaviour, IDamage
     WeaponType m_weaponType = WeaponType.HEAVY;
     #endregion
 
-    bool m_inKeepAir = default;
+    bool _inKeepAir = default;
 
     [SerializeField]
-    float m_airDasuSpeed = 1.0f;
+    float _airDasuSpeed = 1.0f;
 
     [SerializeField]
-    float m_airDasuTime = 0.5f;
+    float _airDasuTime = 0.5f;
 
     [SerializeField]
-    float m_airKeepTime = 1.0f;
+    float _airKeepTime = 1.0f;
 
-    float m_airKeepTimer;
+    float _airKeepTimer;
 
-    bool m_airAttackEnd = default;
-
-    [SerializeField]
-    int m_jumpStep = 2;
-    int m_currentJumpStep = default;
+    bool _airAttackEnd = default;
 
     [SerializeField]
-    int m_airDushCount = 1;
-    int m_currentAirDushCount = default;
-    bool m_stateKeep;
+    int _jumpStep = 2;
+    int _currentJumpStep = default;
 
-    float m_currentRotateSpeed = 10f;
-    float m_currentJustTime = default;
-    float m_currentGravityScale = default;
+    [SerializeField]
+    int _airDushCount = 1;
+    int _currentAirDushCount = default;
+    bool _stateKeep;
+
+    float _currentRotateSpeed = 10f;
+    float _currentJustTime = default;
+    float _currentGravityScale = default;
     /// <summary>ジャスト回避のトリガー</summary>
-    bool m_justTrigger = false;
+    bool _justTrigger = false;
 
-    List<EnemyBase> m_targetEnemys = new List<EnemyBase>();
+    List<EnemyBase> _targetEnemys = new List<EnemyBase>();
 
-    Vector3 m_moveForward = Vector3.zero;
-    Vector3 m_currentVelocity = Vector3.zero;
-    Vector3 m_inputDir = Vector3.zero;
-    Quaternion m_targetRot = Quaternion.identity;
+    IInputProvider _inputProvider;
+    Vector3 _moveForward = Vector3.zero;
+    Vector3 _currentVelocity = Vector3.zero;
+    Vector3 _inputDir = Vector3.zero;
+    Quaternion _targetRot = Quaternion.identity;
     void Start()
     {
-        m_anim = GetComponentInChildren<Animator>();
-        m_controller = GetComponent<CharacterController>();
-        m_attackAssist = GetComponent<AttackAssistController>();
-        m_weaponHolder = GetComponentInChildren<WeaponHolder>();
-        m_animCtrl.SetEventDelegate(EventCall);
-        ChangeState(m_idleState);
-        m_inputManager = InputManager.Instance;
-        m_actionCtrl = ActionControl.Instance;
+        _anim = GetComponentInChildren<Animator>();
+        _controller = GetComponent<CharacterController>();
+        _attackAssist = GetComponent<AttackAssistController>();
+        _weaponHolder = GetComponentInChildren<WeaponHolder>();
+        _animCtrl.SetEventDelegate(EventCall);
+        ChangeState(_idleState);
+        _inputManager = InputManager.Instance;
+        _actionCtrl = ActionControl.Instance;
 
         //m_lunchTrigger.enabled = false;
-        m_selfTrans = transform;
-        m_currentJustTime = m_justTime;
-        m_currentGravityScale = m_gravityScale;
-        m_currentJumpStep = m_jumpStep;
+        _selfTrans = transform;
+        _currentJustTime = _justTime;
+        _currentGravityScale = _gravityScale;
+        _currentJumpStep = _jumpStep;
     }
 
     void Update()
@@ -171,38 +172,38 @@ public partial class Player : MonoBehaviour, IDamage
         ApplyGravity();
         ApplyRotation();
         CheckAir();
-        if (m_inputManager.WeaponChangeKey is KeyStatus.DOWN) ChangeWeapon();
+        if (_inputManager.WeaponChangeKey is KeyStatus.DOWN) ChangeWeapon();
 
-        m_currentState.OnUpdate(this);
+        _currentState.OnUpdate(this);
     }
 
     void ApplyAxis()
     {
-        m_moveForward = Camera.main.transform.TransformDirection(m_inputDir);
-        m_moveForward.y = 0.0f;
-        m_moveForward.Normalize();
-        m_inputDir = m_inputManager.InputDir;
+        _moveForward = Camera.main.transform.TransformDirection(_inputDir);
+        _moveForward.y = 0.0f;
+        _moveForward.Normalize();
+        _inputDir = _inputManager.InputDir;
     }
 
     void ApplyMove()
     {
-        var velocity = Vector3.Scale(m_currentVelocity, new Vector3(m_moveSpeed, 1f, m_moveSpeed));
-        m_controller.Move(Time.deltaTime * velocity);
+        var velocity = Vector3.Scale(_currentVelocity, new Vector3(_moveSpeed, 1f, _moveSpeed));
+        _controller.Move(Time.deltaTime * velocity);
     }
 
     void ApplyRotation()
     {
-        var rot = m_selfTrans.rotation;
-        rot = Quaternion.Slerp(rot, m_targetRot, m_currentRotateSpeed * Time.deltaTime);
-        m_selfTrans.rotation = rot;
+        var rot = _selfTrans.rotation;
+        rot = Quaternion.Slerp(rot, _targetRot, _currentRotateSpeed * Time.deltaTime);
+        _selfTrans.rotation = rot;
     }
 
     void LookAt(Vector3 target)
     {
         var targetRot = Quaternion.LookRotation(target);
-        var rot = m_selfTrans.rotation;
+        var rot = _selfTrans.rotation;
         rot = Quaternion.Slerp(rot, targetRot, 1000.0f);
-        m_selfTrans.rotation = rot;
+        _selfTrans.rotation = rot;
     }
 
     void MoveForward(float time, float speed)
@@ -222,15 +223,15 @@ public partial class Player : MonoBehaviour, IDamage
 
     void CheckAir()
     {
-        if (m_inKeepAir)
+        if (_inKeepAir)
         {
-            m_airKeepTimer -= Time.deltaTime;
+            _airKeepTimer -= Time.deltaTime;
         }
         //Debug.Log(m_airKeepTimer);
-        if (m_airKeepTimer < 0.0)
+        if (_airKeepTimer < 0.0)
         {
-            m_inKeepAir = false;
-            m_airKeepTimer = m_airKeepTime;
+            _inKeepAir = false;
+            _airKeepTimer = _airKeepTime;
             
         }
     }
@@ -238,41 +239,41 @@ public partial class Player : MonoBehaviour, IDamage
     {
         Vector3 start = new Vector3(transform.position.x, transform.position.y + 0.7f, transform.position.z);
         Ray ray = new Ray(start, Vector3.down);
-        bool isGround = Physics.SphereCast(ray, m_isGroundRadius, m_isGroundLength, m_groundLayer);
+        bool isGround = Physics.SphereCast(ray, _isGroundRadius, _isGroundLength, _groundLayer);
         return isGround;
     }
 
     private void OnDrawGizmos()
     {
         Vector3 start = new Vector3(transform.position.x, transform.position.y + 0.7f, transform.position.z);
-        Vector3 end = start + Vector3.down * m_isGroundLength;
+        Vector3 end = start + Vector3.down * _isGroundLength;
         Color color = new Color(1, 0, 0);
-        Gizmos.DrawWireSphere(end, m_isGroundRadius);
+        Gizmos.DrawWireSphere(end, _isGroundRadius);
     }
 
     void ApplyGravity()
     {
         
-        if (m_inKeepAir)
+        if (_inKeepAir)
         {
-            m_currentVelocity.y = 0.0f;
+            _currentVelocity.y = 0.0f;
         }
-        else if (!(IsGround() || m_controller.isGrounded) && !m_inKeepAir)
+        else if (!(IsGround() || _controller.isGrounded) && !_inKeepAir)
         {
-            m_currentVelocity.y += m_currentGravityScale * Physics.gravity.y * Time.deltaTime;
+            _currentVelocity.y += _currentGravityScale * Physics.gravity.y * Time.deltaTime;
         }
     }
 
     public void PlayAnimation(string stateName, float transitionTime = 0.1f, int layer = 0,Action onAnimEnd = null)
     {
-        m_animCtrl.Play(stateName, transitionTime, layer, onAnimEnd);
+        _animCtrl.Play(stateName, transitionTime, layer, onAnimEnd);
     }
 
     void ChangeState(PlayerStateBase nextState)
     {
-        m_currentState?.OnExit(this, nextState);
-        nextState?.OnEnter(this, m_currentState);
-        m_currentState = nextState;
+        _currentState?.OnExit(this, nextState);
+        nextState?.OnEnter(this, _currentState);
+        _currentState = nextState;
     }
 
     void ChangeWeapon()
@@ -292,7 +293,7 @@ public partial class Player : MonoBehaviour, IDamage
 
     public void AddDamage(int damage,AttackType attackType = default)
     {
-        if (m_justTrigger)
+        if (_justTrigger)
         {
             justsubject.OnNext(Unit.Default);
         }
@@ -302,23 +303,23 @@ public partial class Player : MonoBehaviour, IDamage
             if (m_hp.Value <= 0)
             {
                 playerDeath.OnNext(Unit.Default);
-                m_controller.enabled = false;
-                ChangeState(m_deathState);
+                _controller.enabled = false;
+                ChangeState(_deathState);
             }
         }
     }
 
     void AttackAssist()
     {
-        if (m_attackAssist.Target)
+        if (_attackAssist.Target)
         {
-            var target = m_attackAssist.Target.transform.position;
-            target.y = m_selfTrans.position.y;
+            var target = _attackAssist.Target.transform.position;
+            target.y = _selfTrans.position.y;
             transform.LookAt(target);
         }
-        var dir = m_selfTrans.forward;
+        var dir = _selfTrans.forward;
         dir.y = 0.0f;
-        m_targetRot = Quaternion.LookRotation(dir, Vector3.up);
+        _targetRot = Quaternion.LookRotation(dir, Vector3.up);
     }
 
     void NextAction(int step, AttackLayer layer, List<Attack> comboList)
@@ -344,11 +345,11 @@ public partial class Player : MonoBehaviour, IDamage
             case ActionType.Animation:
                 AttackAssist();
                 //Debug.Log($"{step}/{layer}{comboList[actId].Name}");
-                m_weaponHolder.ChangeWeapon(m_weaponType);
-                m_hitCtrl.SetCtrl(this, comboList[actId]);
+                _weaponHolder.ChangeWeapon(m_weaponType);
+                _hitCtrl.SetCtrl(this, comboList[actId]);
                 m_waitTimer = attack.WaitTime;
                 m_actionKeepingTimer = attack.KeepTime;
-                m_animCtrl.Play(attack.ActionTargetName, 0.2f);
+                _animCtrl.Play(attack.ActionTargetName, 0.2f);
                 break;
             case ActionType.CreateObject:
                 Debug.Log("CreateObject");
@@ -366,8 +367,8 @@ public partial class Player : MonoBehaviour, IDamage
                 Debug.Log("LongRange");
                 break;
             case AttackLayer.Airial:
-                m_inKeepAir = true;
-                m_airKeepTimer = (attack.KeepTime + attack.WaitTime);
+                _inKeepAir = true;
+                _airKeepTimer = (attack.KeepTime + attack.WaitTime);
                 Debug.Log("空中");
                 //MoveForward(0.2f, 1.0f);
                 //m_currentVelocity = transform.forward * 0.7f;
@@ -376,7 +377,7 @@ public partial class Player : MonoBehaviour, IDamage
                 //transform.DOMove();
                 break;
             case AttackLayer.Lunch:
-                m_airKeepTimer = (attack.KeepTime + attack.WaitTime);
+                _airKeepTimer = (attack.KeepTime + attack.WaitTime);
                 break;
             default:
                 break;
@@ -388,14 +389,14 @@ public partial class Player : MonoBehaviour, IDamage
         switch (type)
         {
             case WeaponType.HEAVY:
-                m_currentAttackList = m_actionCtrl.HeavySwordNormalCombos;
-                m_currentSkillList = m_actionCtrl.HeavySwordSkillList;
-                m_currentAirialAttackList = m_actionCtrl.HeavySwordAirialCombos;
+                m_currentAttackList = _actionCtrl.HeavySwordNormalCombos;
+                m_currentSkillList = _actionCtrl.HeavySwordSkillList;
+                m_currentAirialAttackList = _actionCtrl.HeavySwordAirialCombos;
                 break;
             case WeaponType.LIGHT:
-                m_currentAttackList = m_actionCtrl.LightSwordNormalCombo;
-                m_currentSkillList = m_actionCtrl.LightSwordSkillList;
-                m_currentAirialAttackList = m_actionCtrl.LightSwordAirialCombo;
+                m_currentAttackList = _actionCtrl.LightSwordNormalCombo;
+                m_currentSkillList = _actionCtrl.LightSwordSkillList;
+                m_currentAirialAttackList = _actionCtrl.LightSwordAirialCombo;
                 break;
             default: break;
         }
@@ -407,8 +408,8 @@ public partial class Player : MonoBehaviour, IDamage
         {
             case 1:
                 
-                m_targetEnemys.ForEach(e => e.LaunchUp(4.0f));
-                m_selfTrans.DOMoveY(4.0f, 1.0f);
+                _targetEnemys.ForEach(e => e.LaunchUp(4.0f));
+                _selfTrans.DOMoveY(4.0f, 1.0f);
                 break;
         }
     }
@@ -418,21 +419,20 @@ public partial class Player : MonoBehaviour, IDamage
         enemy?.AddDamage(attack.Damage);
         enemy?.AirStayMaintenance(0.7f);
         enemy?.OffGravity();
-        m_actionCtrl.HitStop(attack.Power);
+        _actionCtrl.HitStop(attack.Power);
         comboSubject.OnNext(Unit.Default);
-        if (!m_targetEnemys.Contains(enemy))
+        if (!_targetEnemys.Contains(enemy))
         {
-            m_targetEnemys.Add(enemy);
+            _targetEnemys.Add(enemy);
         }
     }
     public void StartAttack()
     {
-        m_weaponHolder.TriggerEnable();
+        _weaponHolder.TriggerEnable();
     }
 
     public void AttackEnd()
     {
-        m_weaponHolder.TriggerDisable();
-        //m_lunchTrigger.m_atkTrigeer.enabled = false;
+        _weaponHolder.TriggerDisable();
     }
 }

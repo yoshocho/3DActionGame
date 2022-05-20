@@ -14,9 +14,6 @@ public enum KeyStatus
 public class InputManager : SingleMonoBehaviour<InputManager>
 {
     public Vector3 InputDir { get; private set; } = default;
-    public KeyStatus JumpKey { get; private set; } = KeyStatus.NONE;
-    public KeyStatus AttackKey { get; private set; } = KeyStatus.NONE;
-    public KeyStatus AvoidKey { get; private set; } = KeyStatus.NONE;
 
     public KeyStatus WeaponChangeKey { get; private set; } = KeyStatus.NONE;
 
@@ -52,7 +49,7 @@ public class InputManager : SingleMonoBehaviour<InputManager>
 
     private void Update()
     {
-        
+
         var axis = InputActions.Player.Move.ReadValue<Vector2>();
         InputDir = Vector3.forward * axis.y + Vector3.right * axis.x;
 

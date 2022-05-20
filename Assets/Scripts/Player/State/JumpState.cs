@@ -7,10 +7,10 @@ public partial class Player : MonoBehaviour
         public override void OnEnter(Player owner, PlayerStateBase prevState)
         {
             owner.PlayAnimation("Jump",0.1f);
-            owner.m_moveForward.y = 0;
-            if (owner.m_inputDir.sqrMagnitude > 0.1) owner.m_targetRot = Quaternion.LookRotation(owner.m_moveForward);
-            owner.m_currentVelocity = new Vector3(owner.m_moveForward.x, owner.m_jumpPower, owner.m_moveForward.z);
-            owner.m_currentJumpStep -= 1;
+            owner._moveForward.y = 0;
+            if (owner._inputDir.sqrMagnitude > 0.1) owner._targetRot = Quaternion.LookRotation(owner._moveForward);
+            owner._currentVelocity = new Vector3(owner._moveForward.x, owner._jumpPower, owner._moveForward.z);
+            owner._currentJumpStep -= 1;
         }
 
         public override void OnExit(Player owner, PlayerStateBase nextState)
@@ -24,17 +24,17 @@ public partial class Player : MonoBehaviour
             //{
             //    owner.ChangeState(owner.m_landState);
             //}
-            if (owner.m_currentVelocity.y < 0f)
+            if (owner._currentVelocity.y < 0f)
             {
-                owner.ChangeState(owner.m_fallState);
+                owner.ChangeState(owner._fallState);
             }
-            if (owner.m_inputManager.AvoidKey == KeyStatus.DOWN && owner.m_currentAirDushCount < owner.m_airDushCount)
+            if (owner._inputProvider.GetAvoid() && owner._currentAirDushCount < owner._airDushCount)
             {
-                owner.ChangeState(owner.m_avoidState);
+                owner.ChangeState(owner._avoidState);
             }
-            if (owner.m_inputManager.AttackKey == KeyStatus.DOWN)
+            if (owner._inputProvider.GetAttack())
             {
-                owner.ChangeState(owner.m_attackState);
+                owner.ChangeState(owner._attackState);
             }
         }
     }

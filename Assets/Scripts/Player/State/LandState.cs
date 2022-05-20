@@ -7,8 +7,8 @@ public partial class Player : MonoBehaviour
         public override void OnEnter(Player owner, PlayerStateBase prevState)
         {
             owner.PlayAnimation("Land",0.1f);
-            owner.m_currentJumpStep = owner.m_jumpStep;
-            owner.m_currentAirDushCount = 0;
+            owner._currentJumpStep = owner._jumpStep;
+            owner._currentAirDushCount = 0;
             owner.m_lunchEnd = false;
         }
 
@@ -18,38 +18,38 @@ public partial class Player : MonoBehaviour
 
         public override void OnUpdate(Player owner)
         {
-            if (owner.m_inputDir.sqrMagnitude > 0.1f)
+            if (owner._inputDir.sqrMagnitude > 0.1f)
             {
                 Debug.Log("Land -> Walk");
-                owner.ChangeState(owner.m_walkState);
+                owner.ChangeState(owner._walkState);
             }
-            else if(!owner.m_animCtrl.IsPlayingAnimatin())
+            else if(!owner._animCtrl.IsPlayingAnimatin())
             {
-                owner.m_currentVelocity.x = 0f;
-                owner.m_currentVelocity.z = 0f;
+                owner._currentVelocity.x = 0f;
+                owner._currentVelocity.z = 0f;
                 Debug.Log("Land -> Idle");
-                owner.ChangeState(owner.m_idleState);
+                owner.ChangeState(owner._idleState);
             }
             else
             {
-                owner.m_currentVelocity.x = 0f;
-                owner.m_currentVelocity.z = 0f;
+                owner._currentVelocity.x = 0f;
+                owner._currentVelocity.z = 0f;
             }
-            if (owner.m_inputManager.AvoidKey == KeyStatus.DOWN)
+            if (owner._inputProvider.GetAvoid())
             {
                 Debug.Log("Land -> Jump");
-                owner.ChangeState(owner.m_avoidState);
+                owner.ChangeState(owner._avoidState);
             }
-            if (owner.m_inputManager.LunchKey is KeyStatus.STAY) owner.m_lunchAttack = true;
+            if (owner._inputManager.LunchKey is KeyStatus.STAY) owner.m_lunchAttack = true;
             else owner.m_lunchAttack = false;
-            if (owner.m_inputManager.AttackKey == KeyStatus.DOWN)
+            if (owner._inputProvider.GetAttack())
             {
-                owner.ChangeState(owner.m_attackState);
+                owner.ChangeState(owner._attackState);
             }
 
-            if (owner.m_inputManager.JumpKey == KeyStatus.DOWN)
+            if (owner._inputProvider.GetJump())
             {
-                owner.ChangeState(owner.m_jumpState);
+                owner.ChangeState(owner._jumpState);
             }
         }
     }

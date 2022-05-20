@@ -8,7 +8,7 @@ public partial class Player : MonoBehaviour
     {
         public override void OnEnter(Player owner, PlayerStateBase prevState)
         {
-            owner.m_moveSpeed = owner.m_walkSpeed;
+            owner._moveSpeed = owner._walkSpeed;
             owner.PlayAnimation("Walk" ,0.2f);
         }
         public override void OnExit(Player owner, PlayerStateBase nextState)
@@ -16,37 +16,37 @@ public partial class Player : MonoBehaviour
         }
         public override void OnUpdate(Player owner)
         {
-            if (owner.m_inputManager.LunchKey is KeyStatus.STAY) owner.m_lunchAttack = true;
+            if (owner._inputManager.LunchKey is KeyStatus.STAY) owner.m_lunchAttack = true;
             else owner.m_lunchAttack = false;
             if (owner.IsGround())
             {
-                if (owner.m_inputDir.sqrMagnitude > 0.1)
+                if (owner._inputDir.sqrMagnitude > 0.1f)
                 {
-                    owner.m_targetRot = Quaternion.LookRotation(owner.m_moveForward);
-                    owner.m_currentVelocity = new Vector3(owner.m_moveForward.x, owner.m_currentVelocity.y , owner.m_moveForward.z);
+                    owner._targetRot = Quaternion.LookRotation(owner._moveForward);
+                    owner._currentVelocity = new Vector3(owner._moveForward.x, owner._currentVelocity.y , owner._moveForward.z);
                     //owner.m_currentVelocity =
                     //    new Vector3(owner.m_selfTrans.forward.x, owner.m_currentVelocity.y, owner.m_selfTrans.forward.z);
-                    if(owner.m_inputManager.AvoidKey == KeyStatus.DOWN)
+                    if(owner._inputProvider.GetAvoid())
                     {
-                        owner.ChangeState(owner.m_avoidState);
+                        owner.ChangeState(owner._avoidState);
                     }
-                    if (owner.m_inputManager.AttackKey is KeyStatus.DOWN)
+                    if (owner._inputProvider.GetAttack())
                     {
-                        owner.ChangeState(owner.m_attackState);
+                        owner.ChangeState(owner._attackState);
                     }
-                    if (owner.m_inputManager.JumpKey == KeyStatus.DOWN && owner.m_jumpStep >= 0)
+                    if (owner._inputProvider.GetJump() && owner._jumpStep >= 0)
                     {
-                        owner.ChangeState(owner.m_jumpState);
+                        owner.ChangeState(owner._jumpState);
                     }
                 }
                 else
                 {
-                    owner.ChangeState(owner.m_idleState);
+                    owner.ChangeState(owner._idleState);
                 }
             }
             else
             {
-                owner.ChangeState(owner.m_fallState);
+                owner.ChangeState(owner._fallState);
             }
         }
     }
