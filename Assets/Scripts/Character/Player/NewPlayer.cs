@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -38,12 +37,7 @@ public partial class NewPlayer : CharacterBase
     float _avoidTime = 1.0f;
     [SerializeField]
     float _justTime = 0.3f;
-    [Tooltip("接地判定での中心からの距離")]
-    [SerializeField] float _isGroundLength = 1.05f;
-    [Tooltip("接地判定の範囲")]
-    [SerializeField] float _isGroundRadius = 0.18f;
-    [Tooltip("地面のレイヤー")]
-    [SerializeField] LayerMask _groundLayer;
+    
 
     [SerializeField]
     bool _invincible = false;
@@ -58,13 +52,16 @@ public partial class NewPlayer : CharacterBase
     Vector3 _inputAxis = Vector3.zero;
     Quaternion _targetRot = Quaternion.identity;
 
+    IInputProvider _inputProvider;
     InputManager _inputManager;
     [SerializeField]
     AnimationCtrl _animCtrl;
+    GrandChecker _grandCheck;
     ActionCtrl _actionCtrl;
     StateMachine<NewPlayer> _stateMachine;
 
     bool _inAvoid = false;
+    bool _keepAir = false;
     float _moveSpeed;
 
     void Start()
@@ -83,6 +80,7 @@ public partial class NewPlayer : CharacterBase
         _inputManager = InputManager.Instance;
         _selfTrans = transform;
         if(!_animCtrl)_animCtrl = GetComponentInChildren<AnimationCtrl>();
+        _grandCheck = GetComponent<GrandChecker>();
         _actionCtrl = GetComponent<ActionCtrl>();
     }
     void Update()
@@ -116,7 +114,7 @@ public partial class NewPlayer : CharacterBase
     }
     void ApplyGravity()
     {
-        if (!IsGround())
+        if (!IsGround() && !_keepAir)
         {
             _currentVelocity.y += _gravityScale * Physics.gravity.y * Time.deltaTime;
         }
@@ -124,19 +122,7 @@ public partial class NewPlayer : CharacterBase
 
     bool IsGround()
     {
-        Vector3 start = new Vector3(transform.position.x, transform.position.y + 0.7f, transform.position.z);
-        Ray ray = new Ray(start, Vector3.down);
-        bool isGround = Physics.SphereCast(ray, _isGroundRadius, _isGroundLength, _groundLayer);
-        return isGround;
-    }
-
-    private void OnDrawGizmos()
-    {
-        Vector3 start = new Vector3(transform.position.x, transform.position.y + 0.7f, transform.position.z);
-        Vector3 end = start + Vector3.down * _isGroundLength;
-        Color color = Color.magenta;
-        Gizmos.color = color;
-        Gizmos.DrawWireSphere(end, _isGroundRadius);
+        return _grandCheck.IsGround();
     }
 
     void ChangeState(StateEvent nextState)
