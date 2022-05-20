@@ -29,22 +29,21 @@ namespace AttackSetting
     {
 
         [SerializeField]
-        AnimationCtrl m_animCtrl;
+        AnimationCtrl _animCtrl;
         [SerializeField]
-        List<ComboData> m_comboDatas = new List<ComboData>();
-        public List<ComboData> CurrentAttacks => m_comboDatas;
-        public List<ComboData> SetAttacks { set => value = m_comboDatas; }
+        List<ComboData> _comboDatas = new List<ComboData>();
+        public List<ComboData> CurrentAttacks => _comboDatas;
 
         [SerializeField]
-        OwerType m_owerType;
+        OwerType _owerType;
 
-        AttackType m_prevType;
-        ComboData m_currentCombo;
-        NewHitCtrl m_hitCtrl;
+        AttackType _prevType;
+        ComboData _currentCombo;
+        NewHitCtrl _hitCtrl;
 
-        float m_receiveTimer = 0.0f;
-        float m_keepTimer = 0.0f;
-        int m_comboCount = 0;
+        float _receiveTimer = 0.0f;
+        float _keepTimer = 0.0f;
+        int _comboCount = 0;
 
         public ActionData CurrentAction { get; private set; }
         public bool ReserveAction { get; private set; } = false;
@@ -54,6 +53,7 @@ namespace AttackSetting
         public bool ActionKeep { get; private set; } = false;
 
         public bool ComboEnd { get; private set; } = false;
+
         /// <summary>
         /// 攻撃のアニメーションクリップの名前
         /// </summary>
@@ -63,72 +63,78 @@ namespace AttackSetting
             Second,
         }
 
-        ClipName m_clipName = ClipName.First;
+        ClipName _clipName = ClipName.First;
 
         void Start()
         {
-            if (!m_animCtrl) m_animCtrl = GetComponentInChildren<AnimationCtrl>();
+            if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
 
         }
         void Update()
         {
-            if (m_keepTimer > 0.0f)
+            if (_keepTimer > 0.0f)
             {
-                m_keepTimer -= Time.deltaTime;
+                _keepTimer -= Time.deltaTime;
 
                 ActionKeep = true;
                 ComboEnd = false;
-                if (m_keepTimer <= 0.0f)
+                if (_keepTimer <= 0.0f)
                 {
-                    m_keepTimer = 0.0f;
+                    _keepTimer = 0.0f;
                     ActionKeep = false;
                     ReserveAction = false;
                 }
             }
-            else if (m_receiveTimer > 0.0f)
+            else if (_receiveTimer > 0.0f)
             {
-                m_receiveTimer -= Time.deltaTime;
+                InReceiveTime = true;
+                _receiveTimer -= Time.deltaTime;
 
-                if (m_receiveTimer <= 0.0f)
+                if (_receiveTimer <= 0.0f)
                 {
-                    m_receiveTimer = 0.0f;
+                    _receiveTimer = 0.0f;
+                    InReceiveTime = false;
                 }
             }
 
-            if (!ReserveAction && m_receiveTimer <= 0.0f)
+            if (!ReserveAction && _receiveTimer <= 0.0f)
             {
-                m_comboCount = 0;
+                _comboCount = 0;
             }
 
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="attackType"></param>
+        /// <param name="id"></param>
         public void RequestAction(AttackType attackType, int id = 0)
         {
             ReserveAction = true;
-            if (!m_comboDatas.Any()) return;
+            if (!_comboDatas.Any()) return;
             ActionData data = null;
-            if (m_prevType != attackType) m_comboCount = 0;
-            m_prevType = attackType;
-            if (m_comboCount > m_currentCombo.ComboCount)
+            if (_prevType != attackType) _comboCount = 0;
+            _prevType = attackType;
+            if (_comboCount >= _currentCombo.ComboCount)
             {
-                m_comboCount = 0;
+                _comboCount = 0;
                 ComboEnd = true;
             }
 
             switch (attackType)
             {
                 case AttackType.Weak:
-                    m_currentCombo = m_comboDatas[0];
-                    data = m_comboDatas[0].ActionDatas[m_comboCount];
+                    _currentCombo = _comboDatas[0];
+                    data = _comboDatas[0].ActionDatas[_comboCount];
                     break;
 
                 case AttackType.Airial:
-                    if (m_comboDatas.Count < 1) break;
-                    m_currentCombo = m_comboDatas[1];
-                    data = m_comboDatas[1].ActionDatas[m_comboCount];
+                    if (_comboDatas.Count < 1) break;
+                    _currentCombo = _comboDatas[1];
+                    data = _comboDatas[1].ActionDatas[_comboCount];
                     break;
                 case AttackType.Counter:
-                    data = m_comboDatas[0].ActionDatas[-1];
+                    data = _comboDatas[0].ActionDatas[-1];
 
                     break;
                 case AttackType.Heavy:
@@ -141,30 +147,33 @@ namespace AttackSetting
                     break;
             }
             if (data) SetAction(data);
-            m_comboCount++;
+            _comboCount++;
         }
 
         public void EndAttack()
         {
             TriggerOnEnable();
-            m_keepTimer = 0.0f;
-            m_receiveTimer = 0.0f;
-            m_comboCount = 0;
+            _keepTimer = 0.0f;
+            _receiveTimer = 0.0f;
+            _comboCount = 0;
         }
-
+        /// <summary>
+        /// アクションをセットする関数
+        /// </summary>
+        /// <param name="attack"></param>
         void SetAction(ActionData attack)
         {
             CurrentAction = attack;
-            m_receiveTimer = attack.ReceiveTime;
-            m_keepTimer = attack.KeepTime;
+            _receiveTimer = attack.ReceiveTime;
+            _keepTimer = attack.KeepTime;
 
-            m_animCtrl.ChangeClip(m_clipName.ToString(), attack.AnimSet.Clip);
-            m_animCtrl.Play(m_clipName.ToString(), attack.AnimSet.Duration);
+            _animCtrl.ChangeClip(_clipName.ToString(), attack.AnimSet.Clip);
+            _animCtrl.Play(_clipName.ToString(), attack.AnimSet.Duration);
 
-            if (m_clipName is ClipName.Second)　//ブレンドするために二つのステートを交互に再生する
-                m_clipName = ClipName.First;
+            if (_clipName is ClipName.Second)　//ブレンドするために二つのステートを交互に再生する
+                _clipName = ClipName.First;
             else
-                m_clipName = ClipName.Second;
+                _clipName = ClipName.Second;
         }
 
         /// <summary>
