@@ -88,11 +88,13 @@ public partial class NewPlayer : CharacterBase
     void Update()
     {
         ApplyAxis();
-        ApplyMove();
+        _stateMachine.Update();
+    }
+    private void FixedUpdate()
+    {
         ApplyRotation();
         ApplyGravity();
-
-        _stateMachine.Update();
+        ApplyMove();
     }
     void ApplyAxis()
     {
