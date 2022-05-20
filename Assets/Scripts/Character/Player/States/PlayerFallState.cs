@@ -19,12 +19,12 @@ public partial class NewPlayer : CharacterBase
             //アニメジャンプ
 
             //制限
-            if (owner._inputManager.InputActions.Player.Jump.WasPressedThisFrame())
+            if (owner._inputProvider.GetJump())
                 owner.ChangeState(StateEvent.Jump);
             //制限
-            if (owner._inputManager.InputActions.Player.Avoid.WasPressedThisFrame())
+            if (owner._inputProvider.GetAvoid())
                 owner.ChangeState(StateEvent.Avoid);
-            if (owner._inputManager.InputActions.Player.Attack.WasPressedThisFrame())
+            if (owner._inputProvider.GetAttack())
                 owner.ChangeState(StateEvent.Attack);
             if (owner.IsGround()) owner.ChangeState(StateEvent.Land);
 

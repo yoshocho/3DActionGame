@@ -94,6 +94,12 @@ public partial class NewPlayer : CharacterBase
         ApplyGravity();
         ApplyMove();
     }
+
+    public void SetInputProvider(IInputProvider input)
+    {
+        _inputProvider = input;
+    }
+
     void ApplyAxis()
     {
         _moveForward = Camera.main.transform.TransformDirection(_inputAxis);

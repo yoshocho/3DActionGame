@@ -24,11 +24,11 @@ public partial class NewPlayer : CharacterBase
             {
                 owner.ChangeState(StateEvent.Idle);
             }
-            if (owner._inputManager.InputActions.Player.Avoid.WasPressedThisFrame())
+            if (owner._inputProvider.GetAvoid())
                 owner.ChangeState(StateEvent.Avoid);
-            if (owner._inputManager.InputActions.Player.Attack.WasPressedThisFrame())
+            if (owner._inputProvider.GetAttack())
                 owner.ChangeState(StateEvent.Attack);
-            if (owner._inputManager.InputActions.Player.Jump.WasPressedThisFrame())
+            if (owner._inputProvider.GetJump())
                 owner.ChangeState(StateEvent.Jump);
         }
         protected override void OnExit(State nextState)

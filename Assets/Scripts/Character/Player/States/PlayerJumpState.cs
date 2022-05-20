@@ -21,11 +21,11 @@ partial class NewPlayer : CharacterBase
             {
                 owner._targetRot = Quaternion.LookRotation(owner._moveForward);
             }
-            if (owner._inputManager.InputActions.Player.Avoid.WasPressedThisFrame())
+            if (owner._inputProvider.GetAvoid())
                 owner.ChangeState(StateEvent.Avoid);
-            if (owner._inputManager.InputActions.Player.Attack.WasPressedThisFrame())
+            if (owner._inputProvider.GetAttack())
                 owner.ChangeState(StateEvent.Attack);
-            if (owner._inputManager.InputActions.Player.Jump.WasPressedThisFrame())
+            if (owner._inputProvider.GetJump())
                 owner.ChangeState(StateEvent.Jump);
 
             if (owner._currentVelocity.y < 0.0f) owner.ChangeState(StateEvent.Fall);

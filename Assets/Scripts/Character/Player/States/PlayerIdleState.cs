@@ -19,15 +19,13 @@ public partial class NewPlayer : CharacterBase
         {
             if (owner.IsGround())
             {
-                if (owner._inputAxis.sqrMagnitude > 0.1f)
-                { 
+                if (owner._inputAxis.sqrMagnitude > 0.1f) 
                     owner.ChangeState(StateEvent.Walk);
-                }
-                if (owner._inputManager.InputActions.Player.Avoid.WasPressedThisFrame())
+                if(owner._inputProvider.GetAvoid())
                     owner.ChangeState(StateEvent.Avoid);
-                if (owner._inputManager.InputActions.Player.Attack.WasPressedThisFrame())
+                if(owner._inputProvider.GetAttack())
                     owner.ChangeState(StateEvent.Attack);
-                if (owner._inputManager.InputActions.Player.Jump.WasPressedThisFrame())
+                if(owner._inputProvider.GetJump())
                     owner.ChangeState(StateEvent.Jump);
             }
             else owner.ChangeState(StateEvent.Fall);
