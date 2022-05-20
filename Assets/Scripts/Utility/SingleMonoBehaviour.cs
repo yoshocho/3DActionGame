@@ -42,7 +42,10 @@ public class SingleMonoBehaviour<TOwer> : MonoBehaviour where TOwer :SingleMonoB
 
     private void Awake()
     {
-        CheckInstance();
+        if (CheckInstance())
+        {
+            OnAwake();
+        }
     }
 
     bool CheckInstance()
