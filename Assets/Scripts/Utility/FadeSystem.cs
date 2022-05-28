@@ -1,17 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
-using Cysharp.Threading.Tasks;
-using System.Threading;
-using System;
 using UnityEngine.UI;
 
 public class FadeSystem : SingleMonoBehaviour<FadeSystem>
 {
-    [SerializeField] Image m_fadePanel = default;
-
-    [SerializeField] CanvasGroup m_canvasGroup = default;
-
     protected override void ForcedRun()
     {
         base.ForcedRun();
@@ -34,26 +26,75 @@ public class FadeSystem : SingleMonoBehaviour<FadeSystem>
         rectTrans.offsetMin = Vector2.zero;
         rectTrans.offsetMax = Vector2.zero;
 
-        m_fadePanel = imageObj.AddComponent<Image>();
-        m_fadePanel.color = Color.black;
-        m_canvasGroup = imageObj.AddComponent<CanvasGroup>();
-        m_canvasGroup.blocksRaycasts = false;
-        DontDestroyOnLoad(go);
+        _fadePanel = imageObj.AddComponent<Image>();
+        _fadePanel.color = Color.black;
+        _canvasGroup = imageObj.AddComponent<CanvasGroup>();
+        _canvasGroup.blocksRaycasts = false;
+        DontDestroyOnLoad(gameObject);
     }
 
-    public void FadeAsync(float fadeTime) => Fade(fadeTime,this.GetCancellationTokenOnDestroy()).Forget();
-    public async UniTask Fade(float fadeTime,CancellationToken token = default)
+    protected override void OnAwake()
     {
-        float timer = 0;
-        Color panelColor = m_fadePanel.color;
-        float alpha = 0;
-        while (timer < fadeTime)
+        if (!_fadePanel) _fadePanel = GetComponentInChildren<Image>();
+        if (!_canvasGroup) _canvasGroup = GetComponentInChildren<CanvasGroup>();
+        DontDestroyOnLoad(gameObject);
+    }
+
+    [SerializeField] Image _fadePanel = default;
+
+    [SerializeField] CanvasGroup _canvasGroup = default;
+
+    public const float DefaultFadeTime = 1.0f;
+
+    float _startValue = 0.0f;
+    float _endValue = 0.0f;
+    float _elapedTime = 0.0f;
+    float _fadeTime = 0.0f;
+
+    Action _onFadeEnd;
+    bool _isFade;
+    private void Update()
+    {
+        if (!_isFade) return;
+        _elapedTime += Time.deltaTime;
+        var rate = _elapedTime / _fadeTime;
+        _canvasGroup.alpha = Mathf.Lerp(_startValue, _endValue, rate);
+
+        if (rate > 1.0f)
         {
-            timer += Time.deltaTime;
-            alpha += Time.deltaTime / fadeTime;
-            panelColor.a = alpha;
-            m_fadePanel.color = panelColor;
-            await UniTask.WaitForEndOfFrame(token);
+            _onFadeEnd?.Invoke();
+            _onFadeEnd = null;
+            _isFade = false;
+            _canvasGroup.blocksRaycasts = false;
         }
+    }
+
+    private void StartFade(float startValue, float endValue, float fadeTime, Action onFadeEnd = null)
+    {
+        if (_isFade) return;
+        _fadePanel.gameObject.SetActive(true);
+        _fadeTime = fadeTime;
+        _startValue = startValue;
+        _endValue = endValue;
+        _onFadeEnd = onFadeEnd;
+        _elapedTime = 0.0f;
+        _isFade = true;
+    }
+
+    public static void FadeIn(Action onFadeEnd = null)
+    {
+        Instance.StartFade(1.0f, 0.0f, DefaultFadeTime, onFadeEnd);
+    }
+    public static void FadeIn(float fadeTime = DefaultFadeTime, Action onFadeEnd = null)
+    {
+        Instance.StartFade(1.0f, 0.0f, fadeTime, onFadeEnd);
+    }
+    public static void FadeOut(Action onFadeEnd = null)
+    {
+        Instance.StartFade(0.0f, 1.0f, DefaultFadeTime, onFadeEnd);
+    }
+    public static void FadeOut(float fadeTime = DefaultFadeTime, Action onFadeEnd = null)
+    {
+        Instance.StartFade(0.0f, 1.0f, fadeTime, onFadeEnd);
     }
 }
