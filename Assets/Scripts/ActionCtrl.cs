@@ -41,8 +41,8 @@ namespace AttackSetting
         ComboData _currentCombo;
         NewHitCtrl _hitCtrl;
 
-        float _receiveTimer = 0.0f;
-        float _keepTimer = 0.0f;
+        public float ReceiveTimer { get; private set; } = 0.0f;
+        public float KeepTimer { get; private set; } = 0.0f;
         int _comboCount = 0;
 
         public ActionData CurrentAction { get; private set; }
@@ -72,32 +72,32 @@ namespace AttackSetting
         }
         void Update()
         {
-            if (_keepTimer > 0.0f)
+            if (KeepTimer > 0.0f)
             {
-                _keepTimer -= Time.deltaTime;
+                KeepTimer -= Time.deltaTime;
 
                 ActionKeep = true;
                 ComboEnd = false;
-                if (_keepTimer <= 0.0f)
+                if (KeepTimer <= 0.0f)
                 {
-                    _keepTimer = 0.0f;
+                    KeepTimer = 0.0f;
                     ActionKeep = false;
                     ReserveAction = false;
                 }
             }
-            else if (_receiveTimer > 0.0f)
+            else if (ReceiveTimer > 0.0f)
             {
                 InReceiveTime = true;
-                _receiveTimer -= Time.deltaTime;
+                ReceiveTimer -= Time.deltaTime;
 
-                if (_receiveTimer <= 0.0f)
+                if (ReceiveTimer <= 0.0f)
                 {
-                    _receiveTimer = 0.0f;
+                    ReceiveTimer = 0.0f;
                     InReceiveTime = false;
                 }
             }
 
-            if (!ReserveAction && _receiveTimer <= 0.0f)
+            if (!ReserveAction && ReceiveTimer <= 0.0f)
             {
                 _comboCount = 0;
             }
@@ -115,11 +115,6 @@ namespace AttackSetting
             ActionData data = null;
             if (_prevType != attackType) _comboCount = 0;
             _prevType = attackType;
-            if (_comboCount >= _currentCombo.ComboCount)
-            {
-                _comboCount = 0;
-                ComboEnd = true;
-            }
 
             switch (attackType)
             {
@@ -129,7 +124,7 @@ namespace AttackSetting
                     break;
 
                 case AttackType.Airial:
-                    if (_comboDatas.Count < 1) break;
+                    if (_comboDatas.Count <= 1) break;
                     _currentCombo = _comboDatas[1];
                     data = _comboDatas[1].ActionDatas[_comboCount];
                     break;
@@ -148,13 +143,18 @@ namespace AttackSetting
             }
             if (data) SetAction(data);
             _comboCount++;
+            if (_comboCount > _currentCombo.ComboCount)
+            {
+                _comboCount = 0;
+                ComboEnd = true;
+            }
         }
 
         public void EndAttack()
         {
             TriggerOnEnable();
-            _keepTimer = 0.0f;
-            _receiveTimer = 0.0f;
+            KeepTimer = 0.0f;
+            ReceiveTimer = 0.0f;
             _comboCount = 0;
         }
         /// <summary>
@@ -164,8 +164,8 @@ namespace AttackSetting
         void SetAction(ActionData attack)
         {
             CurrentAction = attack;
-            _receiveTimer = attack.ReceiveTime;
-            _keepTimer = attack.KeepTime;
+            ReceiveTimer = attack.ReceiveTime;
+            KeepTimer = attack.KeepTime;
 
             _animCtrl.ChangeClip(_clipName.ToString(), attack.AnimSet.Clip);
             _animCtrl.Play(_clipName.ToString(), attack.AnimSet.Duration);
