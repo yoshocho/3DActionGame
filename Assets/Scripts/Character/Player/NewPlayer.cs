@@ -77,7 +77,6 @@ public partial class NewPlayer : CharacterBase
         _stateMachine.AddAnyTransition<PlayerLandState>((int)StateEvent.Land);
         _stateMachine.Start<PlayerIdleState>();
 
-        _inputManager = InputManager.Instance;
         _selfTrans = transform;
         if(!_animCtrl)_animCtrl = GetComponentInChildren<AnimationCtrl>();
         _grandCheck = GetComponent<GrandChecker>();
@@ -102,10 +101,10 @@ public partial class NewPlayer : CharacterBase
 
     void ApplyAxis()
     {
+        _inputAxis = _inputProvider.GetInputDirection();
         _moveForward = Camera.main.transform.TransformDirection(_inputAxis);
         _moveForward.y = 0.0f;
         _moveForward.Normalize();
-        _inputAxis = InputManager.Instance.InputDir;
     }
     void ApplyMove()
     {
