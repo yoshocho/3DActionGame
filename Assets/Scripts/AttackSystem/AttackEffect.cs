@@ -13,7 +13,8 @@ namespace AttackSetting {
         {
 
             if (data.Effect.CameraShake) CameraManager.ShakeCam();
-            if (data.Effect.ControllerShake) { }
+            if (data.Effect.ControllerEf.ShakeVec != Vector2.zero)
+                EffectManager.Instance.ControllerShake(data.Effect.ControllerEf.ShakeVec, data.Effect.ControllerEf.Duration);
 
             switch (data.Effect.ZoomSet)
             {
@@ -41,6 +42,7 @@ namespace AttackSetting {
                     CameraManager.ShakeCam();
                     break;
                 case AttackEffect.ControllerShake:
+
                     break;
                 case AttackEffect.ZoomIn:
                     CameraManager.ZoomIn();

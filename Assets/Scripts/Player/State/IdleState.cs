@@ -25,8 +25,8 @@ public partial class Player : MonoBehaviour
                 }
             }
             else owner.PlayAnimation("Idle", 0.1f);
-            owner.m_currentVelocity.x = 0f;
-            owner.m_currentVelocity.z = 0f;
+            owner._currentVelocity.x = 0f;
+            owner._currentVelocity.z = 0f;
             Debug.Log("InIdle");
         }
 
@@ -34,7 +34,7 @@ public partial class Player : MonoBehaviour
         {
             if (owner.m_poseKeep)
             {
-                owner.m_weaponHolder.ResetHolder();
+                owner._weaponHolder.ResetHolder();
                 owner.m_poseKeep = false;
             }
         }
@@ -43,28 +43,26 @@ public partial class Player : MonoBehaviour
         {
             if (owner.IsGround())
             {
-                if (owner.m_inputDir.sqrMagnitude > 0.1f)
+                if (owner._inputDir.sqrMagnitude > 0.1f)
                 {
-                    owner.ChangeState(owner.m_walkState);
+                    owner.ChangeState(owner._walkState);
                 }
-                if (owner.m_inputManager.AvoidKey == KeyStatus.DOWN)
+                if (owner._inputProvider.GetAvoid())
                 {
-                    owner.ChangeState(owner.m_avoidState);
+                    owner.ChangeState(owner._avoidState);
                 }
-                if (owner.m_inputManager.LunchKey is KeyStatus.STAY) owner.m_lunchAttack = true;
-                else owner.m_lunchAttack = false;
-                if (owner.m_inputManager.AttackKey == KeyStatus.DOWN)
+                if (owner._inputProvider.GetAttack())
                 {
-                    owner.ChangeState(owner.m_attackState);
+                    owner.ChangeState(owner._attackState);
                 }
-                if (owner.m_inputManager.JumpKey == KeyStatus.DOWN && owner.m_currentJumpStep >= 0)
+                if (owner._inputProvider.GetJump() && owner._currentJumpStep >= 0)
                 {
-                    owner.ChangeState(owner.m_jumpState);
+                    owner.ChangeState(owner._jumpState);
                 }
             }
             else
             {
-                owner.ChangeState(owner.m_fallState);
+                owner.ChangeState(owner._fallState);
             }
         }
     }

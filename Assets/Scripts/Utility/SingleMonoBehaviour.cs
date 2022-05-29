@@ -4,38 +4,38 @@ using UnityEngine;
 
 public class SingleMonoBehaviour<TOwer> : MonoBehaviour where TOwer :SingleMonoBehaviour<TOwer>
 {
-    private static TOwer m_instance = null;
+    private static TOwer s_instance = null;
 
     public static TOwer Instance
     {
         get 
         {
-            if (m_instance == null)
+            if (s_instance == null)
             {
                 Initialize();
             }
-            return m_instance;
+            return s_instance;
         } 
     }
 
     static void Initialize()
     {
 
-        if (m_instance == null)
+        if (s_instance == null)
         {
             var previous = FindObjectOfType(typeof(TOwer));
             if (previous)
             {
                 Debug.Log(string.Format("ヒエラルキーにある{0}をインスタンスに変換します", previous));
-                m_instance = previous as TOwer;
+                s_instance = previous as TOwer;
             }
             else
             {
                 Debug.LogWarning(string.Format("Hierarchy上に{0}が見つからなかったので生成します", typeof(TOwer).Name));
                 var go = new GameObject(typeof(TOwer).Name);
-                m_instance = go.AddComponent<TOwer>();
+                s_instance = go.AddComponent<TOwer>();
 
-                m_instance.SetUp();
+                s_instance.ForcedRun();
             }
         }
     }
@@ -47,13 +47,13 @@ public class SingleMonoBehaviour<TOwer> : MonoBehaviour where TOwer :SingleMonoB
 
     bool CheckInstance()
     {
-        if (m_instance == null)
+        if (s_instance == null)
         {
-            m_instance = this as TOwer;
+            s_instance = this as TOwer;
             OnAwake();
             return true;
         }
-        else if (m_instance == this)
+        else if (s_instance == this)
             return true;
 
         Destroy(this);
@@ -61,7 +61,7 @@ public class SingleMonoBehaviour<TOwer> : MonoBehaviour where TOwer :SingleMonoB
     }
 
 
-    protected virtual void SetUp() { }
+    protected virtual void ForcedRun() { }
     
     public static bool IsAlive => Instance != null;
 
@@ -78,9 +78,12 @@ public class SingleMonoBehaviour<TOwer> : MonoBehaviour where TOwer :SingleMonoB
         if (Instance == this)
         {
             OnRelease();
-            m_instance = null;
+            s_instance = null;
             Debug.LogWarning(string.Format("{0}のインスタンスを破棄しました。",typeof(TOwer)));
         }
     }
+    /// <summary>
+    /// オブジェクトが破棄された時に呼ばれる
+    /// </summary>
     protected virtual void OnRelease() { }
 }

@@ -4,27 +4,23 @@ using UnityEngine;
 using UniRx;
 using AttackSetting;
 
-[RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(Rigidbody))]
 public class CharacterBase : MonoBehaviour,IDamage
 {
     StatusModel m_status = new StatusModel();
 
     [SerializeField]
     float m_moveSpeed = default;
-    [SerializeField]
-    float m_ratateSpeed = default;
-    
     public IReadOnlyReactiveProperty<int> CurrentHp { get => m_status.hp; protected set { m_status.hp.Value = value.Value; } }
     public int MaxHp { get => m_status.maxHp; private set { m_status.maxHp = value; }}
     public float MoveSpeed { get => m_moveSpeed;protected set { m_moveSpeed = value; } }
-    public float RotateSpeed { get => m_ratateSpeed; protected set { m_ratateSpeed = value; } }
     public int Atk { get => m_status.atk; protected set { m_status.atk = value;} }
 
     public bool IsDeath { get; protected set; } = false;
 
-    CharacterController m_controller;
+    Rigidbody m_rb;
 
-    public CharacterController Controller { get => m_controller; protected set { m_controller = value; } }
+    public Rigidbody Rigidbody { get => m_rb; protected set { m_rb = value; } }
 
     private void Awake()
     {
@@ -33,16 +29,21 @@ public class CharacterBase : MonoBehaviour,IDamage
 
     protected virtual void OnAwake()
     {
-        m_controller = GetComponent<CharacterController>();
+        m_rb = GetComponent<Rigidbody>();
         m_status.maxHp = m_status.hp.Value;
     }
 
-    public virtual void AddDamage(int damage, AttackType attackType = AttackType.Light)
+    public virtual void AddDamage(int damage, AttackType attackType = AttackType.Weak)
     {
         m_status.hp.Value = Mathf.Max(m_status.hp.Value - damage,0);
         if(m_status.hp.Value == 0)
         {
             IsDeath = true;
         }
+    }
+
+    public virtual void KnockBack()
+    {
+
     }
 }

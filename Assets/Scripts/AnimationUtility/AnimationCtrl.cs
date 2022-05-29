@@ -3,6 +3,25 @@ using System.Collections.Generic;
 using UnityEditor.Animations;
 using UnityEngine;
 using System;
+
+[System.Serializable]
+public class AnimClip
+{
+    [SerializeField, Header("アニメーションクリップ")]
+    public AnimationClip Clip;
+    [Range(0, 0.5f), Header("ブレンド時間")]
+    public float Duration = 0.1f;
+    [Range(-0.5f, 2.0f)]
+    public float Speed = 1.0f;
+}
+
+[System.Serializable]
+public class AnimState
+{
+    public string StateName = "";
+    [Range(0, 0.5f), Header("ブレンド時間")]
+    public float Duration = 0.1f;
+}
 public class AnimationCtrl : MonoBehaviour
 {
     public delegate void CallBack(int param);
@@ -10,7 +29,7 @@ public class AnimationCtrl : MonoBehaviour
 
     [SerializeField]
     Animator m_anim;
-    
+
     AnimatorOverrideController m_animatorOverrideController;
 
     private void Awake()
@@ -20,8 +39,6 @@ public class AnimationCtrl : MonoBehaviour
         m_animatorOverrideController = new AnimatorOverrideController();
         m_animatorOverrideController.runtimeAnimatorController = m_anim.runtimeAnimatorController;
         m_anim.runtimeAnimatorController = m_animatorOverrideController;
-
-        //m_animatorController = m_anim.runtimeAnimatorController as AnimatorController;
     }
 
     public void Active()
@@ -41,18 +58,23 @@ public class AnimationCtrl : MonoBehaviour
 
     public void SetNormalizedTime(float time, int layer = 0)
     {
-        m_anim.Play(0,layer,time);
+        m_anim.Play(0, layer, time);
         m_anim.Update(0.0f);
     }
 
-    public void Play(string stateName, float dur = 0.1f,int layer = 0, Action onAnimEnd = null)
+    //public void Play(string stateName,float dur = 0.1f,int layer = 0)
+    //{
+    //Active();
+    //m_anim.CrossFadeInFixedTime(stateName, dur, layer);
+    //}
+    public void Play(string stateName, float dur = 0.1f, int layer = 0, Action onAnimEnd = null)
     {
         Active();
-        m_anim.CrossFadeInFixedTime(stateName,dur,layer);
-        StartCoroutine(AnimEndCallBack(0,onAnimEnd));
+        m_anim.CrossFadeInFixedTime(stateName, dur, layer);
+        StartCoroutine(AnimEndCallBack(0, onAnimEnd));
     }
 
-    //public void PlayEndCallBack(string stateName, float dur = 0.1f, int layer = 0, Action onAnimEnd = null)
+    //public void PlayAndCallBack(string stateName, float dur = 0.1f, int layer = 0, Action onAnimEnd = null)
     //{
 
     //}
@@ -63,10 +85,16 @@ public class AnimationCtrl : MonoBehaviour
         yield return new WaitUntil(() => !IsPlayingAnimatin(layer));
         onAnimEnd?.Invoke();
     }
-
-    public void ChangeClip(string stateName,AnimationClip clip,int layerId = 0)
+    /// <summary>
+    /// アニメーションステートの中のアニメーションを差し替える関数
+    /// ＊差し替えるアニメーションステートとその中に最初から同じ名前のアニメーションClipを差し込むこと
+    /// </summary>
+    /// <param name="stateName">ステート名</param>
+    /// <param name="clip">差し込みたいアニメーションクリップ</param>
+    /// <param name="layerId">レイヤーId</param>
+    public void ChangeClip(string stateName, AnimationClip clip, int layerId = 0)
     {
-        
+
         AnimatorStateInfo[] layerInfo = new AnimatorStateInfo[m_anim.layerCount];
         for (int i = 0; i < m_anim.layerCount; i++)
         {

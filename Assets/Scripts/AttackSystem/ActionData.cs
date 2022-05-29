@@ -36,20 +36,12 @@ namespace AttackSetting
     }
 
     [System.Serializable]
-    public class AnimationSetting
-    {
-        [SerializeField,Header("アニメーション")]
-        public AnimationClip Clip;
-        [Range(0, 0.5f),Header("ブレンド時間")]
-        public float Duration = 0.1f;
-        [Range(-0.5f, 2.0f)]
-        public float Speed = 1.0f;
-    }
-    [System.Serializable]
     public class ControllerEf
     {
+        [Header("コントローラー振動の縦横値")]
         public Vector2 ShakeVec;
-        public float Dur;
+        [Header("コントローラー振動の持続時間")]
+        public float Duration;
     }
 
     [System.Serializable]
@@ -64,12 +56,12 @@ namespace AttackSetting
     [CreateAssetMenu(fileName = "ActionData", menuName = "ScriptableObjects/ActionData")]
     public class ActionData : ScriptableObject
     {
-        public AnimationSetting AnimSet;
+        public AnimClip AnimSet;
         public AtkEffect Effect;
         public AttackType AttackType;
-        //public int Id;
         public float HitStopPower;
         public int Damage;
+        public bool UseRootMotion = true;
         [Header("持続時間")]
         public float KeepTime;
         [Header("持続時間後の入力受付時間")]

@@ -6,7 +6,7 @@ public partial class Player : MonoBehaviour
     {
         public override void OnEnter(Player owner, PlayerStateBase prevState)
         {
-            owner.m_currentGravityScale = owner.m_gravityScale;
+            owner._currentGravityScale = owner._gravityScale;
             owner.PlayAnimation("Fall",0.1f);
             Debug.Log("InFall");
         }
@@ -19,21 +19,21 @@ public partial class Player : MonoBehaviour
         public override void OnUpdate(Player owner)
         {
            
-            if (owner.m_inputManager.AttackKey == KeyStatus.DOWN && !owner.m_airAttackEnd)
+            if (owner._inputProvider.GetAttack() && !owner._airAttackEnd)
             {
-                owner.ChangeState(owner.m_attackState);
+                owner.ChangeState(owner._attackState);
             }
             if (owner.IsGround())
             {
-                owner.ChangeState(owner.m_landState);
+                owner.ChangeState(owner._landState);
             }
-            if (owner.m_inputManager.AvoidKey == KeyStatus.DOWN && owner.m_currentAirDushCount < owner.m_airDushCount)
+            if (owner._inputProvider.GetAvoid() && owner._currentAirDushCount < owner._airDushCount)
             {
-                owner.ChangeState(owner.m_avoidState);
+                owner.ChangeState(owner._avoidState);
             }
-            if (owner.m_inputManager.JumpKey == KeyStatus.DOWN && owner.m_currentJumpStep > 0)
+            if (owner._inputProvider.GetJump() && owner._currentJumpStep > 0)
             {
-                owner.ChangeState(owner.m_jumpState);
+                owner.ChangeState(owner._jumpState);
             }
         }
     }
