@@ -16,8 +16,6 @@ public partial class Player : MonoBehaviour
         }
         public override void OnUpdate(Player owner)
         {
-            if (owner._inputManager.LunchKey is KeyStatus.STAY) owner.m_lunchAttack = true;
-            else owner.m_lunchAttack = false;
             if (owner.IsGround())
             {
                 if (owner._inputDir.sqrMagnitude > 0.1f)

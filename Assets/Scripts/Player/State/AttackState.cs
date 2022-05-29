@@ -53,8 +53,8 @@ public partial class Player : MonoBehaviour
             owner.AttackEnd();
             owner._stateKeep = false;
             owner.m_waitTimer = 0.0f;
-            owner.m_reserveAction = false;
-            owner.m_actionKeepingTimer = 0.0f;
+            owner._reserveAction = false;
+            owner._actionKeepingTimer = 0.0f;
             owner.m_comboStep = 0;
             owner.m_lunchAttack = false;
             owner._targetEnemys.Clear();
@@ -68,13 +68,13 @@ public partial class Player : MonoBehaviour
 
         public override void OnUpdate(Player owner)
         {
-            if (owner.m_actionKeepingTimer > 0.0f)
+            if (owner._actionKeepingTimer > 0.0f)
             {
                 //Debug.Log("攻撃持続時中");
-                owner.m_actionKeepingTimer -= Time.deltaTime;
-                if (owner.m_actionKeepingTimer <= 0.0f)
+                owner._actionKeepingTimer -= Time.deltaTime;
+                if (owner._actionKeepingTimer <= 0.0f)
                 {
-                    owner.m_actionKeepingTimer = 0.0f;
+                    owner._actionKeepingTimer = 0.0f;
                     //if (!owner.IsGround() && !owner.m_reserveAction)
                     //{
                     //    owner.m_inKeepAir = false;
@@ -91,15 +91,12 @@ public partial class Player : MonoBehaviour
                 }
             }
 
-            if (owner._inputManager.LunchKey is KeyStatus.STAY) owner.m_lunchAttack = true;
-            else owner.m_lunchAttack = false;
-
-            if (owner._inputProvider.GetAttack() && owner.m_actionKeepingTimer <= 0.0f)
+            if (owner._inputProvider.GetAttack() && owner._actionKeepingTimer <= 0.0f)
             {
-                owner.m_reserveAction = true;
+                owner._reserveAction = true;
                 owner._stateKeep = false;
             }
-            if (owner.m_reserveAction && owner.m_actionKeepingTimer <= 0.0f)
+            if (owner._reserveAction && owner._actionKeepingTimer <= 0.0f)
             {
                 //owner.ChangeAttacks(owner.m_weaponType);
                 if (owner.m_lunchAttack && !owner.m_lunchEnd)
@@ -117,9 +114,9 @@ public partial class Player : MonoBehaviour
                 {
                     owner.m_comboStep = 0;
                 }
-                owner.m_reserveAction = false;
+                owner._reserveAction = false;
             }
-            if (!owner.m_reserveAction && owner.m_waitTimer <= 0.0f)
+            if (!owner._reserveAction && owner.m_waitTimer <= 0.0f)
             {
                 owner.m_comboStep = 0;
                 owner._targetEnemys.Clear();
@@ -129,13 +126,13 @@ public partial class Player : MonoBehaviour
             //    owner.ChangeState(owner.m_fallState);
             //}
 
-            if (!owner.IsGround() && !owner.m_reserveAction && !owner._inKeepAir)
+            if (!owner.IsGround() && !owner._reserveAction && !owner._inKeepAir)
             {
                 owner.ChangeState(owner._fallState);
             }
             if (owner.IsGround())
             {
-                if (!owner.m_reserveAction && owner.m_actionKeepingTimer <= 0.0f)
+                if (!owner._reserveAction && owner._actionKeepingTimer <= 0.0f)
                 {
                     if (owner._inputDir.sqrMagnitude > 0.1f && owner._inputProvider.GetAttack())
                     {

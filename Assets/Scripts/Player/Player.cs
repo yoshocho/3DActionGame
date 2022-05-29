@@ -65,7 +65,6 @@ public partial class Player : MonoBehaviour, IDamage
     CharacterController _controller;
     Animator _anim;
     AttackAssistController _attackAssist;
-    InputManager _inputManager;
     WeaponHolder _weaponHolder;
     HitCtrl _hitCtrl;
     [SerializeField] ActionControl _actionCtrl;
@@ -89,11 +88,11 @@ public partial class Player : MonoBehaviour, IDamage
     /// <summary>次の攻撃までの入力受付時間</summary>
     float m_waitTimer = 0.0f;
     /// <summary>攻撃のフラグ</summary> 
-    bool m_reserveAction = false;
+    bool _reserveAction = false;
     /// <summary>コンボ数</summary> 
     int m_comboStep = 0;
     /// <summary>アクションの持続時間</summary>
-    float m_actionKeepingTimer = 0.0f;
+    float _actionKeepingTimer = 0.0f;
 
     bool m_lunchEnd = false;
 
@@ -155,7 +154,6 @@ public partial class Player : MonoBehaviour, IDamage
         _weaponHolder = GetComponentInChildren<WeaponHolder>();
         _animCtrl.SetEventDelegate(EventCall);
         ChangeState(_idleState);
-        _inputManager = InputManager.Instance;
         _actionCtrl = ActionControl.Instance;
 
         //m_lunchTrigger.enabled = false;
@@ -172,17 +170,17 @@ public partial class Player : MonoBehaviour, IDamage
         ApplyGravity();
         ApplyRotation();
         CheckAir();
-        if (_inputManager.WeaponChangeKey is KeyStatus.DOWN) ChangeWeapon();
+        //if (_inputManager.WeaponChangeKey is KeyStatus.DOWN) ChangeWeapon();
 
         _currentState.OnUpdate(this);
     }
 
     void ApplyAxis()
     {
+        _inputDir = _inputProvider.GetInputDirection();
         _moveForward = Camera.main.transform.TransformDirection(_inputDir);
         _moveForward.y = 0.0f;
         _moveForward.Normalize();
-        _inputDir = _inputManager.InputDir;
     }
 
     void ApplyMove()
@@ -348,7 +346,7 @@ public partial class Player : MonoBehaviour, IDamage
                 _weaponHolder.ChangeWeapon(m_weaponType);
                 _hitCtrl.SetCtrl(this, comboList[actId]);
                 m_waitTimer = attack.WaitTime;
-                m_actionKeepingTimer = attack.KeepTime;
+                _actionKeepingTimer = attack.KeepTime;
                 _animCtrl.Play(attack.ActionTargetName, 0.2f);
                 break;
             case ActionType.CreateObject:

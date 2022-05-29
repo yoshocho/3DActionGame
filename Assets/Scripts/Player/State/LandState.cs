@@ -40,8 +40,6 @@ public partial class Player : MonoBehaviour
                 Debug.Log("Land -> Jump");
                 owner.ChangeState(owner._avoidState);
             }
-            if (owner._inputManager.LunchKey is KeyStatus.STAY) owner.m_lunchAttack = true;
-            else owner.m_lunchAttack = false;
             if (owner._inputProvider.GetAttack())
             {
                 owner.ChangeState(owner._attackState);

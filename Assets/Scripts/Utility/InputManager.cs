@@ -1,60 +1,30 @@
-﻿using InputProviders;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
-public enum KeyStatus
-{
-    NONE,
-    STAY,
-    UP,
-    DOWN,
-}
+using InputProviders;
 
 public class InputManager : SingleMonoBehaviour<InputManager>
 {
-    public Vector3 InputDir { get; private set; } = default;
-
-    public KeyStatus WeaponChangeKey { get; private set; } = KeyStatus.NONE;
-
-    public KeyStatus LunchKey { get; private set; }
-
-    public PlayerInput InputActions { get; private set; }
-
-    private void OnEnable()
-    {
-        InputActions = new PlayerInput();
-        InputActions.Enable();
-    }
+    PlayerInput _inputActions;
 
     public void SetUp()
     {
-        InputActions = new PlayerInput();
-        InputActions.Enable();
+        _inputActions = new PlayerInput();
+        _inputActions.Enable();
         var player = GameObject.FindGameObjectWithTag("Player").GetComponent<NewPlayer>();
         var inputProvider = new InputProvider();
-        inputProvider.SetUp(InputActions);
+        inputProvider.SetUp(_inputActions);
         player.SetInputProvider(inputProvider);
     }
     public void Disable()
     {
-        InputActions?.Disable();
+        _inputActions?.Disable();
 
     }
     public void Dispose()
     {
-        InputActions?.Dispose();
-
+        _inputActions?.Dispose();
     }
-
-    private void Update()
-    {
-
-        var axis = InputActions.Player.Move.ReadValue<Vector2>();
-        InputDir = Vector3.forward * axis.y + Vector3.right * axis.x;
-
-    }
-
     public IEnumerator ControllerShake(Vector2 shakeVec, float shakeTime)
     {
         if (Gamepad.current == null) yield break;

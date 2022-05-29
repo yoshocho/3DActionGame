@@ -67,10 +67,6 @@ public partial class Player : MonoBehaviour
 
                     owner._currentVelocity = new Vector3(m_avoidDir.x, 0.0f, m_avoidDir.z) * owner._avoidSpeed;
 
-                    if (owner._inputManager.LunchKey is KeyStatus.STAY)
-                        owner.m_lunchAttack = true;
-                    else owner.m_lunchAttack = false;
-
                     if (owner._inputProvider.GetAttack())
                     {
                         owner.ChangeState(owner._attackState);
