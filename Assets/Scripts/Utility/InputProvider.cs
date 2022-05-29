@@ -25,9 +25,11 @@ namespace InputProviders
             return _inputAction.Player.Jump.WasPressedThisFrame();
         }
 
-        public Vector3 GetMoveDirection()
+        public Vector3 GetInputDirection()
         {
-            throw new System.NotImplementedException();
+            var axis = _inputAction.Player.Move.ReadValue<Vector2>();
+            var inputDir = Vector3.forward * axis.y + Vector3.right * axis.x;
+            return inputDir;
         }
     }
 }
