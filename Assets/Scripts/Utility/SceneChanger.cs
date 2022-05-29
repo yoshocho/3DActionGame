@@ -1,81 +1,48 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using System;
-using Cysharp.Threading.Tasks;
-using System.Threading;
 
 public class SceneChanger : SingleMonoBehaviour<SceneChanger>
 {
-    [SerializeField,Tooltip("シーン遷移時のロードゲージ")]
-    Slider m_loadGage = default;
-    [SerializeField, Tooltip("シーン遷移のキャンバス")]
-    Canvas m_loadCanvas = default;
-
-    float __fadeTime = 1.0f;
 
     protected override void OnAwake()
     {
-        base.OnAwake();
         DontDestroyOnLoad(gameObject);
     }
     public void LoadScene(string sceneName)
     {
+        if (sceneName.Length <= 0) { Debug.LogWarning("シーンを指定してください"); return; }
         SceneManager.LoadScene(sceneName);
     }
-    /// <summary>
-    /// ボタン用の関数
-    /// </summary>
-    /// <param name="sceneName">遷移先のシーン名</param>
-    public void LoadSceneOrFade(string sceneName)
-    {
-        LoadSceneAsync(sceneName,this.GetCancellationTokenOnDestroy()).Forget();
-    }
-    public void LoadSceneOrFade(string sceneName,float fadeSpeed)
-    {
-        __fadeTime = fadeSpeed;
-        LoadSceneAsync(sceneName,this.GetCancellationTokenOnDestroy()).Forget();
-    }
 
-    protected override void ForcedRun()
-    {
-        base.ForcedRun();
-    }
-
-    /// <summary>
-    /// 待機可能なシーン遷移関数
-    ///＊必ずキャンセル処理をして使う
-    /// </summary>
-    /// <param name="sceneName">シーンの名前</param>
-    /// <param name="token">キャンセルトークン</param>
-    /// <returns></returns>
-    public async UniTask LoadSceneAsync(string sceneName, CancellationToken token = default)
+    public void LoadSceneAsync(string sceneName)
     {
         if (sceneName.Length <= 0) { Debug.LogWarning("シーンを指定してください"); return; }
-
+        LoadAsync(sceneName);
+    }
+    private IEnumerator LoadAsync(string sceneName)
+    {
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
-
         asyncLoad.allowSceneActivation = false;
-
-        //m_loadCanvas.gameObject.SetActive(true);
-
-        await FadeSystem.Instance.Fade(1.0f);
 
         while (true)
         {
-            await UniTask.Yield();
-            //m_loadGage.value = asyncLoad.progress;
-
+            yield return null;
             if (asyncLoad.progress >= 0.9f)
             {
-                //m_loadGage.value = 1f;
-
                 asyncLoad.allowSceneActivation = true;
-                await UniTask.Delay(TimeSpan.FromSeconds(1f), cancellationToken: token);
+                yield return new WaitForSeconds(0.5f);
                 break;
             }
         }
+    }
+    public void FadeScene(string sceneName)
+    {
+        FadeSystem.FadeOut(() => LoadScene(sceneName));
+    }
+
+    public void FadeScene(string sceneName, float fadeTime = 1.0f)
+    {
+        FadeSystem.FadeOut(fadeTime, () => LoadScene(sceneName));
     }
 }
