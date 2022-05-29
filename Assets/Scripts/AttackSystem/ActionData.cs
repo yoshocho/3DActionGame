@@ -61,6 +61,7 @@ namespace AttackSetting
         public AttackType AttackType;
         public float HitStopPower;
         public int Damage;
+        public bool UseRootMotion = true;
         [Header("‘±ŠÔ")]
         public float KeepTime;
         [Header("‘±ŠÔŒã‚Ì“ü—Íó•tŠÔ")]
