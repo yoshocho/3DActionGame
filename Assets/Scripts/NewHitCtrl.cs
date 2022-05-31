@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace AttackSetting
@@ -7,25 +5,25 @@ namespace AttackSetting
 
     public class NewHitCtrl : MonoBehaviour
     {
-        Collider m_collider;
-        ActionCtrl m_actCtrl;
+        Collider _collider;
+        ActionCtrl _actCtrl;
 
         private void Awake()
         {
-            m_collider = GetComponentInChildren<Collider>();
-            m_collider.enabled = false;
+            _collider = GetComponentInChildren<Collider>();
+            _collider.enabled = false;
         }
 
         public void SetUp(ActionCtrl ctrl)
         {
-            m_actCtrl = ctrl;
+            _actCtrl = ctrl;
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            if (!m_actCtrl) return;
+            if (!_actCtrl) return;
 
-            m_actCtrl.HitCallBack(other);
+            _actCtrl.HitCallBack(other);
         }
     }
 }

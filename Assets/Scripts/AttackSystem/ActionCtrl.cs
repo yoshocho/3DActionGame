@@ -18,13 +18,6 @@ namespace AttackSetting
         SetEffect,
     }
 
-    public enum OwerType
-    {
-        Player,
-        Enemy,
-    }
-
-
     public partial class ActionCtrl : MonoBehaviour
     {
 
@@ -33,9 +26,6 @@ namespace AttackSetting
         [SerializeField]
         List<ComboData> _comboDatas = new List<ComboData>();
         public List<ComboData> CurrentAttacks => _comboDatas;
-
-        [SerializeField]
-        OwerType _owerType;
 
         AttackType _prevType;
         ComboData _currentCombo;
@@ -115,6 +105,11 @@ namespace AttackSetting
             ActionData data = null;
             if (_prevType != attackType) _comboCount = 0;
             _prevType = attackType;
+
+            foreach (var attacks in _comboDatas) 
+            {
+
+            }
 
             switch (attackType)
             {
