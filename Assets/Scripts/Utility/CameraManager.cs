@@ -5,70 +5,78 @@ using Cinemachine;
 using UnityEngine.UI;
 using UniRx;
 using System;
+
 public class CameraManager : MonoBehaviour
 {
     public static CameraManager Instance { get; private set; } = default;
 
     [SerializeField]
-    CinemachineVirtualCamera m_cam = default;
+    CinemachineVirtualCamera _vCam = default;
     [SerializeField]
-    CinemachineFreeLook m_freeCam = default;
+    CinemachineFreeLook _freeCam = default;
     [SerializeField]
-    float m_zoomSpeed = 1;
+    float _zoomSpeed = 1;
     [SerializeField]
-    private float m_cameraDistance = 8.5f;
+    private float _cameraDistance = 8.5f;
     [SerializeField]
-    private float m_scrollMin = 3f;
+    private float _scrollMin = 3f;
     [SerializeField]
-    float m_zoomDistance = 4f;
-    CinemachineFramingTransposer m_camDistance;
+    float _zoomDistance = 4f;
+    CinemachineFramingTransposer _camDistance;
     CinemachinePOV m_camPov;
-    CinemachineImpulseSource m_impulseSource;
-
-    bool m_isJust = default;
-    float m_defaultDistance = default;
+    CinemachineImpulseSource _impulseSource;
+    
+    bool _isJust = default;
+    float _defaultDistance = default;
     private void Awake()
     {
         Instance = this;
     }
     void Start()
     {
-        m_camDistance = m_cam.GetCinemachineComponent<CinemachineFramingTransposer>();
-        m_camPov = m_cam.GetCinemachineComponent<CinemachinePOV>();
-        m_impulseSource = GetComponent<CinemachineImpulseSource>();
-        m_camDistance.m_CameraDistance = m_cameraDistance;
-        m_defaultDistance = m_camDistance.m_CameraDistance;
+        _camDistance = _vCam.GetCinemachineComponent<CinemachineFramingTransposer>();
+        m_camPov = _vCam.GetCinemachineComponent<CinemachinePOV>();
+        _impulseSource = GetComponent<CinemachineImpulseSource>();
+        _camDistance.m_CameraDistance = _cameraDistance;
+        _defaultDistance = _camDistance.m_CameraDistance;
 
         BulletTimeManager.Instance.JustSuccess
             .Subscribe(_ => StartCoroutine(OnjustCam()))
             .AddTo(this);
-    }
+    } 
+
     IEnumerator OnjustCam()
     {
         Debug.Log("OnZoom");
-        while (m_camDistance.m_CameraDistance > m_zoomDistance)
+        while (_camDistance.m_CameraDistance > _zoomDistance)
         {
-            m_camDistance.m_CameraDistance -= 6f * Time.unscaledDeltaTime;
+            _camDistance.m_CameraDistance -= 6f * Time.unscaledDeltaTime;
             yield return null;
         }
         Debug.Log("ZoomOut");
-        m_isJust = true;
-        yield return new WaitUntil(() => m_isJust);
-        while (m_camDistance.m_CameraDistance <= m_defaultDistance)
+        _isJust = true;
+        yield return new WaitUntil(() => _isJust);
+        while (_camDistance.m_CameraDistance <= _defaultDistance)
         {
-            m_camDistance.m_CameraDistance += 1f;
+            _camDistance.m_CameraDistance += 1f;
         }
 
-        m_isJust = false;
+        _isJust = false;
     }
 
-    public static IEnumerator ZoomIn() { yield return null; }
-
-    public static IEnumerator ZoomOut() { yield return null; }
-
-    public static void ShakeCam()
+    public static IEnumerator ZoomIn(float zoomSpeed = 0.5f, Action zoomEnd = null)
     {
-         Instance.m_impulseSource.GenerateImpulse();
+        yield return null;
+    }
+
+    public static IEnumerator ZoomOut(float zoomSpeed = 0.5f, Action zoomEnd = null)
+    {
+        yield return null;
+    }
+
+    public static void ShakeCam(Vector3 vec = default)
+    {
+        Instance._impulseSource.GenerateImpulse(vec);
     }
 
     //void Update()

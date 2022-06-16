@@ -3,7 +3,7 @@ using UnityEngine;
 using System;
 using AttackSetting;
 
-[RequireComponent(typeof(ActionCtrl))]
+[RequireComponent(typeof(ActionCtrl),typeof(GrandChecker))]
 public partial class NewPlayer : CharacterBase
 {
     enum StateEvent :int
@@ -62,7 +62,6 @@ public partial class NewPlayer : CharacterBase
 
     bool _inAvoid = false;
     bool _keepAir = false;
-    float _moveSpeed;
 
     void Start()
     {
@@ -108,8 +107,8 @@ public partial class NewPlayer : CharacterBase
     }
     void ApplyMove()
     {
-        var velocity = Vector3.Scale(_currentVelocity, new Vector3(_moveSpeed, 1.0f, _moveSpeed));
-        Rigidbody.velocity = velocity;
+        var velocity = Vector3.Scale(_currentVelocity, new Vector3(MoveSpeed, 1.0f, MoveSpeed));
+        Controller.Move(Time.deltaTime * velocity);
     }
     void ApplyRotation()
     {
@@ -134,15 +133,16 @@ public partial class NewPlayer : CharacterBase
     {
         _stateMachine.Dispatch((int)nextState);
     }
-    void PlayAnimation(string name, float dur = 0.1f, int layer = 0, Action onAnimEnd = null)
+    public void PlayAnimation(string name, float dur = 0.1f, int layer = 0, Action onAnimEnd = null)
     {
+        if (!_animCtrl) return;
         _animCtrl.Play(name,dur,layer,onAnimEnd);
     }
     public override void AddDamage(int damage, AttackType attackType = AttackType.Weak)
     {
         if (_invincible) return;
 
-        if (_inAvoid) 
+        if (_inAvoid)
         {
 
             return;

@@ -12,7 +12,7 @@ namespace AttackSetting {
         public void PlayEf(ActionData data)
         {
 
-            if (data.Effect.CameraShake) CameraManager.ShakeCam();
+            if (data.Effect.CameraShakeVec != Vector3.zero) CameraManager.ShakeCam();
             if (data.Effect.ControllerEf.ShakeVec != Vector2.zero)
                 EffectManager.Instance.ControllerShake(data.Effect.ControllerEf.ShakeVec, data.Effect.ControllerEf.Duration);
 
@@ -39,10 +39,11 @@ namespace AttackSetting {
             switch (effect)
             {
                 case AttackEffect.CameraShake:
-                    CameraManager.ShakeCam();
+                    CameraManager.ShakeCam(CurrentAction.Effect.CameraShakeVec);
                     break;
                 case AttackEffect.ControllerShake:
-
+                    var ctlEf = CurrentAction.Effect.ControllerEf;
+                    EffectManager.Instance.ControllerShake(ctlEf.ShakeVec,ctlEf.Duration);
                     break;
                 case AttackEffect.ZoomIn:
                     CameraManager.ZoomIn();
@@ -51,6 +52,7 @@ namespace AttackSetting {
                     CameraManager.ZoomOut();
                     break;
                 case AttackEffect.SetEffect:
+
                     break;
                 default:
                     break;

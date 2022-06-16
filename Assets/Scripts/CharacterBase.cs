@@ -4,23 +4,23 @@ using UnityEngine;
 using UniRx;
 using AttackSetting;
 
-[RequireComponent(typeof(Rigidbody))]
 public class CharacterBase : MonoBehaviour,IDamage
 {
-    StatusModel m_status = new StatusModel();
+    StatusModel _status = new StatusModel();
 
     [SerializeField]
-    float m_moveSpeed = default;
-    public IReadOnlyReactiveProperty<int> CurrentHp { get => m_status.hp; protected set { m_status.hp.Value = value.Value; } }
-    public int MaxHp { get => m_status.maxHp; private set { m_status.maxHp = value; }}
-    public float MoveSpeed { get => m_moveSpeed;protected set { m_moveSpeed = value; } }
-    public int Atk { get => m_status.atk; protected set { m_status.atk = value;} }
+    float _moveSpeed = default;
+    public IReadOnlyReactiveProperty<int> CurrentHp { get => _status.hp; protected set { _status.hp.Value = value.Value; } }
+    public int MaxHp { get => _status.maxHp; private set { _status.maxHp = value; }}
+    public float MoveSpeed { get => _moveSpeed;protected set { _moveSpeed = value; } }
+    public int Atk { get => _status.atk; protected set { _status.atk = value;} }
 
     public bool IsDeath { get; protected set; } = false;
 
-    Rigidbody m_rb;
-
-    public Rigidbody Rigidbody { get => m_rb; protected set { m_rb = value; } }
+    //Rigidbody _rb;
+    //public Rigidbody Rigidbody { get => _rb; protected set { _rb = value; } }
+    CharacterController _characterController;
+    public CharacterController Controller { get => _characterController; protected set { _characterController = value; } }
 
     private void Awake()
     {
@@ -29,14 +29,14 @@ public class CharacterBase : MonoBehaviour,IDamage
 
     protected virtual void OnAwake()
     {
-        m_rb = GetComponent<Rigidbody>();
-        m_status.maxHp = m_status.hp.Value;
+        _characterController = GetComponent<CharacterController>();
+        _status.maxHp = _status.hp.Value;
     }
 
     public virtual void AddDamage(int damage, AttackType attackType = AttackType.Weak)
     {
-        m_status.hp.Value = Mathf.Max(m_status.hp.Value - damage,0);
-        if(m_status.hp.Value == 0)
+        _status.hp.Value = Mathf.Max(_status.hp.Value - damage,0);
+        if(_status.hp.Value == 0)
         {
             IsDeath = true;
         }

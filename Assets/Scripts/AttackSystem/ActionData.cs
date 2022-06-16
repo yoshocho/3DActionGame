@@ -47,8 +47,10 @@ namespace AttackSetting
     [System.Serializable]
     public class AtkEffect
     {
+        [Header("攻撃ヒット時のエフェクト")]
         public GameObject HitEff;
-        public bool CameraShake;
+        [Header("カメらを揺らす強さ")]
+        public Vector3 CameraShakeVec;
         public ControllerEf ControllerEf;
         public CamZoom ZoomSet;
     }
