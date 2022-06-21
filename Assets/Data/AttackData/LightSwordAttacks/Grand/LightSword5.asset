@@ -18,15 +18,18 @@ MonoBehaviour:
     Speed: 0
   Effect:
     HitEff: {fileID: 0}
-    CameraShake: 1
-    ControllerShake: 0
-    ZoomIn: 0
-    ZoomOut: 0
+    CameraShakeVec: {x: 0.03, y: 0.03, z: 0.03}
+    ControllerEf:
+      ShakeVec: {x: 0, y: 0}
+      Duration: 0
+    ZoomSet: 0
   AttackType: 0
   HitStopPower: 1.82
   Damage: 92
+  Id: 0
+  UseRootMotion: 0
   KeepTime: 0.89
-  ReceiveTime: 0.18
+  ReceiveTime: 0.55
   KnockPower:
     ForwardPower: 0
     UpPower: 0

@@ -14,19 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AnimSet:
     Clip: {fileID: 7400000, guid: 40171f66881f0d84a8e1c6eaee43e7db, type: 2}
-    Duration: 0.1
+    Duration: 0.2
     Speed: 0
   Effect:
     HitEff: {fileID: 0}
-    CameraShake: 1
-    ControllerShake: 0
-    ZoomIn: 0
-    ZoomOut: 0
+    CameraShakeVec: {x: 0, y: 0, z: 0}
+    ControllerEf:
+      ShakeVec: {x: 0, y: 0}
+      Duration: 0
+    ZoomSet: 0
   AttackType: 0
   HitStopPower: 1.1
   Damage: 42
+  Id: 0
+  UseRootMotion: 0
   KeepTime: 0.39
-  ReceiveTime: 0.15
+  ReceiveTime: 0.69
   KnockPower:
     ForwardPower: 0.4
     UpPower: 0

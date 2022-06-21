@@ -10,27 +10,27 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4b3f25612b989fc40af95cba7747b043, type: 3}
-  m_Name: LightSword4
+  m_Name: HeavySword1
   m_EditorClassIdentifier: 
   AnimSet:
-    Clip: {fileID: 7400000, guid: 76b69d3dec468d842b06e143b9362d31, type: 2}
+    Clip: {fileID: 7400000, guid: 031b5cf19aa1ca54d9d87df3d9291110, type: 2}
     Duration: 0.1
-    Speed: 0
+    Speed: 1
+    UseRootMotion: 1
   Effect:
     HitEff: {fileID: 0}
-    CameraShakeVec: {x: 0, y: 0, z: 0}
+    CameraShakeVec: {x: 0.05, y: 0.05, z: 0.1}
     ControllerEf:
       ShakeVec: {x: 0, y: 0}
       Duration: 0
     ZoomSet: 0
-  AttackType: 0
-  HitStopPower: 1.28
-  Damage: 69
+  AttackType: 1
+  HitStopPower: 2.4
+  Damage: 90
   Id: 0
-  UseRootMotion: 0
-  KeepTime: 0.47
-  ReceiveTime: 0.62
+  KeepTime: 0.85
+  ReceiveTime: 0.42
   KnockPower:
-    ForwardPower: 0
+    ForwardPower: 0.51
     UpPower: 0
     DownPower: 0
