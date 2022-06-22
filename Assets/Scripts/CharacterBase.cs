@@ -17,11 +17,9 @@ public class CharacterBase : MonoBehaviour,IDamage
 
     public bool IsDeath { get; protected set; } = false;
 
-    //Rigidbody _rb;
-    //public Rigidbody Rigidbody { get => _rb; protected set { _rb = value; } }
-    CharacterController _characterController;
-    public CharacterController Controller { get => _characterController; protected set { _characterController = value; } }
-
+    Rigidbody _rb;
+    public Rigidbody Rigidbody { get => _rb; protected set { _rb = value; } }
+    
     private void Awake()
     {
         OnAwake();
@@ -29,7 +27,7 @@ public class CharacterBase : MonoBehaviour,IDamage
 
     protected virtual void OnAwake()
     {
-        _characterController = GetComponent<CharacterController>();
+        _rb = GetComponent<Rigidbody>();
         _status.maxHp = _status.hp.Value;
     }
 
