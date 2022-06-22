@@ -1,9 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public interface IPoolObject
+namespace ObjectPool
 {
-    public void SetUp();
-    public void Sleep();
+    public interface IPoolObject
+    {
+        public void SetUp();
+        public void Sleep();
+    }
 }

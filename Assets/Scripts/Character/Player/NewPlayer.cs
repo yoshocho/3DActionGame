@@ -36,6 +36,8 @@ public partial class NewPlayer : CharacterBase
     [SerializeField]
     float _avoidTime = 1.0f;
     [SerializeField]
+    float _avoidSpeed = 2.0f;
+    [SerializeField]
     float _justTime = 0.3f;
     
 
