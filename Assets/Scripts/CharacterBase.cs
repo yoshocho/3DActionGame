@@ -6,6 +6,7 @@ using AttackSetting;
 
 public class CharacterBase : MonoBehaviour,IDamage
 {
+    [SerializeField]
     StatusModel _status = new StatusModel();
 
     [SerializeField]
