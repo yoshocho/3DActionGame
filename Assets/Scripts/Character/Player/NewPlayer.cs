@@ -62,6 +62,9 @@ public partial class NewPlayer : CharacterBase
     ActionCtrl _actionCtrl;
     StateMachine<NewPlayer> _stateMachine;
 
+    [SerializeField]
+    bool _debagMode;
+
     bool _inAvoid = false;
     bool _keepAir = false;
 

@@ -9,9 +9,9 @@ public partial class NewPlayer : CharacterBase
     {
         protected override void OnEnter(State prevState)
         {
-            Debug.Log("InWalk");
+           if(owner._debagMode) Debug.Log("InWalk");
             owner.PlayAnimation("Walk",0.1f);
-            owner._moveSpeed = owner._walkSpeed;
+            owner.MoveSpeed = owner._walkSpeed;
         }
         protected override void OnUpdate()
         {
@@ -22,12 +22,10 @@ public partial class NewPlayer : CharacterBase
                     owner._targetRot = Quaternion.LookRotation(owner._moveForward);
                     owner._currentVelocity = new Vector3(owner._selfTrans.forward.x, owner.
                         _currentVelocity.y, owner._selfTrans.forward.z);
-                    if (owner._inputProvider.GetAttack())
-                        owner.ChangeState(StateEvent.Attack);
-                    if (owner._inputProvider.GetAvoid())
-                        owner.ChangeState(StateEvent.Avoid);
-                    if (owner._inputProvider.GetJump())
-                        owner.ChangeState(StateEvent.Jump);
+
+                    if (owner._inputProvider.GetAttack()) owner.ChangeState(StateEvent.Attack);
+                    if (owner._inputProvider.GetAvoid()) owner.ChangeState(StateEvent.Avoid);
+                    if (owner._inputProvider.GetJump()) owner.ChangeState(StateEvent.Jump);
                 }
                 else owner.ChangeState(StateEvent.Idle);
             }
