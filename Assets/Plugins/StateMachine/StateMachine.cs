@@ -4,9 +4,9 @@ public class StateMachine<TOwner>
 {
     public abstract class State 
     {
-        protected StateMachine<TOwner> StateMachine => stateMachine;
         internal StateMachine<TOwner> stateMachine;
-
+        protected StateMachine<TOwner> StateMachine => stateMachine;
+        
         internal Dictionary<int, State> transitions = new Dictionary<int, State>();
 
         protected TOwner owner => stateMachine.Owner;
