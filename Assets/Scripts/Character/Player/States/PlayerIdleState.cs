@@ -9,7 +9,7 @@ public partial class NewPlayer : CharacterBase
     {
         protected override void OnEnter(State prevState)
         {
-            Debug.Log("InIdle");
+            if(owner._debagMode) Debug.Log("InIdle");
             if (prevState is PlayerWalkState) owner.PlayAnimation("WalkEnd",0.2f);
             else owner.PlayAnimation("Idle",0.1f);
             owner._currentVelocity.x = 0.0f;
@@ -19,14 +19,10 @@ public partial class NewPlayer : CharacterBase
         {
             if (owner.IsGround())
             {
-                if (owner._inputAxis.sqrMagnitude > 0.1f) 
-                    owner.ChangeState(StateEvent.Walk);
-                if(owner._inputProvider.GetAvoid())
-                    owner.ChangeState(StateEvent.Avoid);
-                if(owner._inputProvider.GetAttack())
-                    owner.ChangeState(StateEvent.Attack);
-                if(owner._inputProvider.GetJump())
-                    owner.ChangeState(StateEvent.Jump);
+                if (owner._inputAxis.sqrMagnitude > 0.1f) owner.ChangeState(StateEvent.Walk);
+                if (owner._inputProvider.GetAvoid()) owner.ChangeState(StateEvent.Avoid);
+                if(owner._inputProvider.GetAttack()) owner.ChangeState(StateEvent.Attack);
+                if (owner._inputProvider.GetJump()) owner.ChangeState(StateEvent.Jump);
             }
             else owner.ChangeState(StateEvent.Fall);
         }

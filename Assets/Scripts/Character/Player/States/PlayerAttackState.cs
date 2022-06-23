@@ -6,6 +6,7 @@ public partial class NewPlayer : CharacterBase
 {
     public class PlayerAttackState : State
     {
+        const float _extendTime = 0.25f;
         protected override void OnEnter(State prevState)
         {
             owner._currentVelocity = Vector3.zero;
@@ -18,11 +19,11 @@ public partial class NewPlayer : CharacterBase
                 if (owner.IsGround()) owner._actionCtrl.RequestAction(AttackType.Weak);
                 else owner._actionCtrl.RequestAction(AttackType.Airial);
             }
-
+            bool stickMove = owner._inputAxis.sqrMagnitude > 0.1f;
             if ((owner.IsGround()))
             {
-                if (owner._inputAxis.sqrMagnitude > 0.1f && 
-                    owner._actionCtrl.ReceiveTimer < owner._actionCtrl.CurrentAction.ReceiveTime - 0.1f)
+                if (stickMove && owner._actionCtrl.ReceiveTimer <
+                    owner._actionCtrl.CurrentAction.ReceiveTime - _extendTime) //’¼‚®‚ÉƒXƒe[ƒg‚ª•Ï‚í‚ç‚È‚¢‚æ‚¤‚É­‚µ—P—\‚ðŽ‚½‚¹‚é
                     owner.ChangeState(StateEvent.Walk);
                 else if (!owner._animCtrl.IsPlayingAnimatin()) owner.ChangeState(StateEvent.Idle);
             }

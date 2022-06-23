@@ -3,14 +3,15 @@ using UnityEngine;
 using State = StateMachine<NormalStateEnemy>.State;
 using ObjectPool;
 
-[RequireComponent(typeof(GrandChecker))]
+[RequireComponent(typeof(GrandChecker),typeof(ActionCtrl))]
 public partial class NormalStateEnemy : CharacterBase,IPoolObject
 {
     enum StateType
     {
         Idle,
         Chase,
-        Attack
+        Attack,
+        Damage,
     }
     enum Attack
     {
@@ -24,44 +25,52 @@ public partial class NormalStateEnemy : CharacterBase,IPoolObject
     [SerializeField]
     float _rotateSpeed = 5.0f;
 
-    NewHitCtrl _hitCtrl;
-
     [SerializeField]
     Transform _targetTrans;
 
+    Attack _attackType = Attack.Single;
+    float _distance;
     Quaternion _targetRot;
     StateMachine<NormalStateEnemy> _stateMachine;
     ActionCtrl _actCtrl;
     Transform _selfTrans;
     Vector3 _currentVelocity;
+    [SerializeField]
+    bool _debagMode;
 
     private void Start()
+    {
+       Init();
+    }
+    void Init() 
     {
         _stateMachine = new StateMachine<NormalStateEnemy>(this);
 
         _stateMachine.AddAnyTransition<IdleState>((int)StateType.Idle);
         _stateMachine.AddAnyTransition<ChaseState>((int)StateType.Chase);
         _stateMachine.AddAnyTransition<AttackState>((int)StateType.Attack);
+        _stateMachine.AddAnyTransition<DamageState>((int)StateType.Damage);
+        _stateMachine.Start<IdleState>();
 
         _selfTrans = transform;
         _targetTrans = GameObject.FindGameObjectWithTag("Player").transform;
-        _actCtrl = GetComponent<ActionCtrl>();
-        if (!_hitCtrl) _hitCtrl = GetComponentInChildren<NewHitCtrl>();
+         _actCtrl = GetComponent<ActionCtrl>();
     }
     private void Update()
     {
-        ApplyAxis();
+        //ApplyAxis();
         _stateMachine.Update();
+        _distance = Vector3.Distance(transform.position,_targetTrans.position);
     }
     private void FixedUpdate()
     {       
         ApplyMove();
         ApplyRotate();
     }
-    void ApplyAxis()
-    {
-        _currentVelocity = (_currentVelocity - _selfTrans.position).normalized;
-    }
+    //void ApplyAxis()
+    //{
+    //    _currentVelocity = (_currentVelocity - _selfTrans.position).normalized;
+    //}
     void ApplyMove()
     {
         var velo = Vector3.Scale(_currentVelocity, new Vector3(MoveSpeed, 1.0f, MoveSpeed));
@@ -74,35 +83,51 @@ public partial class NormalStateEnemy : CharacterBase,IPoolObject
         _selfTrans.rotation = rot;
     }
 
+    void ChangeState(StateType state)
+    {
+        _stateMachine.Dispatch((int)state);
+    }
+
     public override void AddDamage(int damage, AttackType attackType = AttackType.Weak)
     {
+
         base.AddDamage(damage, attackType);
 
+        if(_debagMode) Debug.Log(CurrentHp);
         if (IsDeath)
         {
-
+            
         }
     }
 
     public void SetUp()
     {
-        throw new System.NotImplementedException();
+        Rigidbody.WakeUp();
     }
 
     public void Sleep()
     {
-        throw new System.NotImplementedException();
+        _currentVelocity = Vector3.zero;
+        Rigidbody.Sleep();
+        gameObject.SetActive(false);
     }
 
     class ChaseState : State
     {
+        Vector3 _axis = Vector3.zero;
         protected override void OnEnter(State prevState)
         {
-            
+            if (owner._debagMode) Debug.Log("InChase");
         }
         protected override void OnUpdate()
         {
-            owner._targetRot = Quaternion.LookRotation(owner._currentVelocity);
+            _axis = (owner._targetTrans.position - owner._selfTrans.position).normalized;
+            _axis.y = 0.0f;
+            owner._targetRot = Quaternion.LookRotation(_axis);
+            owner._currentVelocity = _axis * owner.MoveSpeed;
+
+            if (owner._distance < owner._attackRange) owner.ChangeState(StateType.Attack);
+
         }
         protected override void OnExit(State nextState)
         {
@@ -113,11 +138,13 @@ public partial class NormalStateEnemy : CharacterBase,IPoolObject
     {
         protected override void OnEnter(State prevState)
         {
+            if (owner._debagMode) Debug.Log("InIdle");
             owner._currentVelocity.x = 0.0f;
             owner._currentVelocity.y = 0.0f;
         }
         protected override void OnUpdate()
         {
+            if(owner._distance > owner._attackRange) owner.ChangeState(StateType.Chase);
 
         }
         protected override void OnExit(State nextState)
@@ -127,23 +154,44 @@ public partial class NormalStateEnemy : CharacterBase,IPoolObject
     }
     class AttackState : State
     {
+        float _waitTimer;
         protected override void OnEnter(State prevState)
         {
-            
+            if (owner._debagMode) Debug.Log("InAttack");
+
+            owner._currentVelocity.x = 0.0f;
+            owner._currentVelocity.z = 0.0f;
+            _waitTimer = owner._waitTime;
+            owner._actCtrl.RequestAction(AttackType.Weak);
         }
         protected override void OnUpdate()
         {
-            base.OnUpdate();
+            _waitTimer -= owner._waitTime;
+            
+            //if(owner._attackType == Attack.Combo && !owner._actCtrl.ActionKeep)
+            //{
+            //    owner._actCtrl.RequestAction(AttackType.Weak);
+            //}
+            if(_waitTimer < owner._waitTime && owner._distance < owner._attackRange)
+            {
+                owner._actCtrl.RequestAction(AttackType.Weak);
+                _waitTimer = 0.0f;
+            }
+            else if (!owner._actCtrl.ActionKeep)
+            {
+                if (owner._distance > owner._attackRange) owner.ChangeState(StateType.Chase);
+            }
         }
         protected override void OnExit(State nextState)
         {
-            base.OnExit(nextState);
+            _waitTimer = 0.0f;
         }
     }
     class DamageState : State
     {
         protected override void OnEnter(State prevState)
         {
+            if (owner._debagMode) Debug.Log("InDamage");
             base.OnEnter(prevState);
         }
     }

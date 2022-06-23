@@ -20,12 +20,13 @@ namespace ObjectPool
         /// <param name="poolTarget">プールオブジェクト</param>
         /// <param name="count">最初の生成数</param>
         /// <param name="parent">プールをまとめるtransform</param>
-        public void SetUp(T poolTarget, int count = 10, Transform parent = null)
+        public void SetUp(T poolTarget, Transform parent, int count = 10)
         {
             _origin = poolTarget;
             _objcts = new List<T>();
-            if (parent == null) _poolParent = new GameObject(poolTarget.name + " Pool").transform;
-            else _poolParent = parent;
+            _poolParent = new GameObject(poolTarget.name + " Pool").transform;
+
+            _poolParent.SetParent(parent);
 
             for (int i = 0; i < count; i++)
             {
