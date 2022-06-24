@@ -5,6 +5,7 @@ namespace AttackSetting
 
     public class NewHitCtrl : MonoBehaviour
     {
+        [SerializeField]
         Collider _collider;
         ActionCtrl _actCtrl;
 
@@ -24,6 +25,15 @@ namespace AttackSetting
             if (!_actCtrl) return;
 
             _actCtrl.HitCallBack(other);
+        }
+
+        public void TriggerOnEnable()
+        {
+            _collider.enabled = true;
+        }
+        public void TriggerOnDisable()
+        {
+            _collider.enabled = false;
         }
     }
 }
