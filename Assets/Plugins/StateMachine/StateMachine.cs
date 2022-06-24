@@ -65,7 +65,7 @@ public class StateMachine<TOwner>
         return Ado<T>();
     }
     
-    public void AddTransition<TFrom, TTo>(int eventId)
+    public StateMachine<TOwner> AddTransition<TFrom, TTo>(int eventId)
         where TFrom : State,new()
         where TTo : State,new()
     {
@@ -78,11 +78,13 @@ public class StateMachine<TOwner>
 
         var to = GetOrAddState<TTo>();
         from.transitions.Add(eventId,to);
+        return this;
     }
 
-    public void AddAnyTransition<TTo>(int eventId) where TTo : State, new()
+    public StateMachine<TOwner> AddAnyTransition<TTo>(int eventId) where TTo : State, new()
     {
         AddTransition<AnyState, TTo>(eventId);
+        return this;
     }
 
     public void Start<TFirst>() where TFirst : State, new()
