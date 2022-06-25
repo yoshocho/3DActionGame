@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
 
-public class GrandChecker : MonoBehaviour
+public class GroundChecker : MonoBehaviour
 {
     [Tooltip("Ú’n”»’è‚Å‚Ì’†S‚©‚ç‚Ì‹——£")]
     [SerializeField] float _isGroundLength = 1.05f;
