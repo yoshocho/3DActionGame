@@ -166,28 +166,36 @@ public partial class NormalStateEnemy : CharacterBase, IPoolObject
     }
     class AttackState : State
     {
-        float _waitTimer;
+        float _waitTimer = 0.0f;
         protected override void OnEnter(State prevState)
         {
             if (owner._debagMode) Debug.Log("InAttack");
 
             owner._currentVelocity.x = 0.0f;
             owner._currentVelocity.z = 0.0f;
-            _waitTimer = owner._waitTime;
+            //_waitTimer = owner._waitTime;
             owner._actCtrl.RequestAction(AttackType.Weak);
         }
         protected override void OnUpdate()
         {
-            _waitTimer -= owner._waitTime;
-            
-            //if(owner._attackType == Attack.Combo && !owner._actCtrl.ActionKeep)
-            //{
-            //    owner._actCtrl.RequestAction(AttackType.Weak);
-            //}
-            if(_waitTimer < owner._waitTime && owner._distance < owner._attackRange)
+            _waitTimer += Time.deltaTime;
+
+            if (owner._distance < owner._attackRange)
             {
-                owner._actCtrl.RequestAction(AttackType.Weak);
-                _waitTimer = 0.0f;
+                switch (owner._attackType)
+                {
+                    case Attack.Single:
+                        if (_waitTimer > owner._waitTime)
+                        {
+                            owner._actCtrl.RequestAction(AttackType.Weak);
+                            _waitTimer = 0.0f;
+                        }
+                        break;
+                    case Attack.Combo:
+                        break;
+                    default:
+                        break;
+                }
             }
             else if (!owner._actCtrl.ActionKeep)
             {
