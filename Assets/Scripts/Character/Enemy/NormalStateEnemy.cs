@@ -3,8 +3,8 @@ using UnityEngine;
 using State = StateMachine<NormalStateEnemy>.State;
 using ObjectPool;
 
-[RequireComponent(typeof(GrandChecker),typeof(ActionCtrl))]
-public partial class NormalStateEnemy : CharacterBase,IPoolObject
+[RequireComponent(typeof(GroundChecker), typeof(ActionCtrl))]
+public partial class NormalStateEnemy : CharacterBase, IPoolObject
 {
     enum StateType
     {
@@ -18,59 +18,63 @@ public partial class NormalStateEnemy : CharacterBase,IPoolObject
         Single,
         Combo,
     }
-    [SerializeField,Range(0.5f,5.0f)]
+    [SerializeField, Range(0.5f, 5.0f)]
     float _attackRange = 1.5f;
-    [SerializeField, Range(0.5f,5.0f)]
+    [SerializeField, Range(2.0f, 20f)]
     float _waitTime = 2.0f;
     [SerializeField]
-    float _rotateSpeed = 5.0f;
-
+    float _gravityScale = 0.98f;
     [SerializeField]
-    Transform _targetTrans;
+    float _rotateSpeed;
 
-    Attack _attackType = Attack.Single;
+
+    Transform _selfTrans;
+    Transform _targetTrans;
     float _distance;
     Quaternion _targetRot;
+    Vector3 _currentVelocity;
+
+    Attack _attackType = Attack.Single;
+
     StateMachine<NormalStateEnemy> _stateMachine;
     ActionCtrl _actCtrl;
-    Transform _selfTrans;
-    Vector3 _currentVelocity;
+    GroundChecker _groundChecker;
+
     [SerializeField]
     bool _debagMode;
 
     private void Start()
     {
-       Init();
+        Init();
     }
-    void Init() 
+    void Init()
     {
         _stateMachine = new StateMachine<NormalStateEnemy>(this);
 
-        _stateMachine.AddAnyTransition<IdleState>((int)StateType.Idle);
-        _stateMachine.AddAnyTransition<ChaseState>((int)StateType.Chase);
-        _stateMachine.AddAnyTransition<AttackState>((int)StateType.Attack);
-        _stateMachine.AddAnyTransition<DamageState>((int)StateType.Damage);
-        _stateMachine.Start<IdleState>();
+        _stateMachine
+            .AddAnyTransition<IdleState>((int)StateType.Idle)
+            .AddAnyTransition<ChaseState>((int)StateType.Chase)
+            .AddAnyTransition<AttackState>((int)StateType.Attack)
+            .AddAnyTransition<DamageState>((int)StateType.Damage)
+            .Start<IdleState>();
 
         _selfTrans = transform;
         _targetTrans = GameObject.FindGameObjectWithTag("Player").transform;
-         _actCtrl = GetComponent<ActionCtrl>();
+        _actCtrl = GetComponent<ActionCtrl>();
+        _groundChecker = GetComponent<GroundChecker>();
     }
     private void Update()
     {
-        //ApplyAxis();
         _stateMachine.Update();
-        _distance = Vector3.Distance(transform.position,_targetTrans.position);
+        _distance = Vector3.Distance(transform.position, _targetTrans.position);
     }
     private void FixedUpdate()
-    {       
+    {
         ApplyMove();
         ApplyRotate();
+        ApplyGravity();
     }
-    //void ApplyAxis()
-    //{
-    //    _currentVelocity = (_currentVelocity - _selfTrans.position).normalized;
-    //}
+
     void ApplyMove()
     {
         var velo = Vector3.Scale(_currentVelocity, new Vector3(MoveSpeed, 1.0f, MoveSpeed));
@@ -79,10 +83,15 @@ public partial class NormalStateEnemy : CharacterBase,IPoolObject
     void ApplyRotate()
     {
         var rot = _selfTrans.rotation;
-        rot = Quaternion.Lerp(rot,_targetRot,_rotateSpeed * Time.deltaTime);
+        rot = Quaternion.Lerp(rot, _targetRot, _rotateSpeed * Time.deltaTime);
         _selfTrans.rotation = rot;
     }
 
+    void ApplyGravity()
+    {
+        if(!_groundChecker.IsGround())
+        _currentVelocity.y += _gravityScale * Physics.gravity.y * Time.deltaTime;
+    }
     void ChangeState(StateType state)
     {
         _stateMachine.Dispatch((int)state);
@@ -93,10 +102,10 @@ public partial class NormalStateEnemy : CharacterBase,IPoolObject
 
         base.AddDamage(damage, attackType);
 
-        if(_debagMode) Debug.Log(CurrentHp);
+        if (_debagMode) Debug.Log(CurrentHp);
         if (IsDeath)
         {
-            
+
         }
     }
 
@@ -124,14 +133,15 @@ public partial class NormalStateEnemy : CharacterBase,IPoolObject
             _axis = (owner._targetTrans.position - owner._selfTrans.position).normalized;
             _axis.y = 0.0f;
             owner._targetRot = Quaternion.LookRotation(_axis);
-            owner._currentVelocity = _axis * owner.MoveSpeed;
-
-            if (owner._distance < owner._attackRange) owner.ChangeState(StateType.Attack);
-
+            owner._currentVelocity = new Vector3(_axis.x, owner._currentVelocity.y, _axis.z);
+            if (owner._groundChecker.IsGround())
+            {
+                if (owner._distance < owner._attackRange) owner.ChangeState(StateType.Attack);
+            }
         }
         protected override void OnExit(State nextState)
         {
-            
+
         }
     }
     class IdleState : State
@@ -144,8 +154,10 @@ public partial class NormalStateEnemy : CharacterBase,IPoolObject
         }
         protected override void OnUpdate()
         {
-            if(owner._distance > owner._attackRange) owner.ChangeState(StateType.Chase);
-
+            if (owner._groundChecker.IsGround()) 
+            {
+                if (owner._distance > owner._attackRange) owner.ChangeState(StateType.Chase);
+            }
         }
         protected override void OnExit(State nextState)
         {
