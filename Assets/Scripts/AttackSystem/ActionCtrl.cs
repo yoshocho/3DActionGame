@@ -26,18 +26,21 @@ namespace AttackSetting
         [SerializeField]
         List<ComboData> _comboDatas = new List<ComboData>();
         public List<ComboData> CurrentAttacks => _comboDatas;
+        
+        [SerializeField]
+        List<ActionData> _attacks = new List<ActionData>();
+        [SerializeField]
+        NewHitCtrl _hitCtrl;
 
         AttackType _prevType;
         ComboData _currentCombo;
-        NewHitCtrl _hitCtrl;
-
+       
         public float ReceiveTimer { get; private set; } = 0.0f;
         public float KeepTimer { get; private set; } = 0.0f;
         int _comboCount = 0;
 
         public ActionData CurrentAction { get; private set; }
         public bool ReserveAction { get; private set; } = false;
-        public bool InKeepTime { get; private set; } = false;
         public bool InReceiveTime { get; private set; } = false;
 
         public bool ActionKeep { get; private set; } = false;
@@ -52,13 +55,15 @@ namespace AttackSetting
             First,
             Second,
         }
-
+        
         ClipName _clipName = ClipName.First;
 
         void Start()
         {
             if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
+            if (!_hitCtrl) _hitCtrl = GetComponentInChildren<NewHitCtrl>();
 
+            _hitCtrl.SetUp(this);
         }
         void Update()
         {
@@ -94,23 +99,30 @@ namespace AttackSetting
 
         }
         /// <summary>
-        /// 
+        /// アクションを選定する
         /// </summary>
         /// <param name="attackType"></param>
         /// <param name="id"></param>
         public void RequestAction(AttackType attackType, int id = 0)
         {
             ReserveAction = true;
-            if (!_comboDatas.Any()) return;
+            //if (!_comboDatas.Any()) return;
             ActionData data = null;
             if (_prevType != attackType) _comboCount = 0;
             _prevType = attackType;
 
-            foreach (var attacks in _comboDatas) 
-            {
+            //for (int i = 0; i < _attacks.Count; i++)
+            //{
+            //    if (_attacks[i].AttackType != attackType) continue;
+            //    if (_attacks[i].Id != id) continue;
 
-            }
+            //    data = _attacks[i];
+            //    _comboCount = i;
 
+            //    break;
+            //}
+
+            #region
             switch (attackType)
             {
                 case AttackType.Weak:
@@ -136,6 +148,9 @@ namespace AttackSetting
                 default:
                     break;
             }
+            #endregion
+
+            //if (data) SetAction(_attacks[_comboCount]);
             if (data) SetAction(data);
             _comboCount++;
             if (_comboCount > _currentCombo.ComboCount)
@@ -147,7 +162,7 @@ namespace AttackSetting
 
         public void EndAttack()
         {
-            TriggerOnEnable();
+            TriggerOnDisable();
             KeepTimer = 0.0f;
             ReceiveTimer = 0.0f;
             _comboCount = 0;
@@ -155,14 +170,17 @@ namespace AttackSetting
         /// <summary>
         /// アクションをセットする関数
         /// </summary>
-        /// <param name="attack"></param>
+        /// <param name="attack">攻撃データ</param>
         void SetAction(ActionData attack)
         {
+            
             CurrentAction = attack;
             ReceiveTimer = attack.ReceiveTime;
             KeepTimer = attack.KeepTime;
 
             _animCtrl.ChangeClip(_clipName.ToString(), attack.AnimSet.Clip);
+            //if (attack.UseRootMotion) _animCtrl.SetRootAnim();
+
             _animCtrl.Play(_clipName.ToString(), attack.AnimSet.Duration);
 
             if (_clipName is ClipName.Second)　//ブレンドするために二つのステートを交互に再生する
@@ -183,14 +201,19 @@ namespace AttackSetting
                 EffectManager.PlayEffect(CurrentAction.Effect.HitEff, target.ClosestPoint(transform.position));
 
         }
-
+        /// <summary>
+        /// 攻撃の当たり判定を出すアニメーションイベント用関数
+        /// </summary>
         private void TriggerOnEnable()
         {
-            //m_hitCtrl
+            _hitCtrl.TriggerOnEnable();
         }
+        /// <summary>
+        /// 攻撃の当たり判定を消すアニメーションイベント用関数
+        /// </summary>
         private void TriggerOnDisable()
         {
-
+            _hitCtrl.TriggerOnDisable();
         }
     }
 }
