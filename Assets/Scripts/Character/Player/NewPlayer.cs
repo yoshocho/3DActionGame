@@ -3,10 +3,10 @@ using UnityEngine;
 using System;
 using AttackSetting;
 
-[RequireComponent(typeof(ActionCtrl),typeof(GrandChecker))]
+[RequireComponent(typeof(ActionCtrl), typeof(GroundChecker))]
 public partial class NewPlayer : CharacterBase
 {
-    enum StateEvent :int
+    enum StateEvent : int
     {
         Idle,
         Walk,
@@ -39,7 +39,7 @@ public partial class NewPlayer : CharacterBase
     float _avoidSpeed = 2.0f;
     [SerializeField]
     float _justTime = 0.3f;
-    
+
 
     [SerializeField]
     bool _invincible = false;
@@ -58,7 +58,7 @@ public partial class NewPlayer : CharacterBase
     InputManager _inputManager;
     [SerializeField]
     AnimationCtrl _animCtrl;
-    GrandChecker _grandCheck;
+    GroundChecker _grandCheck;
     ActionCtrl _actionCtrl;
     StateMachine<NewPlayer> _stateMachine;
 
@@ -71,19 +71,20 @@ public partial class NewPlayer : CharacterBase
     void Start()
     {
         _stateMachine = new StateMachine<NewPlayer>(this);
-        _stateMachine.AddAnyTransition<PlayerIdleState>((int)StateEvent.Idle);
-        _stateMachine.AddAnyTransition<PlayerWalkState>((int)StateEvent.Walk);
-        _stateMachine.AddAnyTransition<PlayerAttackState>((int)StateEvent.Attack);
-        _stateMachine.AddAnyTransition<PlayerAvoidState>((int)StateEvent.Avoid);
-        _stateMachine.AddAnyTransition<PlayerRunState>((int)StateEvent.Run);
-        _stateMachine.AddAnyTransition<PlayerJumpState>((int)StateEvent.Jump);
-        _stateMachine.AddAnyTransition<PlayerFallState>((int)StateEvent.Fall);
-        _stateMachine.AddAnyTransition<PlayerLandState>((int)StateEvent.Land);
-        _stateMachine.Start<PlayerIdleState>();
+        _stateMachine
+            .AddAnyTransition<PlayerIdleState>((int)StateEvent.Idle)
+            .AddAnyTransition<PlayerWalkState>((int)StateEvent.Walk) 
+            .AddAnyTransition<PlayerAttackState>((int)StateEvent.Attack)
+            .AddAnyTransition<PlayerAvoidState>((int)StateEvent.Avoid)
+            .AddAnyTransition<PlayerRunState>((int)StateEvent.Run)
+            .AddAnyTransition<PlayerJumpState>((int)StateEvent.Jump)
+            .AddAnyTransition<PlayerFallState>((int)StateEvent.Fall)
+            .AddAnyTransition<PlayerLandState>((int)StateEvent.Land)
+            .Start<PlayerIdleState>();
 
         _selfTrans = transform;
-        if(!_animCtrl)_animCtrl = GetComponentInChildren<AnimationCtrl>();
-        _grandCheck = GetComponent<GrandChecker>();
+        if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
+        _grandCheck = GetComponent<GroundChecker>();
         _actionCtrl = GetComponent<ActionCtrl>();
     }
     void Update()
@@ -113,12 +114,12 @@ public partial class NewPlayer : CharacterBase
     void ApplyMove()
     {
         var velocity = Vector3.Scale(_currentVelocity, new Vector3(MoveSpeed, 1.0f, MoveSpeed));
-        Controller.Move(Time.deltaTime * velocity);
+        Rigidbody.velocity = velocity;
     }
     void ApplyRotation()
     {
         var rot = _selfTrans.rotation;
-        rot = Quaternion.Slerp(rot,_targetRot,_rotateSpeed * Time.deltaTime);
+        rot = Quaternion.Slerp(rot, _targetRot, _rotateSpeed * Time.deltaTime);
         _selfTrans.rotation = rot;
     }
     void ApplyGravity()
@@ -141,7 +142,7 @@ public partial class NewPlayer : CharacterBase
     public void PlayAnimation(string name, float dur = 0.1f, int layer = 0, Action onAnimEnd = null)
     {
         if (!_animCtrl) return;
-        _animCtrl.Play(name,dur,layer,onAnimEnd);
+        _animCtrl.Play(name, dur, layer, onAnimEnd);
     }
     public override void AddDamage(int damage, AttackType attackType = AttackType.Weak)
     {
@@ -164,6 +165,10 @@ public partial class NewPlayer : CharacterBase
                 break;
         }
         base.AddDamage(damage, attackType);
-    }
 
+        if (IsDeath)
+        {
+            GameManager.Instance.GameStateEvent(GameManager.GameState.GameOver);
+        }
+    }
 }
