@@ -26,7 +26,6 @@ public class CameraManager : MonoBehaviour
     CinemachinePOV m_camPov;
     CinemachineImpulseSource _impulseSource;
     
-    bool _isJust = default;
     float _defaultDistance = default;
     private void Awake()
     {
@@ -39,29 +38,6 @@ public class CameraManager : MonoBehaviour
         _impulseSource = GetComponent<CinemachineImpulseSource>();
         _camDistance.m_CameraDistance = _cameraDistance;
         _defaultDistance = _camDistance.m_CameraDistance;
-
-        BulletTimeManager.Instance.JustSuccess
-            .Subscribe(_ => StartCoroutine(OnjustCam()))
-            .AddTo(this);
-    } 
-
-    IEnumerator OnjustCam()
-    {
-        Debug.Log("OnZoom");
-        while (_camDistance.m_CameraDistance > _zoomDistance)
-        {
-            _camDistance.m_CameraDistance -= 6f * Time.unscaledDeltaTime;
-            yield return null;
-        }
-        Debug.Log("ZoomOut");
-        _isJust = true;
-        yield return new WaitUntil(() => _isJust);
-        while (_camDistance.m_CameraDistance <= _defaultDistance)
-        {
-            _camDistance.m_CameraDistance += 1f;
-        }
-
-        _isJust = false;
     }
 
     public static IEnumerator ZoomIn(float zoomSpeed = 0.5f, Action zoomEnd = null)
