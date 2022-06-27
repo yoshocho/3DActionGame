@@ -39,6 +39,7 @@ public partial class NormalStateEnemy : CharacterBase, IPoolObject
     StateMachine<NormalStateEnemy> _stateMachine;
     ActionCtrl _actCtrl;
     GroundChecker _groundChecker;
+    AnimationCtrl _animCtrl;
 
     [SerializeField]
     bool _debagMode;
@@ -46,23 +47,29 @@ public partial class NormalStateEnemy : CharacterBase, IPoolObject
     private void Start()
     {
         Init();
+        StateCash();
     }
     void Init()
+    {
+        _selfTrans = transform;
+        _targetTrans = GameObject.FindGameObjectWithTag("Player").transform;
+        _actCtrl = GetComponent<ActionCtrl>();
+        _groundChecker = GetComponent<GroundChecker>();
+        if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
+    }
+
+    private void StateCash()
     {
         _stateMachine = new StateMachine<NormalStateEnemy>(this);
 
         _stateMachine
             .AddAnyTransition<IdleState>((int)StateType.Idle)
-            .AddAnyTransition<ChaseState>((int)StateType.Chase)
+            .AddAnyTransition<RunState>((int)StateType.Chase)
             .AddAnyTransition<AttackState>((int)StateType.Attack)
             .AddAnyTransition<DamageState>((int)StateType.Damage)
             .Start<IdleState>();
-
-        _selfTrans = transform;
-        _targetTrans = GameObject.FindGameObjectWithTag("Player").transform;
-        _actCtrl = GetComponent<ActionCtrl>();
-        _groundChecker = GetComponent<GroundChecker>();
     }
+
     private void Update()
     {
         _stateMachine.Update();
