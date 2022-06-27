@@ -2,6 +2,7 @@ using AttackSetting;
 using UnityEngine;
 using State = StateMachine<NormalStateEnemy>.State;
 using ObjectPool;
+using System;
 
 [RequireComponent(typeof(GroundChecker), typeof(ActionCtrl))]
 public partial class NormalStateEnemy : CharacterBase, IPoolObject
@@ -99,6 +100,11 @@ public partial class NormalStateEnemy : CharacterBase, IPoolObject
         if(!_groundChecker.IsGround())
         _currentVelocity.y += _gravityScale * Physics.gravity.y * Time.deltaTime;
     }
+
+    void PlayAnim(string stateName,float dur = 0.1f,int layer = 0,Action onAnimEnd = null)
+    {
+        _animCtrl.Play(stateName, dur,layer,onAnimEnd);
+    }
     void ChangeState(StateType state)
     {
         _stateMachine.Dispatch((int)state);
@@ -119,6 +125,7 @@ public partial class NormalStateEnemy : CharacterBase, IPoolObject
     public void SetUp()
     {
         Rigidbody.WakeUp();
+        
     }
 
     public void Sleep()
@@ -128,12 +135,13 @@ public partial class NormalStateEnemy : CharacterBase, IPoolObject
         gameObject.SetActive(false);
     }
 
-    class ChaseState : State
+    class RunState : State
     {
         Vector3 _axis = Vector3.zero;
         protected override void OnEnter(State prevState)
         {
             if (owner._debagMode) Debug.Log("InChase");
+            owner.PlayAnim("Run", 0.2f);
         }
         protected override void OnUpdate()
         {
@@ -158,6 +166,7 @@ public partial class NormalStateEnemy : CharacterBase, IPoolObject
             if (owner._debagMode) Debug.Log("InIdle");
             owner._currentVelocity.x = 0.0f;
             owner._currentVelocity.y = 0.0f;
+            owner.PlayAnim("Idle");
         }
         protected override void OnUpdate()
         {
