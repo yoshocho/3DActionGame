@@ -63,7 +63,7 @@ namespace AttackSetting
         public AttackType AttackType;
         public float HitStopPower;
         public int Damage;
-        public bool UseRootMotion = true;
+        public int Id = 0;
         [Header("‘±ŠÔ")]
         public float KeepTime;
         [Header("‘±ŠÔŒã‚Ì“ü—Íó•tŠÔ")]
@@ -75,8 +75,8 @@ namespace AttackSetting
     public class ComboData
     {
         public WeaponType WeaponType;
+        public AttackType AttackType;
         public int ComboCount;
         public List<ActionData> ActionDatas = new List<ActionData>();
     }
-
 }
