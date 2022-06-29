@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class UiManager : Singleton<UiManager>
 {
@@ -13,11 +14,16 @@ public class UiManager : Singleton<UiManager>
 
     }
 
-    public static void Open(int id)
+    //public static void Open(int id)
+    //{
+    //    if(id == Instance._prevUiIndex)Instance._uiList[id].Close();
+    //    Instance._prevUiIndex = id;
+    //    Instance._currentUi = Instance._uiList[id];
+    //    Instance._currentUi.Open();
+    //}
+
+    public void RequestPanel(int id,object[] data = null)
     {
-        if(id == Instance._prevUiIndex)Instance._uiList[id].Close();
-        Instance._prevUiIndex = id;
-        Instance._currentUi = Instance._uiList[id];
-        Instance._currentUi.Open();
+        _uiList.First(ui => ui.Id == id);
     }
 }
