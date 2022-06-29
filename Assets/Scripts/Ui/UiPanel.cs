@@ -7,6 +7,11 @@ public class UiPanel : MonoBehaviour
 {
     [SerializeField]
     bool _initVisibility = true;
+
+    [SerializeField]
+    int _id;
+    public int Id { get => _id; private set { _id = value; } }
+
     protected CanvasGroup _canvasGroup;
     protected CanvasRenderer _canvasRenderer;
     public RectTransform RectTrans{ get; protected set; }
@@ -27,7 +32,7 @@ public class UiPanel : MonoBehaviour
     protected virtual void SetUp()
     {
         ChildUi[] childUis = GetComponentsInChildren<ChildUi>();
-        foreach (ChildUi childUi in childUis) 
+        foreach (ChildUi childUi in childUis)
         {
             childUi.SetUp();
             _childUis.Add(childUi);
