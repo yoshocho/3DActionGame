@@ -100,7 +100,7 @@ public class AnimationCtrl : MonoBehaviour
     /// <param name="stateName">ステート名</param>
     /// <param name="clip">差し込みたいアニメーションクリップ</param>
     /// <param name="layerId">レイヤーId</param>
-    public void ChangeClip(string stateName, AnimationClip clip, int layerId = 0)
+    public AnimationCtrl ChangeClip(string stateName, AnimationClip clip, int layerId = 0)
     {
 
         AnimatorStateInfo[] layerInfo = new AnimatorStateInfo[_anim.layerCount];
@@ -114,6 +114,7 @@ public class AnimationCtrl : MonoBehaviour
         {
             _anim.Play(layerInfo[i].nameHash, i, layerInfo[i].normalizedTime);
         }
+        return this;
     }
     public AnimationCtrl SetParameter(string paramName, object parameter, int layer = 0)
     {
