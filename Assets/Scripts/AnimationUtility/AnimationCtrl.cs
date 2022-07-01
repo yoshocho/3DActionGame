@@ -116,7 +116,7 @@ public class AnimationCtrl : MonoBehaviour
         }
         return this;
     }
-    public AnimationCtrl SetParameter(string paramName, object parameter, int layer = 0)
+    public AnimationCtrl SetParameter(string paramName, object parameter)
     {
         switch (parameter)
         {
