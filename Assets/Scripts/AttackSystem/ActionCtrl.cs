@@ -178,10 +178,10 @@ namespace AttackSetting
             ReceiveTimer = attack.ReceiveTime;
             KeepTimer = attack.KeepTime;
 
-            _animCtrl.ChangeClip(_clipName.ToString(), attack.AnimSet.Clip);
-            //if (attack.UseRootMotion) _animCtrl.SetRootAnim();
-
-            _animCtrl.Play(_clipName.ToString(), attack.AnimSet.Duration);
+            _animCtrl
+                .ChangeClip(_clipName.ToString(), attack.AnimSet.Clip)
+                .SetParameter("AttackSpeed",attack.AnimSet.Speed)
+                .Play(_clipName.ToString(), attack.AnimSet.Duration);
 
             if (_clipName is ClipName.Second)　//ブレンドするために二つのステートを交互に再生する
                 _clipName = ClipName.First;
