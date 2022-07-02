@@ -72,11 +72,10 @@ namespace AttackSetting
     }
 
     [System.Serializable]
-    public class ComboData
+    public class AttackData
     {
         public WeaponType WeaponType;
         public AttackType AttackType;
-        public int ComboCount;
         public List<ActionData> ActionDatas = new List<ActionData>();
     }
 }
