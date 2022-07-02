@@ -2,6 +2,7 @@ using AttackSetting;
 using UnityEngine;
 using State = StateMachine<NormalStateEnemy>.State;
 using ObjectPool;
+using System;
 
 [RequireComponent(typeof(GroundChecker), typeof(ActionCtrl))]
 public partial class NormalStateEnemy : CharacterBase, IPoolObject
@@ -39,6 +40,7 @@ public partial class NormalStateEnemy : CharacterBase, IPoolObject
     StateMachine<NormalStateEnemy> _stateMachine;
     ActionCtrl _actCtrl;
     GroundChecker _groundChecker;
+    AnimationCtrl _animCtrl;
 
     [SerializeField]
     bool _debagMode;
@@ -46,23 +48,29 @@ public partial class NormalStateEnemy : CharacterBase, IPoolObject
     private void Start()
     {
         Init();
+        StateCash();
     }
     void Init()
+    {
+        _selfTrans = transform;
+        _targetTrans = GameObject.FindGameObjectWithTag("Player").transform;
+        _actCtrl = GetComponent<ActionCtrl>();
+        _groundChecker = GetComponent<GroundChecker>();
+        if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
+    }
+
+    private void StateCash()
     {
         _stateMachine = new StateMachine<NormalStateEnemy>(this);
 
         _stateMachine
             .AddAnyTransition<IdleState>((int)StateType.Idle)
-            .AddAnyTransition<ChaseState>((int)StateType.Chase)
+            .AddAnyTransition<RunState>((int)StateType.Chase)
             .AddAnyTransition<AttackState>((int)StateType.Attack)
             .AddAnyTransition<DamageState>((int)StateType.Damage)
             .Start<IdleState>();
-
-        _selfTrans = transform;
-        _targetTrans = GameObject.FindGameObjectWithTag("Player").transform;
-        _actCtrl = GetComponent<ActionCtrl>();
-        _groundChecker = GetComponent<GroundChecker>();
     }
+
     private void Update()
     {
         _stateMachine.Update();
@@ -92,6 +100,11 @@ public partial class NormalStateEnemy : CharacterBase, IPoolObject
         if(!_groundChecker.IsGround())
         _currentVelocity.y += _gravityScale * Physics.gravity.y * Time.deltaTime;
     }
+
+    void PlayAnim(string stateName,float dur = 0.1f,int layer = 0,Action onAnimEnd = null)
+    {
+        _animCtrl.Play(stateName, dur,layer,onAnimEnd);
+    }
     void ChangeState(StateType state)
     {
         _stateMachine.Dispatch((int)state);
@@ -112,6 +125,7 @@ public partial class NormalStateEnemy : CharacterBase, IPoolObject
     public void SetUp()
     {
         Rigidbody.WakeUp();
+        
     }
 
     public void Sleep()
@@ -121,12 +135,13 @@ public partial class NormalStateEnemy : CharacterBase, IPoolObject
         gameObject.SetActive(false);
     }
 
-    class ChaseState : State
+    class RunState : State
     {
         Vector3 _axis = Vector3.zero;
         protected override void OnEnter(State prevState)
         {
             if (owner._debagMode) Debug.Log("InChase");
+            owner.PlayAnim("Run", 0.2f);
         }
         protected override void OnUpdate()
         {
@@ -151,6 +166,7 @@ public partial class NormalStateEnemy : CharacterBase, IPoolObject
             if (owner._debagMode) Debug.Log("InIdle");
             owner._currentVelocity.x = 0.0f;
             owner._currentVelocity.y = 0.0f;
+            owner.PlayAnim("Idle");
         }
         protected override void OnUpdate()
         {

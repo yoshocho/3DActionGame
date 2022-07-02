@@ -24,6 +24,9 @@ public class AnimState
     [Range(0, 0.5f), Header("ブレンド時間")]
     public float Duration = 0.1f;
 }
+/// <summary>
+/// アニメーション再生などを管理するサポートクラス
+/// </summary>
 public class AnimationCtrl : MonoBehaviour
 {
     public delegate void CallBack(int param);
@@ -63,7 +66,7 @@ public class AnimationCtrl : MonoBehaviour
         _anim.Update(0.0f);
     }
 
-    
+
     public void Play(string stateName, float dur = 0.1f, int layer = 0, Action onAnimEnd = null)
     {
         Active();
@@ -75,7 +78,7 @@ public class AnimationCtrl : MonoBehaviour
 
     //}
 
-    public void SetRootAnim() 
+    public void SetRootAnim()
     {
         _anim.applyRootMotion = true;
     }
@@ -83,7 +86,7 @@ public class AnimationCtrl : MonoBehaviour
     {
         _anim.applyRootMotion = false;
     }
-    
+
     public IEnumerator AnimEndCallBack(int layer = 0, Action onAnimEnd = null)
     {
         yield return null;
@@ -97,7 +100,7 @@ public class AnimationCtrl : MonoBehaviour
     /// <param name="stateName">ステート名</param>
     /// <param name="clip">差し込みたいアニメーションクリップ</param>
     /// <param name="layerId">レイヤーId</param>
-    public void ChangeClip(string stateName, AnimationClip clip, int layerId = 0)
+    public AnimationCtrl ChangeClip(string stateName, AnimationClip clip, int layerId = 0)
     {
 
         AnimatorStateInfo[] layerInfo = new AnimatorStateInfo[_anim.layerCount];
@@ -111,8 +114,27 @@ public class AnimationCtrl : MonoBehaviour
         {
             _anim.Play(layerInfo[i].nameHash, i, layerInfo[i].normalizedTime);
         }
+        return this;
     }
-
+    public AnimationCtrl SetParameter(string paramName, object parameter)
+    {
+        switch (parameter)
+        {
+            case int i:
+                _anim.SetInteger(paramName, i);
+                break;
+            case float f:
+                _anim.SetFloat(paramName, f);
+                break;
+            case bool b:
+                _anim.SetBool(paramName, b);
+                break;
+            default:
+                Debug.LogWarning(string.Format("指定された値は使用できません{0}", parameter));
+                break;
+        }
+        return this;
+    }
     public bool IsPlayingAnimatin(int layer = 0)
     {
         var state = _anim.GetCurrentAnimatorStateInfo(layer);

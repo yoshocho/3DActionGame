@@ -70,10 +70,16 @@ public partial class NewPlayer : CharacterBase
 
     void Start()
     {
+        Init();
+        StateCash();
+    }
+
+    private void StateCash()
+    {
         _stateMachine = new StateMachine<NewPlayer>(this);
         _stateMachine
             .AddAnyTransition<PlayerIdleState>((int)StateEvent.Idle)
-            .AddAnyTransition<PlayerWalkState>((int)StateEvent.Walk) 
+            .AddAnyTransition<PlayerWalkState>((int)StateEvent.Walk)
             .AddAnyTransition<PlayerAttackState>((int)StateEvent.Attack)
             .AddAnyTransition<PlayerAvoidState>((int)StateEvent.Avoid)
             .AddAnyTransition<PlayerRunState>((int)StateEvent.Run)
@@ -82,6 +88,10 @@ public partial class NewPlayer : CharacterBase
             .AddAnyTransition<PlayerLandState>((int)StateEvent.Land)
             .Start<PlayerIdleState>();
 
+    }
+
+    void Init()
+    {
         _selfTrans = transform;
         if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
         _grandCheck = GetComponent<GroundChecker>();

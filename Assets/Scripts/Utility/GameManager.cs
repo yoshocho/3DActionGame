@@ -26,18 +26,17 @@ public partial class GameManager
 
     public float ElapsedTime { get; private set; } = 0.0f;
 
-    Subject<Unit> _onPause = new Subject<Unit>();
-    public IObservable<Unit> OnPause => _onPause;
+    Subject<bool> _onPause = new Subject<bool>();
+    public IObservable<bool> OnPause => _onPause;
 
-    Subject<Unit> _PauseEnd = new Subject<Unit>();
-    public IObservable<Unit> PauseEnd => _PauseEnd;
+    public bool GameStart { get; private set; } = true;
 
-
-    public void SetUpScene(GameState state)
+    public void SetUpEvent(GameState state)
     {
         switch (state)
         {
             case GameState.Title:
+                //UI
                 break;
             case GameState.InGame:
                 InputManager.Instance.SetUp();
