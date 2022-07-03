@@ -8,7 +8,7 @@ public partial class Player : MonoBehaviour
     {
         public override void OnEnter(Player owner, PlayerStateBase prevState)
         {
-            if (prevState is WalkState) owner.PlayAnimation("WalkEnd", 0.2f);
+            if (prevState is WalkState) owner.PlayAnimation("RunEnd", 0.2f);
             else if (prevState is RunState || prevState is AvoidState) owner.PlayAnimation("RunEnd", 0.2f);
             else if (prevState is AttackState)
             {

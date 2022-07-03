@@ -175,6 +175,11 @@ public partial class Player : MonoBehaviour, IDamage
         _currentState.OnUpdate(this);
     }
 
+    public void SetInputProvider(IInputProvider input)
+    {
+        _inputProvider = input;
+    }
+
     void ApplyAxis()
     {
         _inputDir = _inputProvider.GetInputDirection();
@@ -343,7 +348,7 @@ public partial class Player : MonoBehaviour, IDamage
             case ActionType.Animation:
                 AttackAssist();
                 //Debug.Log($"{step}/{layer}{comboList[actId].Name}");
-                _weaponHolder.ChangeWeapon(m_weaponType);
+                //_weaponHolder.ChangeWeapon(m_weaponType);
                 _hitCtrl.SetCtrl(this, comboList[actId]);
                 m_waitTimer = attack.WaitTime;
                 _actionKeepingTimer = attack.KeepTime;
@@ -423,14 +428,5 @@ public partial class Player : MonoBehaviour, IDamage
         {
             _targetEnemys.Add(enemy);
         }
-    }
-    public void StartAttack()
-    {
-        _weaponHolder.TriggerEnable();
-    }
-
-    public void AttackEnd()
-    {
-        _weaponHolder.TriggerDisable();
     }
 }

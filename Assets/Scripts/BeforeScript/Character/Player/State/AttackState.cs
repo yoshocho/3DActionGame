@@ -13,7 +13,7 @@ public partial class Player : MonoBehaviour
             owner._currentVelocity.x = 0f;
             owner._currentVelocity.z = 0f;
 
-            owner._weaponHolder.ChangeWeapon(owner.m_weaponType);
+            //owner._weaponHolder.ChangeWeapon(owner.m_weaponType);
             owner._hitCtrl = owner._weaponHolder.HitCtrl;
             owner.ChangeAttacks(owner.m_weaponType);
 
@@ -50,7 +50,6 @@ public partial class Player : MonoBehaviour
 
         public override void OnExit(Player owner, PlayerStateBase nextState)
         {
-            owner.AttackEnd();
             owner._stateKeep = false;
             owner.m_waitTimer = 0.0f;
             owner._reserveAction = false;
