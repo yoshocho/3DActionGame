@@ -7,8 +7,8 @@ using AttackSetting;
 public class CharacterBase : MonoBehaviour,IDamage
 {
     [SerializeField]
-    public CharaStatusModel Status { get; protected set; } = new CharaStatusModel();
-
+    CharaStatusModel _status = new CharaStatusModel();
+    public CharaStatusModel Status { get => _status; protected set { _status = value;} } 
     [SerializeField]
     float _moveSpeed = default;
     public float MoveSpeed { get => _moveSpeed;protected set { _moveSpeed = value; } }
@@ -25,14 +25,14 @@ public class CharacterBase : MonoBehaviour,IDamage
     protected virtual void SetUp()
     {
         _rb = GetComponent<Rigidbody>();
-        Status.SetUp();
+        _status.SetUp();
     }
 
     public virtual void AddDamage(int damage, AttackType attackType = AttackType.Weak)
     {
-        var hp = Mathf.Max(Status.CurrentHp.Value - damage, 0);
-        Status.UpdateHp(hp);
-        if(Status.CurrentHp.Value == 0)
+        var hp = Mathf.Max(_status.CurrentHp.Value - damage, 0);
+        _status.UpdateHp(hp);
+        if(_status.CurrentHp.Value == 0)
         {
             IsDeath = true;
         }
