@@ -27,11 +27,11 @@ namespace AttackSetting
             _actCtrl.HitCallBack(other);
         }
 
-        public void TriggerOnEnable()
+        public void TriggerEnable()
         {
             _collider.enabled = true;
         }
-        public void TriggerOnDisable()
+        public void TriggerDisable()
         {
             _collider.enabled = false;
         }
