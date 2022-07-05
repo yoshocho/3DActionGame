@@ -53,7 +53,6 @@ namespace AttackSetting
         }
 
         ClipName _clipName = ClipName.First;
-
         void Start()
         {
             if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
@@ -154,10 +153,10 @@ namespace AttackSetting
         public void HitCallBack(Collider target)
         {
             target.gameObject.GetComponent<IDamage>()?.AddDamage(CurrentAction.Damage);
-            EffectManager.HitStop(CurrentAction.HitStopPower);
-            if (CurrentAction.Effect.HitEff)
-                EffectManager.PlayEffect(CurrentAction.Effect.HitEff, target.ClosestPoint(transform.position));
 
+            CurrentAction.HitEvents.ForEach(e => e.SetUp(gameObject));
+            CurrentAction.HitEvents.ForEach(e => e.HitEvent(target));
+            
         }
         /// <summary>
         /// 攻撃の当たり判定を出すアニメーションイベント用関数

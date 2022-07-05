@@ -28,14 +28,6 @@ namespace AttackSetting
     }
 
     [System.Serializable]
-    public class KnockBackPower
-    {
-        public float ForwardPower;
-        public float UpPower;
-        public float DownPower;
-    }
-
-    [System.Serializable]
     public class ControllerEf
     {
         [Header("コントローラー振動の縦横値")]
@@ -47,8 +39,6 @@ namespace AttackSetting
     [System.Serializable]
     public class AtkEffect
     {
-        [Header("攻撃ヒット時のエフェクト")]
-        public GameObject HitEff;
         [Header("カメらを揺らす強さ")]
         public Vector3 CameraShakeVec;
         public ControllerEf ControllerEf;
@@ -60,15 +50,16 @@ namespace AttackSetting
     {
         public AnimClip AnimSet;
         public AtkEffect Effect;
-        public AttackType AttackType;
-        public float HitStopPower;
+        [SerializeReference, SubclassSelector]
+        public List<IHitEvent> HitEvents;
+        [Header("ダメージ数")]
         public int Damage;
+        public AttackType AttackType;
         public int Id = 0;
         [Header("持続時間")]
         public float KeepTime;
         [Header("持続時間後の入力受付時間")]
         public float ReceiveTime;
-        public KnockBackPower KnockPower;
     }
 
     [System.Serializable]
