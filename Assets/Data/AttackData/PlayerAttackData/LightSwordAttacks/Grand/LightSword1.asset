@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b3f25612b989fc40af95cba7747b043, type: 3}
+  m_Name: LightSword1
+  m_EditorClassIdentifier: 
+  AnimSet:
+    Clip: {fileID: 7400000, guid: 40171f66881f0d84a8e1c6eaee43e7db, type: 2}
+    Duration: 0.2
+    Speed: 1.13
+    UseRootMotion: 1
+  Effect:
+    HitEff: {fileID: 0}
+    CameraShakeVec: {x: 0, y: 0, z: 0}
+    ControllerEf:
+      ShakeVec: {x: 0, y: 0}
+      Duration: 0
+    ZoomSet: 0
+  AttackType: 0
+  HitEvents:
+  - rid: 7052827333616467972
+  HitStopPower: 1.1
+  Damage: 42
+  Id: 0
+  KeepTime: 0.39
+  ReceiveTime: 0.69
+  KnockPower:
+    ForwardPower: 0.4
+    UpPower: 0
+    DownPower: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 7052827333616467972
+      type: {class: HitStop, ns: , asm: Assembly-CSharp}
+      data:
+        HitStopPower: 1.1

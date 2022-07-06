@@ -16,6 +16,7 @@ MonoBehaviour:
     Clip: {fileID: 7400000, guid: 03d8105c69b762644a33f2d55664774f, type: 2}
     Duration: 0.1
     Speed: 1
+    UseRootMotion: 1
   Effect:
     HitEff: {fileID: 0}
     CameraShakeVec: {x: 0, y: 0.2, z: 0}
@@ -24,13 +25,21 @@ MonoBehaviour:
       Duration: 0
     ZoomSet: 0
   AttackType: 1
+  HitEvents:
+  - rid: 7052827333616467971
   HitStopPower: 3.32
   Damage: 132
   Id: 2
-  UseRootMotion: 1
   KeepTime: 1.43
   ReceiveTime: 0.3
   KnockPower:
     ForwardPower: 0.59
     UpPower: 0
     DownPower: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 7052827333616467971
+      type: {class: HitStop, ns: , asm: Assembly-CSharp}
+      data:
+        HitStopPower: 3.32

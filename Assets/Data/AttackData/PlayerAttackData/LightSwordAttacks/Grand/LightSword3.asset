@@ -10,27 +10,31 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4b3f25612b989fc40af95cba7747b043, type: 3}
-  m_Name: LightSword5
+  m_Name: LightSword3
   m_EditorClassIdentifier: 
   AnimSet:
-    Clip: {fileID: 7400000, guid: 5b56667eb8080f446bf25c3e937ff96e, type: 2}
+    Clip: {fileID: 7400000, guid: fe40fe9ae90cc99438b87e20803cf838, type: 2}
     Duration: 0.1
-    Speed: 0
+    Speed: 1.13
+    UseRootMotion: 1
   Effect:
-    HitEff: {fileID: 0}
-    CameraShakeVec: {x: 0.03, y: 0.03, z: 0.03}
+    CameraShakeVec: {x: 0.02, y: 0.02, z: 0.03}
     ControllerEf:
       ShakeVec: {x: 0, y: 0}
       Duration: 0
     ZoomSet: 0
   AttackType: 0
-  HitStopPower: 1.82
-  Damage: 92
+  HitEvents:
+  - rid: 7052827354306445313
+  AttackEffects: []
+  Damage: 69
   Id: 0
-  UseRootMotion: 0
-  KeepTime: 0.89
-  ReceiveTime: 0.55
-  KnockPower:
-    ForwardPower: 0
-    UpPower: 0
-    DownPower: 0
+  KeepTime: 0.42
+  ReceiveTime: 0.67
+  references:
+    version: 2
+    RefIds:
+    - rid: 7052827354306445313
+      type: {class: HitStop, ns: , asm: Assembly-CSharp}
+      data:
+        HitStopPower: 1.28
