@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class UseRootMotion : StateMachineBehaviour
 {
@@ -11,16 +9,18 @@ public class UseRootMotion : StateMachineBehaviour
     }
 
     //OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-    //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    animator.gameObject.transform.parent.position = animator.gameObject.transform.parent.TransformPoint(animator.gameObject.transform.localPosition);
-    //}
+    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        animator.applyRootMotion = true;
+        Vector3 velo = new Vector3(animator.rootPosition.x,animator.transform.position.y, animator.rootPosition.z);
+        animator.gameObject.transform.position = velo;
+    }
 
     //OnStateExit is called when a transition ends and the state machine finishes evaluating this state
-    //override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    animator.applyRootMotion = false;
-    //}
+    override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        animator.applyRootMotion = false;
+    }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()
     //override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
