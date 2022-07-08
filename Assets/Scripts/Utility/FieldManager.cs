@@ -1,29 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ObjectPool;
 
 public class FieldManager : MonoBehaviour
 {
-    public FieldManager Instance { get; private set; }
+    public static FieldManager Instance { get; private set; }
     [SerializeField]
     GameData _gameData;
     public GameData GameData => _gameData;
 
     [SerializeField]
-    public int ClearCount = 20;
-   
-    [SerializeField]
     GameObject _enemyPrefab;
 
+    [SerializeField]
+    float _waitTime = 20.0f;
+    //ObjectPool<NormalStateEnemy> _enemyPool = new ObjectPool<NormalStateEnemy>();
     List<Transform> _spawnPoints = new List<Transform>();
-
-    ObjectPool<NormalStateEnemy> _enemyPool = new ObjectPool<NormalStateEnemy>();
-
     float _timer;
     int _fieldCount = 0;
     int _currentWaveCount = 0;
     int _spawnCount = 0;
+    bool _canSpawn = true;
 
     private void Awake()
     {
@@ -32,17 +29,15 @@ public class FieldManager : MonoBehaviour
 
     private void Start()
     {
-        _enemyPool.SetUp(_enemyPrefab.GetComponent<NormalStateEnemy>(), transform, 10);
+        //_enemyPool.SetUp(_enemyPrefab.GetComponent<NormalStateEnemy>(), transform, 10);
         var points = GameObject.FindGameObjectsWithTag("SpawnPoint");
         for (int i = 0; i < points.Length; i++)
         {
             _spawnPoints.Add(points[i].transform);
         }
-
+        _timer = _waitTime;
         _fieldCount = GameData.WavesData[0].EnemyCount;
     }
-
-    //void Enemy
 
     private void Update()
     {
@@ -53,28 +48,59 @@ public class FieldManager : MonoBehaviour
 
     public void UpdateEnemy()
     {
-        if (_spawnCount >= _spawnPoints.Count) return;
+        #region
+        //if (_spawnCount >= _spawnPoints.Count) return;
+        //if (_fieldCount >= GameData.WavesData[_currentWaveCount].EnemyCount)
+        //{
+        //    for (int i = 0; i < _spawnPoints.Count; i++)
+        //    {
+        //        var enemy = _enemyPool.Get();
+        //        Spawn(enemy.gameObject, _spawnPoints[i].transform.position);
+        //        if (_spawnCount == GameData.WavesData[_currentWaveCount].EnemyCount)
+        //        {
+        //            _spawnCount = 0;
+        //            break;
+        //        }
+        //    }
+        //    _currentWaveCount++;
+        //    _fieldCount = GameData.WavesData[_currentWaveCount].EnemyCount;
+        //    if (_currentWaveCount == GameData.WavesData.Count)
+        //    {
+        //        Debug.Log("終了");
+        //    }
+        //}
+        #endregion
 
-        if (_fieldCount >= GameData.WavesData[_currentWaveCount].EnemyCount)
+        _timer += Time.deltaTime;
+        if(_timer > _waitTime) 
         {
-            for (int i = 0; i < _spawnPoints.Count; i++)
-            {
-                var enemy = _enemyPool.Get();
-                Spawn(enemy.gameObject, _spawnPoints[i].transform.position);
-                if (_spawnCount == GameData.WavesData[_currentWaveCount].EnemyCount) break;
-            }
-            _currentWaveCount++;
-            _fieldCount = GameData.WavesData[_currentWaveCount].EnemyCount;
-            if (_currentWaveCount == GameData.WavesData.Count)
-            {
-                Debug.Log("終了");
-            }
-
+            _timer = 0.0f;
+            SpawnEnemy();
         }
     }
+    void SpawnEnemy()
+    {
+        for (int i = 0; i < _spawnPoints.Count; i++)
+        {
+            if (_spawnCount == GameData.WavesData[_currentWaveCount].EnemyCount)
+            {
+                _spawnCount = 0;
+                _currentWaveCount++;
+                break;
+            }
+            
+            Spawn(GameData.WavesData[_currentWaveCount].EnemyPrefab, _spawnPoints[i].transform.position);
+           
+        }
+        if (_currentWaveCount == GameData.WavesData.Count)
+        {
+            Debug.Log("ゲームクリア");
+        }
+    }
+
     void Spawn(GameObject enemyObj, Vector3 point)
     {
-        enemyObj.transform.position = point;
+        Instantiate(enemyObj,point,Quaternion.identity);
         _spawnCount++;
     }
 }
