@@ -22,7 +22,8 @@ public partial class NewPlayer : CharacterBase
                 if (owner._inputAxis.sqrMagnitude > 0.1f) owner.ChangeState(StateEvent.Walk);
                 if (owner._inputProvider.GetAvoid()) owner.ChangeState(StateEvent.Avoid);
                 if(owner._inputProvider.GetAttack()) owner.ChangeState(StateEvent.Attack);
-                if (owner._inputProvider.GetJump()) owner.ChangeState(StateEvent.Jump);
+                if (owner._inputProvider.GetJump() && owner._currentJumpCount <= owner._jumpCount)
+                    owner.ChangeState(StateEvent.Jump);
             }
             else owner.ChangeState(StateEvent.Fall);
         }

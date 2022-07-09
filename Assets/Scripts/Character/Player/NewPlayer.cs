@@ -64,7 +64,7 @@ public partial class NewPlayer : CharacterBase
 
     [SerializeField]
     bool _debagMode;
-
+    int _currentJumpCount = 0;
     bool _inAvoid = false;
     bool _keepAir = false;
 
@@ -124,7 +124,7 @@ public partial class NewPlayer : CharacterBase
     void ApplyMove()
     {
         var velocity = Vector3.Scale(_currentVelocity, new Vector3(MoveSpeed, 1.0f, MoveSpeed));
-        Rigidbody.velocity = velocity;
+        RB.velocity = velocity;
     }
     void ApplyRotation()
     {

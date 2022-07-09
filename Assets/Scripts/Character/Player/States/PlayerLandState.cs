@@ -12,7 +12,7 @@ public partial class NewPlayer : CharacterBase
             if(owner._debagMode)Debug.Log("InLand");
             owner._currentVelocity = Vector3.zero;
             owner.PlayAnimation("Land",0.1f);
-
+            owner._currentJumpCount = 0;
         }
         protected override void OnUpdate()
         {
@@ -21,7 +21,7 @@ public partial class NewPlayer : CharacterBase
 
             if (owner._inputProvider.GetAvoid()) owner.ChangeState(StateEvent.Avoid);
             if (owner._inputProvider.GetAttack()) owner.ChangeState(StateEvent.Attack);
-            if (owner._inputProvider.GetJump()) owner.ChangeState(StateEvent.Jump);
+            if (owner._inputProvider.GetJump() && owner._currentJumpCount <= owner._jumpCount) owner.ChangeState(StateEvent.Jump);
         }
         protected override void OnExit(State nextState)
         {
