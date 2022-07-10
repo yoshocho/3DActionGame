@@ -26,7 +26,6 @@ namespace AttackSetting
         In,
         Out,
     }
-
     [System.Serializable]
     public class ControllerEf
     {
@@ -52,6 +51,8 @@ namespace AttackSetting
         public AtkEffect Effect;
         [SerializeReference, SubclassSelector]
         public List<IHitEvent> HitEvents;
+        [SerializeReference, SubclassSelector]
+        public List<IAttackEffect> AttackEffects;
         [Header("É_ÉÅÅ[ÉWêî")]
         public int Damage;
         public AttackType AttackType;
