@@ -58,7 +58,7 @@ namespace AttackSetting
             if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
             if (!_hitCtrl) _hitCtrl = GetComponentInChildren<NewHitCtrl>();
 
-            _hitCtrl.SetUp(this);
+            _hitCtrl.SetUp(this,gameObject);
         }
         void Update()
         {
@@ -106,6 +106,11 @@ namespace AttackSetting
 
             var datas = _attackDatas.FirstOrDefault(t => t.AttackType == attackType);
 
+            if(datas == null) 
+            {
+                Debug.LogError("Žw’è‚³‚ê‚½UŒ‚‚ÍŒ©‚Â‚©‚è‚Ü‚¹‚ñ‚Å‚µ‚½");
+                return;
+            }
             if (id > -1) _actId = id;
             if (_actId > datas.ActionDatas.Count)
             {
@@ -114,7 +119,6 @@ namespace AttackSetting
             }
             SetAction(datas.ActionDatas[_actId]);
             _actId++;
-            return;
         }
 
         public void EndAttack()
