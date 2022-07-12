@@ -11,7 +11,7 @@ public class AnimClip
     public AnimationClip Clip;
     [Range(0, 0.5f), Header("ブレンド時間")]
     public float Duration = 0.1f;
-    [Range(-0.5f, 2.0f)]
+    [Range(-0.5f, 2.0f),Header("アニメーションのスピード")]
     public float Speed = 1.0f;
     [SerializeField]
     public bool UseRootMotion = true;
@@ -31,16 +31,18 @@ public class AnimationCtrl : MonoBehaviour
 {
     public delegate void CallBack(int param);
     CallBack _eventCallBack;
-
+    [SerializeField]
+    Transform _owerPos;
+    public Transform OwerPos => _owerPos;
     [SerializeField]
     Animator _anim;
-
     AnimatorOverrideController _animatorOverrideController;
 
     private void Awake()
     {
         if (!_anim) _anim = GetComponentInChildren<Animator>();
 
+        if(!_owerPos) _owerPos = transform.root.transform;
         _animatorOverrideController = new AnimatorOverrideController(_anim.runtimeAnimatorController);
         _anim.runtimeAnimatorController = _animatorOverrideController;
     }
