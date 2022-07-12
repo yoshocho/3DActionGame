@@ -7,6 +7,8 @@ namespace AttackSetting
     {
         [SerializeField]
         Collider _collider;
+
+        GameObject _user;
         ActionCtrl _actCtrl;
 
         private void Awake()
@@ -15,16 +17,20 @@ namespace AttackSetting
             _collider.enabled = false;
         }
 
-        public void SetUp(ActionCtrl ctrl)
+        public void SetUp(ActionCtrl ctrl,GameObject owner)
         {
             _actCtrl = ctrl;
+            _user = owner;
         }
 
         private void OnTriggerEnter(Collider other)
         {
             if (!_actCtrl) return;
 
-            _actCtrl.HitCallBack(other);
+            if (_user.gameObject.CompareTag("Player") && other.CompareTag("Enemy"))
+                _actCtrl.HitCallBack(other);
+            else if(_user.gameObject.CompareTag("Enemy") && other.CompareTag("Player"))
+                _actCtrl.HitCallBack(other);
         }
 
         public void TriggerEnable()
