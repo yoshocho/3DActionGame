@@ -158,9 +158,11 @@ namespace AttackSetting
         {
             target.gameObject.GetComponent<IDamage>()?.AddDamage(CurrentAction.Damage);
 
-            CurrentAction.HitEvents.ForEach(e => e.SetUp(gameObject));
-            CurrentAction.HitEvents.ForEach(e => e.HitEvent(target));
-            
+            foreach (var item in CurrentAction.HitEvents)
+            {
+                item.SetUp(gameObject);
+                item.HitEvent(target);
+            }
         }
         /// <summary>
         /// 攻撃の当たり判定を出すアニメーションイベント用関数
