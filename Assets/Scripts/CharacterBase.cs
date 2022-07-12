@@ -1,14 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UniRx;
 using AttackSetting;
 
 public class CharacterBase : MonoBehaviour,IDamage
 {
     [SerializeField]
     CharaStatusModel _status = new CharaStatusModel();
+    [SerializeField]
+    ObjectData _data = new ObjectData();
     public CharaStatusModel Status { get => _status; protected set { _status = value;} } 
+    public ObjectData Data { get => _data; protected set { _data = value;} }
     [SerializeField]
     float _moveSpeed = default;
     public float MoveSpeed { get => _moveSpeed;protected set { _moveSpeed = value; } }
