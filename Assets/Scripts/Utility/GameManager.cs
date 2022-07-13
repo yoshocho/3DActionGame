@@ -34,21 +34,11 @@ public partial class GameManager
 
     public bool GameStart { get; private set; } = true;
 
-    List<EnemyBase> _fieldEnemys = new List<EnemyBase>();
+    public FieldData FieldData { get; private set; } = new FieldData();
 
     public GameObject LockOnTarget { get; set; }
 
-    public void Register(EnemyBase enemy)
-    {
-        _fieldEnemys.Add(enemy);
-    }
-
-    public void Remove(EnemyBase enemy)
-    {
-        _fieldEnemys.Remove(enemy);
-    }
-
-    public void SetUpEvent(GameState state)
+    public void SetUp(GameState state)
     {
         switch (state)
         {
