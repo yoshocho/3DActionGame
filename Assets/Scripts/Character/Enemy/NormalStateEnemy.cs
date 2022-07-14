@@ -5,7 +5,7 @@ using ObjectPool;
 using System;
 
 [RequireComponent(typeof(GroundChecker), typeof(ActionCtrl))]
-public partial class NormalStateEnemy : CharacterBase, IPoolObject
+public partial class NormalStateEnemy : EnemyBase
 {
     enum StateType
     {
@@ -30,7 +30,6 @@ public partial class NormalStateEnemy : CharacterBase, IPoolObject
 
 
     Transform _selfTrans;
-    Transform _targetTrans;
     float _distance;
     Quaternion _targetRot;
     Vector3 _currentVelocity;
@@ -45,15 +44,15 @@ public partial class NormalStateEnemy : CharacterBase, IPoolObject
     [SerializeField]
     bool _debagMode;
 
-    private void Start()
+    protected override void SetUp()
     {
+        base.SetUp();
         Init();
         StateCash();
     }
     void Init()
     {
         _selfTrans = transform;
-        _targetTrans = GameObject.FindGameObjectWithTag("Player").transform;
         _actCtrl = GetComponent<ActionCtrl>();
         _groundChecker = GetComponent<GroundChecker>();
         if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
@@ -86,7 +85,7 @@ public partial class NormalStateEnemy : CharacterBase, IPoolObject
     void ApplyMove()
     {
         var velo = Vector3.Scale(_currentVelocity, new Vector3(MoveSpeed, 1.0f, MoveSpeed));
-        Rigidbody.velocity = velo;
+        RB.velocity = velo;
     }
     void ApplyRotate()
     {
@@ -115,26 +114,13 @@ public partial class NormalStateEnemy : CharacterBase, IPoolObject
 
         base.AddDamage(damage, attackType);
 
-        if (_debagMode) Debug.Log(CurrentHp);
+        if (_debagMode) Debug.Log(Status.CurrentHp);
         if (IsDeath)
         {
 
         }
+        else ChangeState(StateType.Damage);
     }
-
-    public void SetUp()
-    {
-        Rigidbody.WakeUp();
-        
-    }
-
-    public void Sleep()
-    {
-        _currentVelocity = Vector3.zero;
-        Rigidbody.Sleep();
-        gameObject.SetActive(false);
-    }
-
     class RunState : State
     {
         Vector3 _axis = Vector3.zero;

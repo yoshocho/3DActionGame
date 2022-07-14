@@ -10,12 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4b3f25612b989fc40af95cba7747b043, type: 3}
-  m_Name: LightSword4
+  m_Name: Infight1
   m_EditorClassIdentifier: 
   AnimSet:
-    Clip: {fileID: 7400000, guid: 76b69d3dec468d842b06e143b9362d31, type: 2}
+    Clip: {fileID: 7400000, guid: 4dbc80a66d8ac2c4bad8bc6bff1ac7bd, type: 2}
     Duration: 0.1
-    Speed: 0
+    Speed: 1
+    UseRootMotion: 1
   Effect:
     HitEff: {fileID: 0}
     CameraShakeVec: {x: 0, y: 0, z: 0}
@@ -24,12 +25,11 @@ MonoBehaviour:
       Duration: 0
     ZoomSet: 0
   AttackType: 0
-  HitStopPower: 1.28
-  Damage: 69
+  HitStopPower: 0
+  Damage: 44
   Id: 0
-  UseRootMotion: 0
-  KeepTime: 0.47
-  ReceiveTime: 0.62
+  KeepTime: 0.81
+  ReceiveTime: 0
   KnockPower:
     ForwardPower: 0
     UpPower: 0

@@ -29,6 +29,9 @@ public partial class NewPlayer : CharacterBase
             }
             else if (!owner._actionCtrl.ActionKeep) owner.ChangeState(StateEvent.Fall);
 
+            if (owner._inputProvider.GetAvoid()) owner.ChangeState(StateEvent.Avoid);
+            if (owner._inputProvider.GetJump() && owner._currentJumpCount <= owner._jumpCount)
+                owner.ChangeState(StateEvent.Jump);
         }
         protected override void OnExit(State nextState)
         {

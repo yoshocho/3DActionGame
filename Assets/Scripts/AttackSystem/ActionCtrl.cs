@@ -53,13 +53,12 @@ namespace AttackSetting
         }
 
         ClipName _clipName = ClipName.First;
-
         void Start()
         {
             if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
             if (!_hitCtrl) _hitCtrl = GetComponentInChildren<NewHitCtrl>();
 
-            _hitCtrl.SetUp(this);
+            _hitCtrl.SetUp(this,gameObject);
         }
         void Update()
         {
@@ -107,6 +106,11 @@ namespace AttackSetting
 
             var datas = _attackDatas.FirstOrDefault(t => t.AttackType == attackType);
 
+            if(datas == null) 
+            {
+                Debug.LogError("指定された攻撃は見つかりませんでした");
+                return;
+            }
             if (id > -1) _actId = id;
             if (_actId > datas.ActionDatas.Count)
             {
@@ -115,7 +119,6 @@ namespace AttackSetting
             }
             SetAction(datas.ActionDatas[_actId]);
             _actId++;
-            return;
         }
 
         public void EndAttack()
@@ -154,10 +157,12 @@ namespace AttackSetting
         public void HitCallBack(Collider target)
         {
             target.gameObject.GetComponent<IDamage>()?.AddDamage(CurrentAction.Damage);
-            EffectManager.HitStop(CurrentAction.HitStopPower);
-            if (CurrentAction.Effect.HitEff)
-                EffectManager.PlayEffect(CurrentAction.Effect.HitEff, target.ClosestPoint(transform.position));
 
+            foreach (var item in CurrentAction.HitEvents)
+            {
+                item.SetUp(gameObject);
+                item.HitEvent(target);
+            }
         }
         /// <summary>
         /// 攻撃の当たり判定を出すアニメーションイベント用関数

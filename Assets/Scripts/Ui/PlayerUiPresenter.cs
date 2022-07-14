@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System;
 using UniRx;
-using System;
+using UnityEngine;
 
 public class PlayerUiPresenter : MonoBehaviour
 {
@@ -11,9 +9,9 @@ public class PlayerUiPresenter : MonoBehaviour
     [SerializeField]
     HpView _view = default;
     [SerializeField]
-    ComboCountView _comboView= default;
-    
-    [SerializeField] float m_chainTime = 1.5f;
+    ComboCountView _comboView = default;
+    [SerializeField]
+    float _chainTime = 1.5f;
     void Start()
     {
         _player.MaxHp
@@ -28,7 +26,7 @@ public class PlayerUiPresenter : MonoBehaviour
             .Scan(0, (cc, _) => cc + 1)
             .Do(_ => _comboView.TextEnabled())
             .Do(cc => _comboView.SetComboText(cc))
-            .Throttle(TimeSpan.FromSeconds(m_chainTime))
+            .Throttle(TimeSpan.FromSeconds(_chainTime))
             .FirstOrDefault()
             .RepeatUntilDestroy(this)
             .Do(_ => _comboView.TextDisEnabled())

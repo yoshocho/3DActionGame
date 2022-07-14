@@ -17,7 +17,8 @@ public partial class NewPlayer : CharacterBase
             if (owner._inputAxis.sqrMagnitude > 0.1f)
                 owner._targetRot = Quaternion.LookRotation(owner._moveForward);
             //アニメジャンプ && 制限
-            if (owner._inputProvider.GetJump()) owner.ChangeState(StateEvent.Jump);
+            if (owner._inputProvider.GetJump() && owner._currentJumpCount <= owner._jumpCount)
+                owner.ChangeState(StateEvent.Jump);
             //制限
             if (owner._inputProvider.GetAvoid()) owner.ChangeState(StateEvent.Avoid);
             if (owner._inputProvider.GetAttack()) owner.ChangeState(StateEvent.Attack);
