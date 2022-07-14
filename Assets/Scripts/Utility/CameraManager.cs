@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
-using UnityEngine.UI;
 using UniRx;
 using System;
+using System.Linq;
 
 public class CameraManager : MonoBehaviour
 {
     public static CameraManager Instance { get; private set; } = default;
 
+    [SerializeField]
+    GameObject _followTarget;
     [SerializeField]
     CinemachineVirtualCamera _vCam = default;
     [SerializeField]
@@ -33,6 +35,7 @@ public class CameraManager : MonoBehaviour
     }
     void Start()
     {
+        _followTarget = GameObject.FindGameObjectWithTag("Player");
         _camDistance = _vCam.GetCinemachineComponent<CinemachineFramingTransposer>();
         m_camPov = _vCam.GetCinemachineComponent<CinemachinePOV>();
         _impulseSource = GetComponent<CinemachineImpulseSource>();
@@ -55,6 +58,19 @@ public class CameraManager : MonoBehaviour
         Instance._impulseSource.GenerateImpulse(vec);
     }
 
+    public GameObject FindTarget(Transform userTrans ,float dis,bool screenCenter = false)
+    {
+        var enemys = GameManager.Instance.FieldData.Enemys
+            .Where(e => e.IsVisible)
+            .Where(e => !e.IsDeath)
+            .Where(e => Vector3.Distance(e.transform.position, userTrans.position) < dis);
+
+         enemys.OrderBy(e =>  Vector3.Distance(userTrans.position ,e.transform.position));
+        if (screenCenter) enemys.OrderBy(e => Vector2.Distance(new Vector2(
+            Screen.width /2.0f,Screen.height / 2.0f),Camera.main.WorldToScreenPoint(e.transform.position)));
+
+        return enemys.FirstOrDefault().gameObject;
+    }
     //void Update()
     //{
     //    //float scroll = Input.mouseScrollDelta.y;
