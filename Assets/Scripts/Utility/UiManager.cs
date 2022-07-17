@@ -14,6 +14,11 @@ public class UiManager : Singleton<UiManager>
 
     }
 
+    public void Call<T>(T arg)
+    {
+        
+    }
+
     //public static void Open(int id)
     //{
     //    if(id == Instance._prevUiIndex)Instance._uiList[id].Close();
@@ -22,8 +27,10 @@ public class UiManager : Singleton<UiManager>
     //    Instance._currentUi.Open();
     //}
 
-    public void RequestPanel(int id,object[] data = null)
+    public void RequestPanel(int id)
     {
-        _uiList.First(ui => ui.Id == id);
+        var ui = _uiList.First(ui => ui.Id == id);
+
     }
 }
+
