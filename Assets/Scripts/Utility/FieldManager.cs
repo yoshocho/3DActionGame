@@ -14,7 +14,6 @@ public class FieldManager : MonoBehaviour
 
     [SerializeField]
     float _waitTime = 20.0f;
-    //ObjectPool<NormalStateEnemy> _enemyPool = new ObjectPool<NormalStateEnemy>();
     List<Transform> _spawnPoints = new List<Transform>();
     float _timer;
     int _fieldCount = 0;
@@ -26,10 +25,8 @@ public class FieldManager : MonoBehaviour
     {
         Instance = this;
     }
-
     private void Start()
     {
-        //_enemyPool.SetUp(_enemyPrefab.GetComponent<NormalStateEnemy>(), transform, 10);
         var points = GameObject.FindGameObjectsWithTag("SpawnPoint");
         for (int i = 0; i < points.Length; i++)
         {
@@ -44,6 +41,13 @@ public class FieldManager : MonoBehaviour
         if (!GameManager.Instance.GameStart) return;
 
         UpdateEnemy();
+    }
+
+    public void DeathRequest(EnemyBase enemy)
+    {
+        GameManager.Instance.FieldData.RemoveEnemy(enemy);
+        enemy.Death();
+        _fieldCount--;
     }
 
     public void UpdateEnemy()
@@ -100,7 +104,7 @@ public class FieldManager : MonoBehaviour
 
     void Spawn(GameObject enemyObj, Vector3 point)
     {
-        Instantiate(enemyObj,point,Quaternion.identity);
+        var obj = Instantiate(enemyObj,point,Quaternion.identity);
         _spawnCount++;
     }
 }

@@ -4,7 +4,6 @@ using UnityEngine.SceneManagement;
 
 public class SceneChanger : SingleMonoBehaviour<SceneChanger>
 {
-
     protected override void OnAwake()
     {
         DontDestroyOnLoad(gameObject);
@@ -18,9 +17,9 @@ public class SceneChanger : SingleMonoBehaviour<SceneChanger>
     public void LoadSceneAsync(string sceneName)
     {
         if (sceneName.Length <= 0) { Debug.LogWarning("シーンを指定してください"); return; }
-        LoadAsync(sceneName);
+        StartCoroutine(LoadAsyncImpl(sceneName));
     }
-    private IEnumerator LoadAsync(string sceneName)
+    private IEnumerator LoadAsyncImpl(string sceneName)
     {
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
         asyncLoad.allowSceneActivation = false;

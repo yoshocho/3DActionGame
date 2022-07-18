@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class FieldData
 {
-   public List<EnemyBase> _enemys { get; private set; }
+   public List<EnemyBase> Enemys { get; private set; }
 
     public FieldData()
     {
-        _enemys = new List<EnemyBase>();
+        Enemys = new List<EnemyBase>();
     }
-    public void RegisterEnemy(EnemyBase e) => _enemys.Add(e);
-    public void RemoveEnemy(EnemyBase e) => _enemys.Remove(e);
+    public void RegisterEnemy(EnemyBase e) => Enemys.Add(e);
+    public void RemoveEnemy(EnemyBase e) => Enemys.Remove(e);
 }
