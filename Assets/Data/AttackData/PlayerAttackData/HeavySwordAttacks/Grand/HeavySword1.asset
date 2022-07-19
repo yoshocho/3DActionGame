@@ -23,11 +23,12 @@ MonoBehaviour:
       ShakeVec: {x: 0, y: 0}
       Duration: 0
     ZoomSet: 0
-  AttackType: 1
   HitEvents:
   - rid: 7052827333616467968
-  AttackEffects: []
+  AttackEffects:
+  - rid: 7052827443609468928
   Damage: 90
+  AttackType: 1
   Id: 0
   KeepTime: 0.85
   ReceiveTime: 0.42
@@ -38,3 +39,7 @@ MonoBehaviour:
       type: {class: HitStop, ns: , asm: Assembly-CSharp}
       data:
         HitStopPower: 2.4
+    - rid: 7052827443609468928
+      type: {class: CameraShake, ns: , asm: Assembly-CSharp}
+      data:
+        CameraShakeVec: {x: 0.05, y: 0.05, z: 0.1}
