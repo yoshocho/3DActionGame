@@ -18,15 +18,10 @@ public class CameraManager : MonoBehaviour
     CinemachineFreeLook _freeCam = default;
     [SerializeField]
     float _zoomSpeed = 1;
-    [SerializeField]
-    private float _cameraDistance = 8.5f;
-    [SerializeField]
-    private float _scrollMin = 3f;
-    [SerializeField]
-    float _zoomDistance = 4f;
-    CinemachineFramingTransposer _camDistance;
-    CinemachinePOV m_camPov;
     CinemachineImpulseSource _impulseSource;
+
+    bool _isLookAt = false;
+    GameObject _lockOnTarget;
     
     float _defaultDistance = default;
     private void Awake()
@@ -36,11 +31,8 @@ public class CameraManager : MonoBehaviour
     void Start()
     {
         _followTarget = GameObject.FindGameObjectWithTag("Player");
-        _camDistance = _vCam.GetCinemachineComponent<CinemachineFramingTransposer>();
-        m_camPov = _vCam.GetCinemachineComponent<CinemachinePOV>();
         _impulseSource = GetComponent<CinemachineImpulseSource>();
-        _camDistance.m_CameraDistance = _cameraDistance;
-        _defaultDistance = _camDistance.m_CameraDistance;
+        _freeCam = GetComponentInChildren<CinemachineFreeLook>();
     }
 
     public static IEnumerator ZoomIn(float zoomSpeed = 0.5f, Action zoomEnd = null)
@@ -51,6 +43,7 @@ public class CameraManager : MonoBehaviour
     public static IEnumerator ZoomOut(float zoomSpeed = 0.5f, Action zoomEnd = null)
     {
         yield return null;
+        
     }
 
     public static void ShakeCam(Vector3 vec = default)
@@ -71,11 +64,17 @@ public class CameraManager : MonoBehaviour
 
         return enemys.FirstOrDefault().gameObject;
     }
-    //void Update()
-    //{
-    //    //float scroll = Input.mouseScrollDelta.y;
-    //    //m_camDistance.m_CameraDistance -= scroll * m_zoomSpeed;
-    //    float scrollSpeed = Mathf.Clamp(m_camDistance.m_CameraDistance, m_scrollMin, m_scrollMax);
-    //    m_camDistance.m_CameraDistance = scrollSpeed;  
-    //}
+
+    void SetTarget(GameObject target)
+    {
+        _lockOnTarget = target;
+    }
+
+    void LookAtTarget(Vector3 target)
+    {
+        float cameraHeight = _freeCam.transform.position.y;
+        Vector3 followPos = new Vector3(_freeCam.Follow.position.x, cameraHeight, _freeCam.Follow.position.z);
+        Vector3 targetPos = new Vector3(target.x,cameraHeight,target.z);
+
+    }
 }
