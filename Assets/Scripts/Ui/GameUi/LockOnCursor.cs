@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public class LockOnEventHandler 
 {
-    public bool lockOn = false;
-    public Transform target = null;
+    public bool LockOn = false;
+    public Transform Target = null;
 }
 
 public class LockOnCursor : ChildUi,IUIEventReceiver<LockOnEventHandler>
@@ -27,21 +27,23 @@ public class LockOnCursor : ChildUi,IUIEventReceiver<LockOnEventHandler>
     }
     public void ReceiveData(LockOnEventHandler data)
     {
-        if (data.lockOn)
+        if (data.LockOn)
         {
-            _target = data.target;
+            _target = data.Target;
+            Enable();
         }
         else
         {
             _target = null;
+            Disable();
         }
     }
     public override void Enable()
     {
-
+        _cursor.gameObject.SetActive(true);
     }
     public override void Disable()
     {
-
+        _cursor.gameObject.SetActive(false);
     }
 }
