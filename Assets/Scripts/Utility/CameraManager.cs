@@ -16,33 +16,41 @@ public class CameraManager : MonoBehaviour
     CinemachineVirtualCamera _vCam = default;
     [SerializeField]
     CinemachineFreeLook _freeCam = default;
-    [SerializeField]
-    float _zoomSpeed = 1;
+
     CinemachineImpulseSource _impulseSource;
+    GameObject _lockOnTarget;
+    float _defaultDistance = default;
+
+    [SerializeField]
+    float _blendTime = 0.2f;
 
     bool _isLookAt = false;
-    GameObject _lockOnTarget;
+    float _lockOnAngle;
+    float _lockOnProgess;
+    float _lockOnVelocity;
     
-    float _defaultDistance = default;
+
     private void Awake()
     {
         Instance = this;
     }
     void Start()
     {
-        _followTarget = GameObject.FindGameObjectWithTag("Player");
+        InputManager.Instance.PlayerInput.Player.LockOn.started += context => 
+        LookAtTarget(_followTarget.transform.position);
+
+       // _followTarget = GameObject.FindGameObjectWithTag("Player");
         _impulseSource = GetComponent<CinemachineImpulseSource>();
         _freeCam = GetComponentInChildren<CinemachineFreeLook>();
     }
-
-    public static IEnumerator ZoomIn(float zoomSpeed = 0.5f, Action zoomEnd = null)
+    private void Update()
     {
-        yield return null;
-    }
-
-    public static IEnumerator ZoomOut(float zoomSpeed = 0.5f, Action zoomEnd = null)
-    {
-        yield return null;
+        if (_isLookAt)
+        {
+            float angle = Mathf.SmoothDamp(_lockOnProgess, _lockOnAngle, ref _lockOnVelocity, _blendTime);
+            _freeCam.m_XAxis.Value = angle - _lockOnProgess;
+            _lockOnProgess = angle;
+        }
         
     }
 
@@ -76,5 +84,17 @@ public class CameraManager : MonoBehaviour
         Vector3 followPos = new Vector3(_freeCam.Follow.position.x, cameraHeight, _freeCam.Follow.position.z);
         Vector3 targetPos = new Vector3(target.x,cameraHeight,target.z);
 
+        Vector3 followToTarget = targetPos - followPos;
+        Vector3 followToTargetReverse = Vector3.Scale(followToTarget, -Vector3.one);
+        Vector3 followToCamera = _freeCam.transform.position - followPos;
+
+        Vector3 axis = Vector3.Cross(followToCamera,followToTargetReverse);
+        float dir = axis.y < 0 ? -1 : 1;
+        float angle = Vector3.Angle(followToCamera,followToTargetReverse);
+
+        _lockOnAngle = angle * dir;
+        _isLookAt = true;
+        _lockOnVelocity = 0.0f;
+        _lockOnProgess = 0.0f;
     }
 }
