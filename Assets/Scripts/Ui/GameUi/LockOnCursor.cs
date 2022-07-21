@@ -3,33 +3,34 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LockOnEventHandler 
+public class LockOnEventHandler
 {
-    public bool LockOn = false;
     public Transform Target = null;
 }
 
-public class LockOnCursor : ChildUi,IUIEventReceiver<LockOnEventHandler>
+public class LockOnCursor : ChildUi,IUIEventReceiver<Transform>
 {
     [SerializeField]
     Image _cursor;
-
+    RectTransform _tarns;
     Transform _target;
-
-    private void Update()
-    {
-
-    }
-
     public override void SetUp()
     {
+        _cursor = GetComponent<Image>();
+        _cursor.enabled = false;
 
+        _tarns = GetComponent<RectTransform>();
     }
-    public void ReceiveData(LockOnEventHandler data)
+    private void Update()
     {
-        if (data.LockOn)
+        if (!_target) return;
+        _tarns.position = RectTransformUtility.WorldToScreenPoint(Camera.main, _target.position);
+    }
+    public void ReceiveData(Transform data)
+    {
+        if (data)
         {
-            _target = data.Target;
+            _target = data;
             Enable();
         }
         else
@@ -40,10 +41,10 @@ public class LockOnCursor : ChildUi,IUIEventReceiver<LockOnEventHandler>
     }
     public override void Enable()
     {
-        _cursor.gameObject.SetActive(true);
+        _cursor.enabled = true;
     }
     public override void Disable()
     {
-        _cursor.gameObject.SetActive(false);
+        _cursor.enabled = false;
     }
 }
