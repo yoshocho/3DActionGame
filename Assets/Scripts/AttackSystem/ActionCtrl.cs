@@ -6,18 +6,6 @@ using System;
 
 namespace AttackSetting
 {
-    /// <summary>
-    /// 攻撃のエフェクトのタイプ
-    /// </summary>
-    public enum AttackEffect
-    {
-        CameraShake,
-        ControllerShake,
-        ZoomIn,
-        ZoomOut,
-        SetEffect,
-    }
-
     public partial class ActionCtrl : MonoBehaviour
     {
 
@@ -34,6 +22,7 @@ namespace AttackSetting
         public float ReceiveTimer { get; private set; } = 0.0f;
         public float KeepTimer { get; private set; } = 0.0f;
         int _actId = 0;
+        Transform _userTrans;
 
         public ActionData CurrentAction { get; private set; }
         public bool ReserveAction { get; private set; } = false;
@@ -53,12 +42,14 @@ namespace AttackSetting
         }
 
         ClipName _clipName = ClipName.First;
-        void Start()
+        
+        public void SetUp(GameObject user)
         {
+            _userTrans = user.transform;
             if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
             if (!_hitCtrl) _hitCtrl = GetComponentInChildren<NewHitCtrl>();
 
-            _hitCtrl.SetUp(this,gameObject);
+            _hitCtrl.SetUp(this, gameObject);
         }
         void Update()
         {
@@ -134,7 +125,6 @@ namespace AttackSetting
         /// <param name="attack">攻撃データ</param>
         void SetAction(ActionData attack)
         {
-
             CurrentAction = attack;
             ReceiveTimer = attack.ReceiveTime;
             KeepTimer = attack.KeepTime;
