@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(CanvasGroup),typeof(CanvasRenderer))]
 public class UiPanel : MonoBehaviour
 {
     [SerializeField]
     bool _initVisibility = true;
-
     [SerializeField]
-    int _id;
-    public int Id { get => _id; private set { _id = value; } }
-
+    string _path;
+    public string Path => _path;
     protected CanvasGroup _canvasGroup;
     protected CanvasRenderer _canvasRenderer;
     public RectTransform RectTrans{ get; protected set; }
@@ -25,11 +24,12 @@ public class UiPanel : MonoBehaviour
         RectTrans = GetComponent<RectTransform>();
         _canvasGroup = GetComponent<CanvasGroup>();
         _canvasRenderer = GetComponent<CanvasRenderer>();
-        if (!_initVisibility) _canvasGroup.alpha = 0.0f;
         SetUp();
+        if (!_initVisibility) Close();
+
     }
 
-    protected virtual void SetUp()
+    public virtual void SetUp()
     {
         ChildUi[] childUis = GetComponentsInChildren<ChildUi>();
         foreach (ChildUi childUi in childUis)
