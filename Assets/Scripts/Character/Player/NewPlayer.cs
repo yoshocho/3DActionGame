@@ -174,7 +174,16 @@ public partial class NewPlayer : CharacterBase
             default:
                 break;
         }
+
         base.AddDamage(damage, attackType);
+
+        PlayerHPEventHandler hpData = new PlayerHPEventHandler
+        {
+            hp = Status.CurrentHp.Value,
+            maxHp = Status.MaxHp
+        };
+        if(_debagMode) Debug.Log(JsonUtility.ToJson(hpData));
+        UiManager.Instance.ReceiveData("gameUi",hpData);
 
         if (IsDeath)
         {
