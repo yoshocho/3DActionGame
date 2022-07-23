@@ -16,41 +16,42 @@ public class CameraManager : MonoBehaviour
     CinemachineVirtualCamera _vCam = default;
     [SerializeField]
     CinemachineFreeLook _freeCam = default;
-    [SerializeField]
-    float _zoomSpeed = 1;
-    [SerializeField]
-    private float _cameraDistance = 8.5f;
-    [SerializeField]
-    private float _scrollMin = 3f;
-    [SerializeField]
-    float _zoomDistance = 4f;
-    CinemachineFramingTransposer _camDistance;
-    CinemachinePOV m_camPov;
+
     CinemachineImpulseSource _impulseSource;
-    
+    GameObject _lockOnTarget;
     float _defaultDistance = default;
+
+    [SerializeField]
+    float _blendTime = 0.2f;
+
+    bool _isLookAt = false;
+    float _lockOnAngle;
+    float _lockOnProgess;
+    float _lockOnVelocity;
+    
+
     private void Awake()
     {
         Instance = this;
     }
     void Start()
     {
-        _followTarget = GameObject.FindGameObjectWithTag("Player");
-        _camDistance = _vCam.GetCinemachineComponent<CinemachineFramingTransposer>();
-        m_camPov = _vCam.GetCinemachineComponent<CinemachinePOV>();
+        InputManager.Instance.PlayerInput.Player.LockOn.started += context => 
+        LookAtTarget(_followTarget.transform.position);
+
+       // _followTarget = GameObject.FindGameObjectWithTag("Player");
         _impulseSource = GetComponent<CinemachineImpulseSource>();
-        _camDistance.m_CameraDistance = _cameraDistance;
-        _defaultDistance = _camDistance.m_CameraDistance;
+        _freeCam = GetComponentInChildren<CinemachineFreeLook>();
     }
-
-    public static IEnumerator ZoomIn(float zoomSpeed = 0.5f, Action zoomEnd = null)
+    private void Update()
     {
-        yield return null;
-    }
-
-    public static IEnumerator ZoomOut(float zoomSpeed = 0.5f, Action zoomEnd = null)
-    {
-        yield return null;
+        if (_isLookAt)
+        {
+            float angle = Mathf.SmoothDamp(_lockOnProgess, _lockOnAngle, ref _lockOnVelocity, _blendTime);
+            _freeCam.m_XAxis.Value = angle - _lockOnProgess;
+            _lockOnProgess = angle;
+        }
+        
     }
 
     public static void ShakeCam(Vector3 vec = default)
@@ -71,11 +72,29 @@ public class CameraManager : MonoBehaviour
 
         return enemys.FirstOrDefault().gameObject;
     }
-    //void Update()
-    //{
-    //    //float scroll = Input.mouseScrollDelta.y;
-    //    //m_camDistance.m_CameraDistance -= scroll * m_zoomSpeed;
-    //    float scrollSpeed = Mathf.Clamp(m_camDistance.m_CameraDistance, m_scrollMin, m_scrollMax);
-    //    m_camDistance.m_CameraDistance = scrollSpeed;  
-    //}
+
+    void SetTarget(GameObject target)
+    {
+        _lockOnTarget = target;
+    }
+
+    void LookAtTarget(Vector3 target)
+    {
+        float cameraHeight = _freeCam.transform.position.y;
+        Vector3 followPos = new Vector3(_freeCam.Follow.position.x, cameraHeight, _freeCam.Follow.position.z);
+        Vector3 targetPos = new Vector3(target.x,cameraHeight,target.z);
+
+        Vector3 followToTarget = targetPos - followPos;
+        Vector3 followToTargetReverse = Vector3.Scale(followToTarget, -Vector3.one);
+        Vector3 followToCamera = _freeCam.transform.position - followPos;
+
+        Vector3 axis = Vector3.Cross(followToCamera,followToTargetReverse);
+        float dir = axis.y < 0 ? -1 : 1;
+        float angle = Vector3.Angle(followToCamera,followToTargetReverse);
+
+        _lockOnAngle = angle * dir;
+        _isLookAt = true;
+        _lockOnVelocity = 0.0f;
+        _lockOnProgess = 0.0f;
+    }
 }

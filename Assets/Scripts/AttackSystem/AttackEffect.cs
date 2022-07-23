@@ -1,8 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace AttackSetting {
+
+    /// <summary>
+    /// 攻撃のエフェクトのタイプ
+    /// </summary>
+    public enum AttackEffect
+    {
+        CameraShake,
+        ControllerShake,
+        SetEffect,
+    }
+
     public partial class ActionCtrl : MonoBehaviour 
     {
         /// <summary>
@@ -12,23 +24,9 @@ namespace AttackSetting {
         public void PlayEf(ActionData data)
         {
 
-            if (data.Effect.CameraShakeVec != Vector3.zero) CameraManager.ShakeCam();
-            if (data.Effect.ControllerEf.ShakeVec != Vector2.zero)
-                EffectManager.Instance.ControllerShake(data.Effect.ControllerEf.ShakeVec, data.Effect.ControllerEf.Duration);
-
-            switch (data.Effect.ZoomSet)
-            {
-                case CamZoom.Default:
-                    break;
-                case CamZoom.In:
-                    CameraManager.ZoomIn();
-                    break;
-                case CamZoom.Out:
-                    CameraManager.ZoomOut();
-                    break;
-                default:
-                    break;
-            }
+            if (data.Effect.CameraShakeVec != Vector3.zero) CameraManager.ShakeCam(data.Effect.CameraShakeVec);
+            //if (data.Effect.ControllerEf.ShakeVec != Vector2.zero)
+                //EffectManager.Instance.ControllerShake(data.Effect.ControllerEf.ShakeVec, data.Effect.ControllerEf.Duration);
         }
         /// <summary>
         /// アニメーションイベント用のエフェクト再生関数
@@ -36,27 +34,29 @@ namespace AttackSetting {
         /// <param name="effect">タイプ</param>
         public void SetEf(AttackEffect effect)
         {
+            IAttackEffect ef = null;
             switch (effect)
             {
                 case AttackEffect.CameraShake:
-                    CameraManager.ShakeCam(CurrentAction.Effect.CameraShakeVec);
+                    ef = CurrentAction.AttackEffects.FirstOrDefault(e => e is CameraShake);
                     break;
                 case AttackEffect.ControllerShake:
-                    var ctlEf = CurrentAction.Effect.ControllerEf;
-                    EffectManager.Instance.ControllerShake(ctlEf.ShakeVec,ctlEf.Duration);
-                    break;
-                case AttackEffect.ZoomIn:
-                    CameraManager.ZoomIn();
-                    break;
-                case AttackEffect.ZoomOut:
-                    CameraManager.ZoomOut();
+                    //ef = CurrentAction.AttackEffects.OfType<ControllerShake>().First();
+                    ef = CurrentAction.AttackEffects.FirstOrDefault(e => e is ControllerShake);
                     break;
                 case AttackEffect.SetEffect:
-
+                    ef = CurrentAction.AttackEffects.FirstOrDefault(e => e is SetAttackEffect);
                     break;
                 default:
                     break;
             }
+            if (ef == null)
+            {
+                Debug.LogWarning(string.Format("指定された攻撃を設定していません{0}", effect));
+                return;
+            }
+            ef.SetUp(gameObject);
+            ef.SetEffect();
         }
     }
 }

@@ -19,7 +19,7 @@ public class CharacterBase : MonoBehaviour,IDamage
     Rigidbody _rb;
     public Rigidbody RB { get => _rb; protected set { _rb = value; } }
     
-    private void Awake()
+    private void Start()
     {
         SetUp();
     }
@@ -28,6 +28,7 @@ public class CharacterBase : MonoBehaviour,IDamage
     {
         _rb = GetComponent<Rigidbody>();
         _status.SetUp();
+        _data.CheckType(gameObject);
     }
 
     public virtual void AddDamage(int damage, AttackType attackType = AttackType.Weak)
