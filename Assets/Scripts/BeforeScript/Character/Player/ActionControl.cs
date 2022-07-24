@@ -7,7 +7,8 @@ public enum AttackLayer
 {
     InFight,
     LongRange,
-    Airial
+    Airial,
+    Lunch
 }
 public enum ActionType
 {
@@ -30,6 +31,8 @@ public class Attack
 }
 public class ActionControl : MonoBehaviour
 {
+    public static ActionControl Instance { get; private set; } = default;
+
     [SerializeField,Tooltip("大剣の通常攻撃List")]
     List<Attack> m_heavySwordNormalCombo = new List<Attack>();
     public List<Attack> HeavySwordNormalCombos => m_heavySwordNormalCombo;
@@ -39,18 +42,25 @@ public class ActionControl : MonoBehaviour
     [SerializeField, Tooltip("大剣のスキル攻撃List")]
     List<Attack> m_heavySwordSkillList = new List<Attack>();
     public List<Attack> HeavySwordSkillList => m_heavySwordSkillList;
-
-
+    [Space]
+    [SerializeField]
+    List<Attack> m_lightSwordNormalCombo = new List<Attack>();
+    public List<Attack> LightSwordNormalCombo => m_lightSwordNormalCombo;
+    [SerializeField]
+    List<Attack> m_lightSwordAirialCombo = new List<Attack>();
+    public List<Attack> LightSwordAirialCombo => m_lightSwordAirialCombo;
+    [SerializeField]
+    List<Attack> m_lightSwordSkillList = new List<Attack>();
+    public List<Attack> LightSwordSkillList => m_lightSwordSkillList;
 
     float m_stopTime = default;
     float m_frameTimer = default;
     float m_timeScale = default;
     bool m_isHitStop = default;
     
-    HitCtrl m_hitCtrl;
     private void Awake()
     {
-        //m_hitCtrl = GetComponentInChildren<HitCtrl>();
+        Instance = this;
         m_timeScale = Time.timeScale;
     }
 

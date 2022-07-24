@@ -18,32 +18,33 @@ public class WeaponHolder : MonoBehaviour
 
 
     [SerializeField]
-    Transform[] _holderPos;
+    Transform[] _holderPoss;
     [SerializeField]
     GameObject m_currentHolder = default;
     [SerializeField]
     List<GameObject> m_weaponList = new List<GameObject>();
     GameObject m_currentWeapon = default;
-    AttackSetting.WeaponType _currentType;
-    public HitCtrl HitCtrl { get; private set; } = default;
 
+    AttackSetting.WeaponType _currentType;
     private void Start()
     {
         //SetWeapon(1);
     }
 
-    public void ChangeWeapon(WeaponType type)
+    public void ChangeWeapon(AttackSetting.WeaponType type)
     {
+        _currentType = type;
         switch (type)
         {
-            case WeaponType.HEAVY:
-                if (m_currentWeapon)
-                    SetPosition(m_currentWeapon.transform, m_lightSwordHolder.transform);
+            case AttackSetting.WeaponType.LightSword:
+                //if (m_currentWeapon)
+                    SetPosition(m_currentHolder.transform, _holderPoss[0]);
                 SetWeapon(0);
                 break;
-            case WeaponType.LIGHT:
-                if (m_currentWeapon)
-                    SetPosition(m_currentWeapon.transform, m_heavySwordHolder.transform);
+            case AttackSetting.WeaponType.HeavySword:
+                //if (m_currentWeapon)
+                    SetPosition(m_currentHolder.transform,_holderPoss[1]);
+                    //SetPosition(m_currentWeapon.transform, m_heavySwordHolder.transform);
                 SetWeapon(1);
                 break;
             default:
@@ -51,7 +52,7 @@ public class WeaponHolder : MonoBehaviour
         }
     }
 
-    void SetWeapon(int weaponId)
+    public void SetWeapon(int weaponId)
     {
         Debug.Log("変更" + weaponId);
         m_currentWeapon = m_weaponList[weaponId];
@@ -75,11 +76,11 @@ public class WeaponHolder : MonoBehaviour
             case AttackSetting.WeaponType.Hand:
                 break;
             case AttackSetting.WeaponType.LightSword:
-                SetPosition(m_currentWeapon.transform, m_lightSwordHolder.transform);
+                SetPosition(m_currentHolder.transform, _holderPoss[0]);
 
                 break;
             case AttackSetting.WeaponType.HeavySword:
-                SetPosition(m_currentWeapon.transform, m_heavySwordHolder.transform);
+                SetPosition(m_currentHolder.transform, _holderPoss[1]);
                 break;
             default:
                 break;
