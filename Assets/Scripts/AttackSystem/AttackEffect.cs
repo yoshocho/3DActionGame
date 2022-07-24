@@ -52,7 +52,7 @@ namespace AttackSetting {
             }
             if (ef == null)
             {
-                Debug.LogWarning(string.Format("指定された攻撃を設定していません{0}", effect));
+                Debug.LogWarning(string.Format("指定されたエフェクトを設定していません{0}", effect));
                 return;
             }
             ef.SetUp(gameObject);
