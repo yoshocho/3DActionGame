@@ -25,7 +25,7 @@ public partial class GameManager
     ///<summary>現在のゲームステート</summary>
     public GameState CurrentState { get; private set; }
     /// <summary> ゲームの経過時間</summary>
-    public float ElapsedTime { get; private set; } = 0.0f;
+    public TimeData GameTime = new TimeData();
     
     Subject<bool> _onPause = new Subject<bool>();
     /// <summary>ゲームポーズイベント </summary>
@@ -88,11 +88,11 @@ public partial class GameManager
     }
     void ResetGameTime()
     {
-        ElapsedTime = 0.0f;
+        GameTime.ResetTime();
     }
 
     public void UpdateGameTime()
     {
-        ElapsedTime += Time.deltaTime;
+        GameTime.UpdateTime();
     }
 }
