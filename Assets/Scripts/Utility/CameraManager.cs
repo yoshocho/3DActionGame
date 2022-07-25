@@ -13,6 +13,8 @@ public class CameraManager : MonoBehaviour
     [SerializeField]
     GameObject _followTarget;
     [SerializeField]
+    Transform _testTarget;
+    [SerializeField]
     CinemachineVirtualCamera _vCam = default;
     [SerializeField]
     CinemachineFreeLook _freeCam = default;
@@ -36,12 +38,13 @@ public class CameraManager : MonoBehaviour
     }
     void Start()
     {
-        InputManager.Instance.PlayerInput.Player.LockOn.started += context => 
-        LookAtTarget(_followTarget.transform.position);
+        _impulseSource = GetComponent<CinemachineImpulseSource>();
+        //_freeCam = GetComponentInChildren<CinemachineFreeLook>();
+        //InputManager.Instance.PlayerInput.Player.LockOn.started += context => 
+        //LookAtTarget(_testTarget.position);
 
        // _followTarget = GameObject.FindGameObjectWithTag("Player");
-        _impulseSource = GetComponent<CinemachineImpulseSource>();
-        _freeCam = GetComponentInChildren<CinemachineFreeLook>();
+       
     }
     private void Update()
     {
@@ -59,23 +62,23 @@ public class CameraManager : MonoBehaviour
         Instance._impulseSource.GenerateImpulse(vec);
     }
 
-    public GameObject FindTarget(Transform userTrans ,float dis,bool screenCenter = false)
+    public GameObject FindTarget(Transform userTrans ,float dis,bool disCenter = false,bool screenCenter = false)
     {
         var enemys = GameManager.Instance.FieldData.Enemys
             .Where(e => e.IsVisible)
-            .Where(e => !e.IsDeath)
-            .Where(e => Vector3.Distance(e.transform.position, userTrans.position) < dis);
+            .Where(e => e.IsDeath == false)
+            .Where(e => Vector3.Distance(userTrans.position, e.transform.position) < dis);
 
-         enemys.OrderBy(e =>  Vector3.Distance(userTrans.position ,e.transform.position));
-        if (screenCenter) enemys.OrderBy(e => Vector2.Distance(new Vector2(
-            Screen.width /2.0f,Screen.height / 2.0f),Camera.main.WorldToScreenPoint(e.transform.position)));
-
+        if (disCenter)
+        {
+           enemys = enemys.OrderBy(e => Vector3.Distance(userTrans.position, e.transform.position));
+        }
+        if (screenCenter)
+        {
+            enemys = enemys.OrderBy(e => Vector2.Distance(new Vector2(
+            Screen.width / 2.0f, Screen.height / 2.0f), Camera.main.WorldToScreenPoint(e.transform.position)));
+        }
         return enemys.FirstOrDefault().gameObject;
-    }
-
-    void SetTarget(GameObject target)
-    {
-        _lockOnTarget = target;
     }
 
     void LookAtTarget(Vector3 target)

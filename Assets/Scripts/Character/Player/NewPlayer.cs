@@ -68,12 +68,24 @@ public partial class NewPlayer : CharacterBase
     bool _inAvoid = false;
     bool _keepAir = false;
 
-    void Start()
+    protected override void SetUp()
     {
+        base.SetUp();
         Init();
         StateCash();
     }
+    void Init()
+    {
+        InputManager.Instance.PlayerInput.Player.LockOn.started += context => LockOn();
 
+        _selfTrans = transform;
+        if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
+        _grandCheck = GetComponent<GroundChecker>();
+        _actionCtrl = GetComponent<ActionCtrl>();
+        _actionCtrl.SetUp(gameObject);
+
+        
+    }
     private void StateCash()
     {
         _stateMachine = new StateMachine<NewPlayer>(this);
@@ -90,13 +102,6 @@ public partial class NewPlayer : CharacterBase
 
     }
 
-    void Init()
-    {
-        _selfTrans = transform;
-        if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
-        _grandCheck = GetComponent<GroundChecker>();
-        _actionCtrl = GetComponent<ActionCtrl>();
-    }
     void Update()
     {
         ApplyAxis();
@@ -145,6 +150,30 @@ public partial class NewPlayer : CharacterBase
         return _grandCheck.IsGround();
     }
 
+    public void LockOn()
+    {
+        
+        if (GameManager.Instance.LockOnTarget != null)
+        {
+            GameManager.Instance.LockOnTarget = null;
+            UiManager.Instance.ReceiveData("gameUi",GameManager.Instance.LockOnTarget.transform);
+            Debug.Log("LockOnâèú");
+        }
+        else
+        {
+            Debug.Log("LockOn!");
+            var target = CameraManager.Instance.FindTarget(transform, 20.0f, true);
+            GameManager.Instance.LockOnTarget = target;
+            UiManager.Instance.ReceiveData("gameUi",target.transform);
+        }
+    }
+    void DoRotate(Vector3 dir)
+    {
+        if (dir == Vector3.zero) return;
+
+        dir.y = 0.0f;
+        _targetRot = Quaternion.LookRotation(dir);
+    }
     void ChangeState(StateEvent nextState)
     {
         _stateMachine.Dispatch((int)nextState);
@@ -174,7 +203,16 @@ public partial class NewPlayer : CharacterBase
             default:
                 break;
         }
+
         base.AddDamage(damage, attackType);
+
+        PlayerHPEventHandler hpData = new PlayerHPEventHandler
+        {
+            hp = Status.CurrentHp.Value,
+            maxHp = Status.MaxHp
+        };
+        if(_debagMode) Debug.Log(JsonUtility.ToJson(hpData));
+        UiManager.Instance.ReceiveData("gameUi",hpData);
 
         if (IsDeath)
         {

@@ -41,6 +41,7 @@ public class FieldManager : MonoBehaviour
         if (!GameManager.Instance.GameStart) return;
 
         UpdateEnemy();
+        GameManager.Instance.UpdateGameTime();
     }
 
     public void DeathRequest(EnemyBase enemy)

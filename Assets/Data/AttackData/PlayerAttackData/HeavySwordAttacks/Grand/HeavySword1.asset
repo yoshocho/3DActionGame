@@ -19,10 +19,6 @@ MonoBehaviour:
     UseRootMotion: 1
   Effect:
     CameraShakeVec: {x: 0.05, y: 0.05, z: 0.1}
-    ControllerEf:
-      ShakeVec: {x: 0, y: 0}
-      Duration: 0
-    ZoomSet: 0
   HitEvents:
   - rid: 7052827333616467968
   AttackEffects:
@@ -42,4 +38,6 @@ MonoBehaviour:
     - rid: 7052827443609468928
       type: {class: CameraShake, ns: , asm: Assembly-CSharp}
       data:
-        CameraShakeVec: {x: 0.05, y: 0.05, z: 0.1}
+        XShakeVec: 0.05
+        YShakeVec: 0.05
+        ZShakeVec: 0.1

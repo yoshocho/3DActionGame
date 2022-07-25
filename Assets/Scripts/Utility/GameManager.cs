@@ -15,7 +15,6 @@ public partial class GameManager
         Title,
         InGame,
         GameOver,
-        GameEnd,
         Loading,
     }
 
@@ -26,7 +25,7 @@ public partial class GameManager
     ///<summary>現在のゲームステート</summary>
     public GameState CurrentState { get; private set; }
     /// <summary> ゲームの経過時間</summary>
-    public float ElapsedTime { get; private set; } = 0.0f;
+    public TimeData GameTime = new TimeData();
     
     Subject<bool> _onPause = new Subject<bool>();
     /// <summary>ゲームポーズイベント </summary>
@@ -40,20 +39,20 @@ public partial class GameManager
 
     public void SetUp(GameState state)
     {
+        UiManager.Instance.SetUp();
+
         switch (state)
         {
             case GameState.Title:
                 //UI
                 break;
             case GameState.InGame:
+
                 InputManager.Instance.SetUp();
                 break;
             case GameState.GameOver:
                 break;
-            case GameState.GameEnd:
-
-                //UI
-                break;
+            
             case GameState.Loading:
 
                 break;
@@ -73,13 +72,12 @@ public partial class GameManager
                 break;
             case GameState.InGame:
                 Debug.Log("InGame");
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
                 break;
             case GameState.GameOver:
-                //var player = GameObject.FindGameObjectWithTag("Player").GetComponent<NewPlayer>();
                 
-                break;
-            case GameState.GameEnd:
-                Debug.Log("End");
+                
                 break;
             case GameState.Loading:
 
@@ -90,11 +88,11 @@ public partial class GameManager
     }
     void ResetGameTime()
     {
-        ElapsedTime = 0.0f;
+        GameTime.ResetTime();
     }
 
     public void UpdateGameTime()
     {
-        ElapsedTime += Time.deltaTime;
+        GameTime.UpdateTime();
     }
 }

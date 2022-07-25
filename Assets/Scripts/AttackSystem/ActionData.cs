@@ -26,22 +26,12 @@ namespace AttackSetting
         In,
         Out,
     }
-    [System.Serializable]
-    public class ControllerEf
-    {
-        [Header("コントローラー振動の縦横値")]
-        public Vector2 ShakeVec;
-        [Header("コントローラー振動の持続時間")]
-        public float Duration;
-    }
-
+    
     [System.Serializable]
     public class AtkEffect
     {
         [Header("カメらを揺らす強さ")]
         public Vector3 CameraShakeVec;
-        public ControllerEf ControllerEf;
-        public CamZoom ZoomSet;
     }
 
     [CreateAssetMenu(fileName = "ActionData", menuName = "ScriptableObjects/ActionData")]
@@ -55,6 +45,7 @@ namespace AttackSetting
         public List<IAttackEffect> AttackEffects;
         [Header("ダメージ数")]
         public int Damage;
+        [Header("攻撃タイプ")]
         public AttackType AttackType;
         public int Id = 0;
         [Header("持続時間")]

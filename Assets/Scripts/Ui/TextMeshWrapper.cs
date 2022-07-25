@@ -19,4 +19,14 @@ public class TextMeshWrapper : MonoBehaviour
         _text = GetComponent<TMP_Text>();
         _text.fontSize = 40;
     }
+
+    public void Enable()
+    {
+        _text.enabled = true;
+    }
+
+    public void Disable()
+    {
+        _text.enabled = false;
+    }
 }
