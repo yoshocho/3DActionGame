@@ -15,7 +15,6 @@ public partial class GameManager
         Title,
         InGame,
         GameOver,
-        GameEnd,
         Loading,
     }
 
@@ -40,20 +39,20 @@ public partial class GameManager
 
     public void SetUp(GameState state)
     {
+        UiManager.Instance.SetUp();
+
         switch (state)
         {
             case GameState.Title:
                 //UI
                 break;
             case GameState.InGame:
+
                 InputManager.Instance.SetUp();
                 break;
             case GameState.GameOver:
                 break;
-            case GameState.GameEnd:
-
-                //UI
-                break;
+            
             case GameState.Loading:
 
                 break;
@@ -73,13 +72,12 @@ public partial class GameManager
                 break;
             case GameState.InGame:
                 Debug.Log("InGame");
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
                 break;
             case GameState.GameOver:
-                //var player = GameObject.FindGameObjectWithTag("Player").GetComponent<NewPlayer>();
                 
-                break;
-            case GameState.GameEnd:
-                Debug.Log("End");
+                
                 break;
             case GameState.Loading:
 
