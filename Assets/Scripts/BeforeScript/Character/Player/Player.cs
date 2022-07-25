@@ -66,7 +66,6 @@ public partial class Player : MonoBehaviour, IDamage
     Animator _anim;
     AttackAssistController _attackAssist;
     WeaponHolder _weaponHolder;
-    HitCtrl _hitCtrl;
     [SerializeField] ActionControl _actionCtrl;
     [SerializeField] AnimationCtrl _animCtrl;
 
@@ -85,22 +84,7 @@ public partial class Player : MonoBehaviour, IDamage
     #endregion
 
     #region Attack
-    /// <summary>次の攻撃までの入力受付時間</summary>
-    float m_waitTimer = 0.0f;
-    /// <summary>攻撃のフラグ</summary> 
-    bool _reserveAction = false;
-    /// <summary>コンボ数</summary> 
-    int m_comboStep = 0;
-    /// <summary>アクションの持続時間</summary>
-    float _actionKeepingTimer = 0.0f;
-
-    bool m_lunchEnd = false;
-
     bool m_poseKeep = false;
-
-    bool m_lunchAttack = false;
-
-    //[SerializeField] HitCtrl m_lunchTrigger;
 
     List<Attack> m_currentAttackList = new List<Attack>();
     List<Attack> m_currentAirialAttackList = new List<Attack>();
@@ -139,8 +123,6 @@ public partial class Player : MonoBehaviour, IDamage
     /// <summary>ジャスト回避のトリガー</summary>
     bool _justTrigger = false;
 
-    List<EnemyBase> _targetEnemys = new List<EnemyBase>();
-
     IInputProvider _inputProvider;
     Vector3 _moveForward = Vector3.zero;
     Vector3 _currentVelocity = Vector3.zero;
@@ -152,11 +134,7 @@ public partial class Player : MonoBehaviour, IDamage
         _controller = GetComponent<CharacterController>();
         _attackAssist = GetComponent<AttackAssistController>();
         _weaponHolder = GetComponentInChildren<WeaponHolder>();
-        _animCtrl.SetEventDelegate(EventCall);
         ChangeState(_idleState);
-        _actionCtrl = ActionControl.Instance;
-
-        //m_lunchTrigger.enabled = false;
         _selfTrans = transform;
         _currentJustTime = _justTime;
         _currentGravityScale = _gravityScale;
@@ -169,8 +147,6 @@ public partial class Player : MonoBehaviour, IDamage
         ApplyMove();
         ApplyGravity();
         ApplyRotation();
-        CheckAir();
-        //if (_inputManager.WeaponChangeKey is KeyStatus.DOWN) ChangeWeapon();
 
         _currentState.OnUpdate(this);
     }
@@ -208,12 +184,6 @@ public partial class Player : MonoBehaviour, IDamage
         rot = Quaternion.Slerp(rot, targetRot, 1000.0f);
         _selfTrans.rotation = rot;
     }
-
-    void MoveForward(float time, float speed)
-    {
-        //StartCoroutine(MoveForwardAsync(time,speed));
-    }
-
     //IEnumerator MoveForwardAsync(float time, float speed)
     //{
     //    while (time < 0.0f)
@@ -224,20 +194,6 @@ public partial class Player : MonoBehaviour, IDamage
     //    }
     //}
 
-    void CheckAir()
-    {
-        if (_inKeepAir)
-        {
-            _airKeepTimer -= Time.deltaTime;
-        }
-        //Debug.Log(m_airKeepTimer);
-        if (_airKeepTimer < 0.0)
-        {
-            _inKeepAir = false;
-            _airKeepTimer = _airKeepTime;
-            
-        }
-    }
     bool IsGround()
     {
         Vector3 start = new Vector3(transform.position.x, transform.position.y + 0.7f, transform.position.z);
@@ -278,22 +234,6 @@ public partial class Player : MonoBehaviour, IDamage
         nextState?.OnEnter(this, _currentState);
         _currentState = nextState;
     }
-
-    void ChangeWeapon()
-    {
-        if (m_weaponType is WeaponType.HEAVY)
-        {
-            m_weaponType = WeaponType.LIGHT;
-            ChangeAttacks(m_weaponType);
-        }
-        else
-        {
-            m_weaponType = WeaponType.HEAVY;
-            ChangeAttacks(m_weaponType);
-        }
-        m_comboStep = 0;
-    }
-
     public void AddDamage(int damage,AttackType attackType = default)
     {
         if (_justTrigger)
@@ -323,110 +263,5 @@ public partial class Player : MonoBehaviour, IDamage
         var dir = _selfTrans.forward;
         dir.y = 0.0f;
         _targetRot = Quaternion.LookRotation(dir, Vector3.up);
-    }
-
-    void NextAction(int step, AttackLayer layer, List<Attack> comboList)
-    {
-        int actId = -1;
-        Attack attack = comboList[0];
-        for (int i = 0; i < comboList.Count; i++)
-        {
-            if (comboList[i].Step != step) continue;
-            if (comboList[i].Layer != layer) continue;
-
-            attack = comboList[i];
-            actId = i;
-            break;
-        }
-        if (actId == -1)
-        {
-            Debug.LogWarning(string.Format("attack not found. {0}/1", step, layer));
-            return;
-        }
-        switch (attack.ActType)
-        {
-            case ActionType.Animation:
-                AttackAssist();
-                //Debug.Log($"{step}/{layer}{comboList[actId].Name}");
-                //_weaponHolder.ChangeWeapon(m_weaponType);
-                _hitCtrl.SetCtrl(this, comboList[actId]);
-                m_waitTimer = attack.WaitTime;
-                _actionKeepingTimer = attack.KeepTime;
-                _animCtrl.Play(attack.ActionTargetName, 0.2f);
-                break;
-            case ActionType.CreateObject:
-                Debug.Log("CreateObject");
-                break;
-            default:
-                break;
-        }
-
-        switch (attack.Layer)
-        {
-            case AttackLayer.InFight:
-                Debug.Log("InFight");
-                break;
-            case AttackLayer.LongRange:
-                Debug.Log("LongRange");
-                break;
-            case AttackLayer.Airial:
-                _inKeepAir = true;
-                _airKeepTimer = (attack.KeepTime + attack.WaitTime);
-                Debug.Log("空中");
-                //MoveForward(0.2f, 1.0f);
-                //m_currentVelocity = transform.forward * 0.7f;
-                //m_controller.Move(m_currentVelocity);
-
-                //transform.DOMove();
-                break;
-            case AttackLayer.Lunch:
-                _airKeepTimer = (attack.KeepTime + attack.WaitTime);
-                break;
-            default:
-                break;
-        }
-    }
-
-    void ChangeAttacks(WeaponType type)
-    {
-        switch (type)
-        {
-            case WeaponType.HEAVY:
-                m_currentAttackList = _actionCtrl.HeavySwordNormalCombos;
-                m_currentSkillList = _actionCtrl.HeavySwordSkillList;
-                m_currentAirialAttackList = _actionCtrl.HeavySwordAirialCombos;
-                break;
-            case WeaponType.LIGHT:
-                m_currentAttackList = _actionCtrl.LightSwordNormalCombo;
-                m_currentSkillList = _actionCtrl.LightSwordSkillList;
-                m_currentAirialAttackList = _actionCtrl.LightSwordAirialCombo;
-                break;
-            default: break;
-        }
-    }
-
-    void EventCall(int eventId)
-    {
-        switch (eventId)
-        {
-            case 1:
-                
-                _targetEnemys.ForEach(e => e.LaunchUp(4.0f));
-                _selfTrans.DOMoveY(4.0f, 1.0f);
-                break;
-        }
-    }
-
-    public void HitCallBack(EnemyBase enemy, Attack attack)
-    {
-        enemy?.AddDamage(attack.Damage);
-        enemy?.AirStayMaintenance(0.7f);
-        enemy?.OffGravity();
-        _actionCtrl.HitStop(attack.Power);
-        comboSubject.OnNext(Unit.Default);
-        if (!_targetEnemys.Contains(enemy))
-        {
-            _targetEnemys.Add(enemy);
-        }
     }
 }

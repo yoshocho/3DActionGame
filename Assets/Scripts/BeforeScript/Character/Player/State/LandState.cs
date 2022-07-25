@@ -9,7 +9,6 @@ public partial class Player : MonoBehaviour
             owner.PlayAnimation("Land",0.1f);
             owner._currentJumpStep = owner._jumpStep;
             owner._currentAirDushCount = 0;
-            owner.m_lunchEnd = false;
         }
 
         public override void OnExit(Player owner, PlayerStateBase nextState)
