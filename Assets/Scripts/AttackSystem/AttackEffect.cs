@@ -18,17 +18,6 @@ namespace AttackSetting {
     public partial class ActionCtrl : MonoBehaviour 
     {
         /// <summary>
-        /// 攻撃のエフェクト再生関数
-        /// </summary>
-        /// <param name="data">攻撃データ</param>
-        public void PlayEf(ActionData data)
-        {
-
-            if (data.Effect.CameraShakeVec != Vector3.zero) CameraManager.ShakeCam(data.Effect.CameraShakeVec);
-            //if (data.Effect.ControllerEf.ShakeVec != Vector2.zero)
-                //EffectManager.Instance.ControllerShake(data.Effect.ControllerEf.ShakeVec, data.Effect.ControllerEf.Duration);
-        }
-        /// <summary>
         /// アニメーションイベント用のエフェクト再生関数
         /// </summary>
         /// <param name="effect">タイプ</param>
