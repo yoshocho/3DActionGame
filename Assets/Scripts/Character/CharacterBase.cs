@@ -13,6 +13,9 @@ public class CharacterBase : MonoBehaviour,IDamage
     public ObjectData Data { get => _data; protected set { _data = value;} }
     [SerializeField]
     float _moveSpeed = default;
+    [SerializeField]
+    Transform _centerPos;
+    public Transform CenterPos => _centerPos;
     public float MoveSpeed { get => _moveSpeed;protected set { _moveSpeed = value; } }
     public bool IsDeath { get; protected set; } = false;
 
@@ -28,7 +31,7 @@ public class CharacterBase : MonoBehaviour,IDamage
     {
         _rb = GetComponent<Rigidbody>();
         _status.SetUp();
-        _data.CheckType(gameObject);
+        if(_data.Type == ObjectType.None) _data.CheckType(gameObject);
     }
 
     public virtual void AddDamage(int damage, AttackType attackType = AttackType.Weak)
