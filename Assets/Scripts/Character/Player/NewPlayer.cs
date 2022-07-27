@@ -84,7 +84,7 @@ public partial class NewPlayer : CharacterBase
         _actionCtrl = GetComponent<ActionCtrl>();
         _actionCtrl.SetUp(gameObject);
 
-        
+
     }
     private void StateCash()
     {
@@ -110,7 +110,7 @@ public partial class NewPlayer : CharacterBase
     private void FixedUpdate()
     {
         ApplyRotation();
-        ApplyGravity();
+       if(!IsGround()) ApplyGravity();
         ApplyMove();
     }
 
@@ -139,10 +139,9 @@ public partial class NewPlayer : CharacterBase
     }
     void ApplyGravity()
     {
-        if (!IsGround() && !_keepAir)
-        {
-            _currentVelocity.y += _gravityScale * Physics.gravity.y * Time.deltaTime;
-        }
+
+        _currentVelocity.y += _gravityScale * Physics.gravity.y * Time.deltaTime;
+
     }
 
     bool IsGround()
@@ -152,19 +151,20 @@ public partial class NewPlayer : CharacterBase
 
     public void LockOn()
     {
-        
+
         if (GameManager.Instance.LockOnTarget != null)
         {
+
             GameManager.Instance.LockOnTarget = null;
-            UiManager.Instance.ReceiveData("gameUi",GameManager.Instance.LockOnTarget.transform);
+            UiManager.Instance.ReceiveData("gameUi", new LockOnEventHandler(false));
             Debug.Log("LockOnâèú");
         }
         else
         {
             Debug.Log("LockOn!");
-            var target = CameraManager.Instance.FindTarget(transform, 20.0f, true);
+            var target = CameraManager.Instance.FindTarget(transform, 60.0f, false, true);
             GameManager.Instance.LockOnTarget = target;
-            UiManager.Instance.ReceiveData("gameUi",target.transform);
+            UiManager.Instance.ReceiveData("gameUi", new LockOnEventHandler(true, target.transform));
         }
     }
     void DoRotate(Vector3 dir)
@@ -211,8 +211,8 @@ public partial class NewPlayer : CharacterBase
             hp = Status.CurrentHp.Value,
             maxHp = Status.MaxHp
         };
-        if(_debagMode) Debug.Log(JsonUtility.ToJson(hpData));
-        UiManager.Instance.ReceiveData("gameUi",hpData);
+        if (_debagMode) Debug.Log(JsonUtility.ToJson(hpData));
+        UiManager.Instance.ReceiveData("gameUi", hpData);
 
         if (IsDeath)
         {
