@@ -1,24 +1,27 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Rigidbody),typeof(GroundChecker))]
 public class RigidMover : MonoBehaviour
 {
     [SerializeField]
     float _gravityScale = 0.98f;
     [SerializeField]
-    float _rotateSpeed = 10f;
+    float _rotateSpeed = 10.0f;
+    GroundChecker _groundChecker;
     Rigidbody _rb;
     Vector3 _velocity = default;
     Quaternion _targetRot;
     [SerializeField]
     bool _useGravity = true;
+    
     public bool UseGravity { set { _useGravity = value; } }
-    public Vector3 SetVelocity { set { _velocity = value; } }
+    public Vector3 Velocity { get => _velocity; set { _velocity = value; } }
     public Quaternion SetRot { set { _targetRot = value; } }
     public float SetRotateSpeed { set { _rotateSpeed = value; } }
     public void SetUp()
     {
         _rb = GetComponent<Rigidbody>();
+        _groundChecker = GetComponent<GroundChecker>();
     }
     private void Reset()
     {
@@ -28,9 +31,9 @@ public class RigidMover : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        ApplyMove();
         ApplyRotate();
         if (_useGravity) ApplyGravity();
+        ApplyMove();
     }
     void ApplyMove()
     {
@@ -44,6 +47,13 @@ public class RigidMover : MonoBehaviour
     }
     void ApplyGravity()
     {
-        _velocity.y += _gravityScale * Physics.gravity.y * Time.deltaTime;
+        //if (!_groundChecker.IsGround())
+        //{
+            _velocity.y += _gravityScale * Physics.gravity.y * Time.deltaTime;
+        //}
+    }
+    public bool IsGround()
+    {
+        return _groundChecker.IsGround();
     }
 }
