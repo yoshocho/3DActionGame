@@ -5,10 +5,16 @@ using UnityEngine.UI;
 
 public class LockOnEventHandler
 {
+    public bool IsLockOn = false;
     public Transform Target = null;
+    public LockOnEventHandler(bool lockOn, Transform target = null)
+    {
+        IsLockOn = lockOn;
+        Target = target;
+    }
 }
 
-public class LockOnCursor : ChildUi,IUIEventReceiver<Transform>
+public class LockOnCursor : ChildUi, IUIEventReceiver<LockOnEventHandler>
 {
     [SerializeField]
     Image _cursor;
@@ -23,14 +29,20 @@ public class LockOnCursor : ChildUi,IUIEventReceiver<Transform>
     }
     private void Update()
     {
-        if (!_target) return;
+        if (_target == null)
+        {
+            Disable();
+            return;
+        }
+
+
         _tarns.position = RectTransformUtility.WorldToScreenPoint(Camera.main, _target.position);
     }
-    public void ReceiveData(Transform data)
+    public void ReceiveData(LockOnEventHandler data)
     {
-        if (data)
+        if (data.IsLockOn)
         {
-            _target = data;
+            _target = data.Target;
             Enable();
         }
         else
