@@ -27,4 +27,14 @@ public class PlayerHPUI : ChildUi, IUIEventReceiver<PlayerHPEventHandler>
         Debug.Log(data);
         ApllyHpBar(data.hp,data.maxHp);
     }
+
+    public override void Enable()
+    {
+        _hpBar.image.enabled = true;
+    }
+
+    public override void Disable()
+    {
+        _hpBar.image.enabled = false;
+    }
 }
