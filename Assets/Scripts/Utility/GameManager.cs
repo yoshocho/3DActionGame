@@ -35,7 +35,7 @@ public partial class GameManager
 
     public FieldData FieldData { get; private set; } = new FieldData();
 
-    public GameObject LockOnTarget { get; set; } = null;
+    public Transform LockOnTarget { get; set; } = null;
 
     public void SetUp(GameState state)
     {

@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
 
-public class UseRootMotion : StateMachineBehaviour
+public class ApplyRootVelocity : StateMachineBehaviour
 {
+    AnimationCtrl _animCtrl;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         animator.applyRootMotion = true;
+
+        if(!_animCtrl)_animCtrl = animator.gameObject.GetComponent<AnimationCtrl>();
     }
 
     //OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -13,7 +16,7 @@ public class UseRootMotion : StateMachineBehaviour
     {
         animator.applyRootMotion = true;
         Vector3 velo = new Vector3(animator.rootPosition.x,animator.transform.position.y, animator.rootPosition.z);
-        animator.gameObject.transform.position = velo;
+        _animCtrl.OwerPos.position = velo;
     }
 
     //OnStateExit is called when a transition ends and the state machine finishes evaluating this state
@@ -21,16 +24,4 @@ public class UseRootMotion : StateMachineBehaviour
     {
         animator.applyRootMotion = false;
     }
-
-    // OnStateMove is called right after Animator.OnAnimatorMove()
-    //override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    // Implement code that processes and affects root motion
-    //}
-
-    // OnStateIK is called right after Animator.OnAnimatorIK()
-    //override public void OnStateIK(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    // Implement code that sets up animation IK (inverse kinematics)
-    //}
 }
