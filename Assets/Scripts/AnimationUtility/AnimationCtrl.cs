@@ -36,13 +36,19 @@ public class AnimationCtrl : MonoBehaviour
     public Transform OwerPos => _owerPos;
     [SerializeField]
     Animator _anim;
+    public Animator Animator => _anim;
     AnimatorOverrideController _animatorOverrideController;
 
     private void Awake()
     {
+        SetUp();
+    }
+
+    public void SetUp()
+    {
         if (!_anim) _anim = GetComponentInChildren<Animator>();
 
-        if(!_owerPos) _owerPos = transform.root.transform;
+        if (!_owerPos) _owerPos = transform.root.transform;
         _animatorOverrideController = new AnimatorOverrideController(_anim.runtimeAnimatorController);
         _anim.runtimeAnimatorController = _animatorOverrideController;
     }
