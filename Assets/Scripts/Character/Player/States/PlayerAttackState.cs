@@ -59,7 +59,7 @@ public partial class NewPlayer : CharacterBase
             Vector3 dir = owner._currentVelocity;
             if(GameManager.Instance.LockOnTarget != null)
             {
-                dir = GameManager.Instance.LockOnTarget.transform.position - owner._selfTrans.position;
+                dir = GameManager.Instance.LockOnTarget.position - owner._selfTrans.position;
             }
             else
             {
