@@ -19,6 +19,12 @@ public partial class NewPlayer : CharacterBase
         Damage,
     }
 
+    enum StyleState 
+    {
+        Common, �@
+        Strafe,  //���������Ă�����
+    }
+
     [SerializeField]
     float _walkSpeed = 10;
     [SerializeField]
@@ -47,7 +53,8 @@ public partial class NewPlayer : CharacterBase
     [SerializeField]
     List<AnimState> _animSets = new List<AnimState>();
 
-    AttackType _currentType;
+    StyleState _currentStyle = StyleState.Common;
+    AttackType _attackType;
     Transform _selfTrans;
     Vector3 _moveForward = Vector3.zero;
     Vector3 _currentVelocity = Vector3.zero;
@@ -110,7 +117,7 @@ public partial class NewPlayer : CharacterBase
     private void FixedUpdate()
     {
         ApplyRotation();
-       if(!IsGround()) ApplyGravity();
+        if(!IsGround()) ApplyGravity();
         ApplyMove();
     }
 
