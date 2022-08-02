@@ -6,7 +6,7 @@ using AttackSetting;
 [RequireComponent(typeof(ActionCtrl), typeof(GroundChecker))]
 public partial class NewPlayer : CharacterBase
 {
-    enum StateEvent : int
+    public enum StateEvent : int
     {
         Idle,
         Walk,
