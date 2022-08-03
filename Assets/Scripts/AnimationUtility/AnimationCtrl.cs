@@ -11,18 +11,21 @@ public class AnimClip
     public AnimationClip Clip;
     [Range(0, 0.5f), Header("ブレンド時間")]
     public float Duration = 0.1f;
-    [Range(-0.5f, 2.0f),Header("アニメーションのスピード")]
+    [Range(0.1f, 2.0f),Header("アニメーションのスピード")]
     public float Speed = 1.0f;
     [SerializeField]
-    public bool UseRootMotion = true;
+    public bool UseRootMotion = false;
 }
 
 [System.Serializable]
 public class AnimState
 {
-    public string StateName = "";
+    [SerializeField]
+    public string StateName = string.Empty;
     [Range(0, 0.5f), Header("ブレンド時間")]
     public float Duration = 0.1f;
+    [SerializeField]
+    public bool UseRootMotion = false;
 }
 /// <summary>
 /// アニメーション再生などを管理するサポートクラス
