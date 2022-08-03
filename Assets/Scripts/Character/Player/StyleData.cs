@@ -19,10 +19,5 @@ public class StyleData : ScriptableObject
     [SerializeField]
     public List<AttackData> AttackData = new List<AttackData>();
     [SerializeField]
-    public List<StyleAnim> StyleAnims = new List<StyleAnim>();
-
-    public StyleAnim GetAnim(NewPlayer.StateEvent state)
-    {
-        return StyleAnims.FirstOrDefault(anim => anim.PlayerState == state);
-    }
+    public AnimatorOverrideController OverrideAnimator;
 }
