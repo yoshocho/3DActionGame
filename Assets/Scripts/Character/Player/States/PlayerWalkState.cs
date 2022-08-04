@@ -1,16 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using State = StateMachine<NewPlayer>.State;
+using State = StateMachine<PlayerStateMachine>.State;
 
-public partial class NewPlayer : CharacterBase
+public partial class PlayerStateMachine : CharacterBase
 {
     public class PlayerWalkState : State
     {
         protected override void OnEnter(State prevState)
         {
            if(owner._debagMode) Debug.Log("InWalk");
-            owner.PlayAnimation("Walk",0.1f);
+            owner.PlayAnimation("Run",0.1f);
             owner.MoveSpeed = owner._walkSpeed;
         }
         protected override void OnUpdate()

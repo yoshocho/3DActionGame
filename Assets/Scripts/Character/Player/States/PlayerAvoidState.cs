@@ -1,7 +1,7 @@
 using UnityEngine;
-using State = StateMachine<NewPlayer>.State;
+using State = StateMachine<PlayerStateMachine>.State;
 
-public partial class NewPlayer : CharacterBase
+public partial class PlayerStateMachine : CharacterBase
 {
     public class PlayerAvoidState : State
     {
@@ -39,7 +39,7 @@ public partial class NewPlayer : CharacterBase
             {
                 if (owner.IsGround())
                 {
-                    if (owner._inputAxis.sqrMagnitude < 0.1f) owner.ChangeState(StateEvent.Walk);
+                    if (owner._inputAxis.sqrMagnitude < 0.1f) owner.ChangeState(StateEvent.Run);
                     else owner.ChangeState(StateEvent.Idle);
                     if (owner._inputProvider.GetJump() && owner._currentJumpCount < owner._jumpCount) 
                         owner.ChangeState(StateEvent.Jump);

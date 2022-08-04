@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using State = StateMachine<NewPlayer>.State;
+using State = StateMachine<PlayerStateMachine>.State;
 
-public partial class NewPlayer : CharacterBase
+public partial class PlayerStateMachine : CharacterBase
 {
     public class PlayerIdleState : State
     {
@@ -19,7 +19,7 @@ public partial class NewPlayer : CharacterBase
         {
             if (owner.IsGround())
             {
-                if (owner._inputAxis.sqrMagnitude > 0.1f) owner.ChangeState(StateEvent.Walk);
+                if (owner._inputAxis.sqrMagnitude > 0.1f) owner.ChangeState(StateEvent.Run);
                 if (owner._inputProvider.GetAvoid()) owner.ChangeState(StateEvent.Avoid);
                 if(owner._inputProvider.GetAttack()) owner.ChangeState(StateEvent.Attack);
                 if (owner._inputProvider.GetJump())

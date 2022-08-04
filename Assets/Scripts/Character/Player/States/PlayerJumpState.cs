@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using State = StateMachine<NewPlayer>.State;
+using State = StateMachine<PlayerStateMachine>.State;
 
-partial class NewPlayer : CharacterBase
+partial class PlayerStateMachine : CharacterBase
 {
     public class PlayerJumpState : State
     {

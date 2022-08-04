@@ -1,8 +1,8 @@
 using AttackSetting;
 using UnityEngine;
-using State = StateMachine<NewPlayer>.State;
+using State = StateMachine<PlayerStateMachine>.State;
 
-public partial class NewPlayer : CharacterBase
+public partial class PlayerStateMachine : CharacterBase
 {
     public class PlayerAttackState : State
     {
@@ -22,26 +22,13 @@ public partial class NewPlayer : CharacterBase
                 if (owner.IsGround()) owner._actionCtrl.RequestAction(_type);
                 else owner._actionCtrl.RequestAction(AttackType.Airial);
                 AttackAssist();
-                #region
-                //if (GameManager.Instance.LockOnTarget == null)
-                //{
-                //    if (stickMove)
-                //        owner._targetRot = Quaternion.LookRotation(owner._moveForward);
-                //}
-                //else
-                //{
-                //    AttackAssist(GameManager.Instance.LockOnTarget.transform.position);
-                //}
-                #endregion
             }
-
-
 
             if (owner.IsGround())
             {
                 if (stickMove && owner._actionCtrl.ReceiveTimer <
                     owner._actionCtrl.CurrentAction.ReceiveTime - _extendTime) //’¼‚®‚ÉƒXƒe[ƒg‚ª•Ï‚í‚ç‚È‚¢‚æ‚¤‚É­‚µ—P—\‚ðŽ‚½‚¹‚é
-                    owner.ChangeState(StateEvent.Walk);
+                    owner.ChangeState(StateEvent.Run);
                 else if (!owner._animCtrl.IsPlayingAnimatin()) owner.ChangeState(StateEvent.Idle);
             }
             else if (!owner._actionCtrl.ActionKeep) owner.ChangeState(StateEvent.Fall);

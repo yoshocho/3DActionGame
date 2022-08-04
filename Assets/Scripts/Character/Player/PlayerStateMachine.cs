@@ -4,13 +4,13 @@ using System;
 using AttackSetting;
 
 [RequireComponent(typeof(ActionCtrl), typeof(GroundChecker))]
-public partial class NewPlayer : CharacterBase
+public partial class PlayerStateMachine : CharacterBase
 {
     public enum StateEvent : int
     {
         Idle,
-        Walk,
         Run,
+        Sprint,
         Avoid,
         Attack,
         Jump,
@@ -21,8 +21,8 @@ public partial class NewPlayer : CharacterBase
 
     enum StyleState 
     {
-        Common, ï¿½@
-        Strafe,  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ï¿½
+        Common, @
+        Strafe,  //•Ší‚ğ‚Á‚Ä‚¢‚éó‘Ô
     }
 
     [SerializeField]
@@ -67,7 +67,7 @@ public partial class NewPlayer : CharacterBase
     AnimationCtrl _animCtrl;
     GroundChecker _grandCheck;
     ActionCtrl _actionCtrl;
-    StateMachine<NewPlayer> _stateMachine;
+    StateMachine<PlayerStateMachine> _stateMachine;
 
     [SerializeField]
     bool _debagMode;
@@ -95,13 +95,13 @@ public partial class NewPlayer : CharacterBase
     }
     private void StateCash()
     {
-        _stateMachine = new StateMachine<NewPlayer>(this);
+        _stateMachine = new StateMachine<PlayerStateMachine>(this);
         _stateMachine
             .AddAnyTransition<PlayerIdleState>((int)StateEvent.Idle)
-            .AddAnyTransition<PlayerWalkState>((int)StateEvent.Walk)
+            .AddAnyTransition<PlayerWalkState>((int)StateEvent.Run)
             .AddAnyTransition<PlayerAttackState>((int)StateEvent.Attack)
             .AddAnyTransition<PlayerAvoidState>((int)StateEvent.Avoid)
-            .AddAnyTransition<PlayerRunState>((int)StateEvent.Run)
+            .AddAnyTransition<PlayerRunState>((int)StateEvent.Sprint)
             .AddAnyTransition<PlayerJumpState>((int)StateEvent.Jump)
             .AddAnyTransition<PlayerFallState>((int)StateEvent.Fall)
             .AddAnyTransition<PlayerLandState>((int)StateEvent.Land)
@@ -146,9 +146,7 @@ public partial class NewPlayer : CharacterBase
     }
     void ApplyGravity()
     {
-
         _currentVelocity.y += _gravityScale * Physics.gravity.y * Time.deltaTime;
-
     }
 
     bool IsGround()
@@ -169,7 +167,8 @@ public partial class NewPlayer : CharacterBase
         else
         {
             Debug.Log("LockOn!");
-            var target = CameraManager.Instance.FindTarget(transform, 60.0f, false, true);
+            var targetObj = CameraManager.Instance.FindTarget(transform, 60.0f, false, true);
+            var target = targetObj.GetComponent<CharacterBase>().CenterPos;
             GameManager.Instance.LockOnTarget = target;
             UiManager.Instance.ReceiveData("gameUi", new LockOnEventHandler(true, target.transform));
         }
