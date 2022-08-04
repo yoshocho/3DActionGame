@@ -13,7 +13,8 @@ namespace AttackSetting
         AnimationCtrl _animCtrl;
         [SerializeField]
         List<AttackData> _attackDatas = new List<AttackData>();
-        public List<AttackData> CurrentAttacks => _attackDatas;
+        public List<AttackData> AttackDatas { get => _attackDatas; set { _attackDatas = value; } }
+        
         [SerializeField]
         NewHitCtrl _hitCtrl;
 
@@ -49,7 +50,7 @@ namespace AttackSetting
             if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
             if (!_hitCtrl) _hitCtrl = GetComponentInChildren<NewHitCtrl>();
 
-            _hitCtrl.SetUp(this, gameObject);
+            _hitCtrl.SetUp(this, user);
         }
         void Update()
         {
