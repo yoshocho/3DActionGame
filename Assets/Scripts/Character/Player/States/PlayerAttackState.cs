@@ -6,12 +6,14 @@ public partial class PlayerStateMachine : CharacterBase
 {
     public class PlayerAttackState : State
     {
-        AttackType _type = AttackType.Heavy;
+        
         const float _extendTime = 0.25f;
         protected override void OnEnter(State prevState)
         {
             owner._currentVelocity = Vector3.zero;
-            owner._actionCtrl.RequestAction(_type);
+            owner._currentStyle = StyleState.Strafe;
+            owner._playerActCtrl.SetStyle(owner._currentWeapon);
+            owner._actionCtrl.RequestAction(owner._attackType);
             AttackAssist();
         }
         protected override void OnUpdate()
@@ -19,7 +21,7 @@ public partial class PlayerStateMachine : CharacterBase
             bool stickMove = owner._inputAxis.sqrMagnitude > 0.1f;
             if (owner._inputProvider.GetAttack() && !owner._actionCtrl.ActionKeep)
             {
-                if (owner.IsGround()) owner._actionCtrl.RequestAction(_type);
+                if (owner.IsGround()) owner._actionCtrl.RequestAction(owner._attackType);
                 else owner._actionCtrl.RequestAction(AttackType.Airial);
                 AttackAssist();
             }

@@ -45,8 +45,8 @@ public partial class PlayerStateMachine : CharacterBase
     float _avoidSpeed = 2.0f;
     [SerializeField]
     float _justTime = 0.3f;
-
-
+    [SerializeField]
+    WeaponType _currentWeapon;
     [SerializeField]
     bool _invincible = false;
 
@@ -66,6 +66,7 @@ public partial class PlayerStateMachine : CharacterBase
     [SerializeField]
     AnimationCtrl _animCtrl;
     GroundChecker _grandCheck;
+    PlayerActionCtrl _playerActCtrl;
     ActionCtrl _actionCtrl;
     StateMachine<PlayerStateMachine> _stateMachine;
 
@@ -87,11 +88,12 @@ public partial class PlayerStateMachine : CharacterBase
 
         _selfTrans = transform;
         if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
+        
         _grandCheck = GetComponent<GroundChecker>();
+        _playerActCtrl = GetComponent<PlayerActionCtrl>();
+        _playerActCtrl.SetUp();
         _actionCtrl = GetComponent<ActionCtrl>();
         _actionCtrl.SetUp(gameObject);
-
-
     }
     private void StateCash()
     {
