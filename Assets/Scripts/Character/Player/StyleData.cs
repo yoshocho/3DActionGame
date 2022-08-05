@@ -20,7 +20,10 @@ public class StyleData : ScriptableObject
     public List<AttackData> AttackData = new List<AttackData>();
     [SerializeField]
     public List<StyleAnim> StyleAnimData = new List<StyleAnim>();
-    
+
+    [SerializeField]
+    public AnimationClip[] Clips;
+
     public AnimationClip GetStyleAnim(PlayerStateMachine.StateEvent state)
     {
         return StyleAnimData.FirstOrDefault(data => data.PlayerState == state).AnimClip;
