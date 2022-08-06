@@ -13,7 +13,9 @@ public partial class PlayerStateMachine : CharacterBase
             if(owner._debagMode)Debug.Log("InAvoid");
 
             _avoidAxis = owner._moveForward.normalized;
-            owner.PlayAnimation("Avoid");
+            if (owner.IsGround()) owner.PlayAnimation("Avoid");
+            else owner.PlayAnimation("AirDush");
+
             owner._inAvoid = true;
             _avoidTimer = owner._avoidTime;
             _justTimer = owner._justTime;
@@ -39,7 +41,11 @@ public partial class PlayerStateMachine : CharacterBase
             {
                 if (owner.IsGround())
                 {
-                    if (owner._inputAxis.sqrMagnitude < 0.1f) owner.ChangeState(StateEvent.Run);
+                    if (owner._inputAxis.sqrMagnitude > 0.1f)
+                    {
+                        if (owner._inputProvider.GetAvoidDown()) owner.ChangeState(StateEvent.Sprint);
+                        else owner.ChangeState(StateEvent.Run);
+                    }
                     else owner.ChangeState(StateEvent.Idle);
                     if (owner._inputProvider.GetJump() && owner._currentJumpCount < owner._jumpCount) 
                         owner.ChangeState(StateEvent.Jump);
