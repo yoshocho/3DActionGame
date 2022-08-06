@@ -1,17 +1,19 @@
 using AttackSetting;
 using UnityEngine;
-using State = StateMachine<NewPlayer>.State;
+using State = StateMachine<PlayerStateMachine>.State;
 
-public partial class NewPlayer : CharacterBase
+public partial class PlayerStateMachine : CharacterBase
 {
     public class PlayerAttackState : State
     {
-        AttackType _type = AttackType.Heavy;
+        
         const float _extendTime = 0.25f;
         protected override void OnEnter(State prevState)
         {
             owner._currentVelocity = Vector3.zero;
-            owner._actionCtrl.RequestAction(_type);
+            owner._currentStyle = StyleState.Strafe;
+            owner._playerActCtrl.SetStyle(owner._currentWeapon);
+            owner._actionCtrl.RequestAction(owner._attackType);
             AttackAssist();
         }
         protected override void OnUpdate()
@@ -19,35 +21,22 @@ public partial class NewPlayer : CharacterBase
             bool stickMove = owner._inputAxis.sqrMagnitude > 0.1f;
             if (owner._inputProvider.GetAttack() && !owner._actionCtrl.ActionKeep)
             {
-                if (owner.IsGround()) owner._actionCtrl.RequestAction(_type);
+                if (owner.IsGround()) owner._actionCtrl.RequestAction(owner._attackType);
                 else owner._actionCtrl.RequestAction(AttackType.Airial);
                 AttackAssist();
-                #region
-                //if (GameManager.Instance.LockOnTarget == null)
-                //{
-                //    if (stickMove)
-                //        owner._targetRot = Quaternion.LookRotation(owner._moveForward);
-                //}
-                //else
-                //{
-                //    AttackAssist(GameManager.Instance.LockOnTarget.transform.position);
-                //}
-                #endregion
             }
-
-
 
             if (owner.IsGround())
             {
                 if (stickMove && owner._actionCtrl.ReceiveTimer <
                     owner._actionCtrl.CurrentAction.ReceiveTime - _extendTime) //’¼‚®‚ÉƒXƒe[ƒg‚ª•Ï‚í‚ç‚È‚¢‚æ‚¤‚É­‚µ—P—\‚ðŽ‚½‚¹‚é
-                    owner.ChangeState(StateEvent.Walk);
+                    owner.ChangeState(StateEvent.Run);
                 else if (!owner._animCtrl.IsPlayingAnimatin()) owner.ChangeState(StateEvent.Idle);
             }
             else if (!owner._actionCtrl.ActionKeep) owner.ChangeState(StateEvent.Fall);
 
             if (owner._inputProvider.GetAvoid()) owner.ChangeState(StateEvent.Avoid);
-            if (owner._inputProvider.GetJump() && owner._currentJumpCount <= owner._jumpCount)
+            if (owner._inputProvider.GetJump() && owner._currentJumpCount < owner._jumpCount)
                 owner.ChangeState(StateEvent.Jump);
         }
         protected override void OnExit(State nextState)
@@ -59,7 +48,7 @@ public partial class NewPlayer : CharacterBase
             Vector3 dir = owner._currentVelocity;
             if(GameManager.Instance.LockOnTarget != null)
             {
-                dir = GameManager.Instance.LockOnTarget.transform.position - owner._selfTrans.position;
+                dir = GameManager.Instance.LockOnTarget.position - owner._selfTrans.position;
             }
             else
             {

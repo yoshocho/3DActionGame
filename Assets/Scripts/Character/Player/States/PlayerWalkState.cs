@@ -1,16 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using State = StateMachine<NewPlayer>.State;
+using State = StateMachine<PlayerStateMachine>.State;
 
-public partial class NewPlayer : CharacterBase
+public partial class PlayerStateMachine : CharacterBase
 {
     public class PlayerWalkState : State
     {
         protected override void OnEnter(State prevState)
         {
            if(owner._debagMode) Debug.Log("InWalk");
-            owner.PlayAnimation("Walk",0.1f);
+            owner.PlayAnimation("Run",0.1f);
             owner.MoveSpeed = owner._walkSpeed;
         }
         protected override void OnUpdate()
@@ -25,8 +25,7 @@ public partial class NewPlayer : CharacterBase
 
                     if (owner._inputProvider.GetAttack()) owner.ChangeState(StateEvent.Attack);
                     if (owner._inputProvider.GetAvoid()) owner.ChangeState(StateEvent.Avoid);
-                    if (owner._inputProvider.GetJump() && owner._currentJumpCount <= owner._jumpCount)
-                        owner.ChangeState(StateEvent.Jump);
+                    if (owner._inputProvider.GetJump()) owner.ChangeState(StateEvent.Jump);
                 }
                 else owner.ChangeState(StateEvent.Idle);
             }

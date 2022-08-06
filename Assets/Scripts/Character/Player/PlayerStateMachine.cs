@@ -4,19 +4,25 @@ using System;
 using AttackSetting;
 
 [RequireComponent(typeof(ActionCtrl), typeof(GroundChecker))]
-public partial class NewPlayer : CharacterBase
+public partial class PlayerStateMachine : CharacterBase
 {
-    enum StateEvent : int
+    public enum StateEvent : int
     {
         Idle,
-        Walk,
         Run,
+        Sprint,
         Avoid,
         Attack,
         Jump,
         Fall,
         Land,
         Damage,
+    }
+
+    enum StyleState 
+    {
+        Common, Å@
+        Strafe,  //ïêäÌÇéùÇ¡ÇƒÇ¢ÇÈèÛë‘
     }
 
     [SerializeField]
@@ -39,15 +45,16 @@ public partial class NewPlayer : CharacterBase
     float _avoidSpeed = 2.0f;
     [SerializeField]
     float _justTime = 0.3f;
-
-
+    [SerializeField]
+    WeaponType _currentWeapon;
     [SerializeField]
     bool _invincible = false;
 
     [SerializeField]
     List<AnimState> _animSets = new List<AnimState>();
 
-    AttackType _currentType;
+    StyleState _currentStyle = StyleState.Common;
+    AttackType _attackType;
     Transform _selfTrans;
     Vector3 _moveForward = Vector3.zero;
     Vector3 _currentVelocity = Vector3.zero;
@@ -59,8 +66,9 @@ public partial class NewPlayer : CharacterBase
     [SerializeField]
     AnimationCtrl _animCtrl;
     GroundChecker _grandCheck;
+    PlayerActionCtrl _playerActCtrl;
     ActionCtrl _actionCtrl;
-    StateMachine<NewPlayer> _stateMachine;
+    StateMachine<PlayerStateMachine> _stateMachine;
 
     [SerializeField]
     bool _debagMode;
@@ -80,21 +88,22 @@ public partial class NewPlayer : CharacterBase
 
         _selfTrans = transform;
         if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
+        
         _grandCheck = GetComponent<GroundChecker>();
+        _playerActCtrl = GetComponent<PlayerActionCtrl>();
+        _playerActCtrl.SetUp();
         _actionCtrl = GetComponent<ActionCtrl>();
         _actionCtrl.SetUp(gameObject);
-
-
     }
     private void StateCash()
     {
-        _stateMachine = new StateMachine<NewPlayer>(this);
+        _stateMachine = new StateMachine<PlayerStateMachine>(this);
         _stateMachine
             .AddAnyTransition<PlayerIdleState>((int)StateEvent.Idle)
-            .AddAnyTransition<PlayerWalkState>((int)StateEvent.Walk)
+            .AddAnyTransition<PlayerWalkState>((int)StateEvent.Run)
             .AddAnyTransition<PlayerAttackState>((int)StateEvent.Attack)
             .AddAnyTransition<PlayerAvoidState>((int)StateEvent.Avoid)
-            .AddAnyTransition<PlayerRunState>((int)StateEvent.Run)
+            .AddAnyTransition<PlayerRunState>((int)StateEvent.Sprint)
             .AddAnyTransition<PlayerJumpState>((int)StateEvent.Jump)
             .AddAnyTransition<PlayerFallState>((int)StateEvent.Fall)
             .AddAnyTransition<PlayerLandState>((int)StateEvent.Land)
@@ -110,7 +119,7 @@ public partial class NewPlayer : CharacterBase
     private void FixedUpdate()
     {
         ApplyRotation();
-       if(!IsGround()) ApplyGravity();
+        if(!IsGround()) ApplyGravity();
         ApplyMove();
     }
 
@@ -139,9 +148,7 @@ public partial class NewPlayer : CharacterBase
     }
     void ApplyGravity()
     {
-
         _currentVelocity.y += _gravityScale * Physics.gravity.y * Time.deltaTime;
-
     }
 
     bool IsGround()
@@ -162,7 +169,8 @@ public partial class NewPlayer : CharacterBase
         else
         {
             Debug.Log("LockOn!");
-            var target = CameraManager.Instance.FindTarget(transform, 60.0f, false, true);
+            var targetObj = CameraManager.Instance.FindTarget(transform, 60.0f, false, true);
+            var target = targetObj.GetComponent<CharacterBase>().CenterPos;
             GameManager.Instance.LockOnTarget = target;
             UiManager.Instance.ReceiveData("gameUi", new LockOnEventHandler(true, target.transform));
         }

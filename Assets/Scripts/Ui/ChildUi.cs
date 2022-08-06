@@ -7,7 +7,7 @@ public abstract class ChildUi : MonoBehaviour
 
     public abstract void SetUp();
 
-    public virtual void Enable() { }
+    public abstract void Enable();
 
-    public virtual void Disable() { }
+    public abstract void Disable();
 }

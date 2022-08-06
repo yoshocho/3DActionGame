@@ -2,96 +2,61 @@
 using System.Collections.Generic;
 using UnityEngine;
 using AttackSetting;
+using System.Linq;
 
-public enum WeaponType
+[System.Serializable]
+public class Weapon 
 {
-    HEAVY,
-    LIGHT,
+    public WeaponType Type;
+    public GameObject WeaponObj;
 }
+
 public class WeaponHolder : MonoBehaviour
 {
-    [SerializeField]
-    GameObject m_heavySwordHolder = default;
-
-    [SerializeField]
-    GameObject m_lightSwordHolder = default;
-
-
+   
     [SerializeField]
     Transform[] _holderPoss;
     [SerializeField]
-    GameObject m_currentHolder = default;
+    Transform _handTrans = default;
     [SerializeField]
-    List<GameObject> m_weaponList = new List<GameObject>();
-    GameObject m_currentWeapon = default;
+    List<Weapon> _weapons = new List<Weapon>();
+    GameObject _currentWeapon = default;
 
-    AttackSetting.WeaponType _currentType;
-    private void Start()
+    WeaponType _currentType;
+    
+    public void SetWeapon(WeaponType type)
     {
-        //SetWeapon(1);
-    }
-
-    public void ChangeWeapon(AttackSetting.WeaponType type)
-    {
+        if (_currentWeapon != null) ResetHolder();
         _currentType = type;
-        switch (type)
-        {
-            case AttackSetting.WeaponType.LightSword:
-                //if (m_currentWeapon)
-                    SetPosition(m_currentHolder.transform, _holderPoss[0]);
-                SetWeapon(0);
-                break;
-            case AttackSetting.WeaponType.HeavySword:
-                //if (m_currentWeapon)
-                    SetPosition(m_currentHolder.transform,_holderPoss[1]);
-                    //SetPosition(m_currentWeapon.transform, m_heavySwordHolder.transform);
-                SetWeapon(1);
-                break;
-            default:
-                break;
-        }
-    }
-
-    public void SetWeapon(int weaponId)
-    {
-        Debug.Log("変更" + weaponId);
-        m_currentWeapon = m_weaponList[weaponId];
-        SetPosition(m_weaponList[weaponId].transform, m_currentHolder.transform);
+        var weapon = _weapons.First(w => w.Type == type);
+        _currentWeapon = weapon.WeaponObj;
+        
+        Debug.Log(string.Format(" 武器を変更{0}",type));
+        
+        SetPosition(weapon.WeaponObj.transform, _handTrans);
     }
     public void ResetHolder()
     {
-        //switch (HitCtrl.WeaponType)
-        //{
-        //    case WeaponType.HEAVY:
-        //        SetPosition(m_currentWeapon.transform, m_heavySwordHolder.transform);
-        //        break;
-        //    case WeaponType.LIGHT:
-        //        SetPosition(m_currentWeapon.transform, m_lightSwordHolder.transform);
-        //        break;
-        //    default:
-        //        break;
-        //}
         switch (_currentType)
         {
-            case AttackSetting.WeaponType.Hand:
+            case WeaponType.Hand:
                 break;
-            case AttackSetting.WeaponType.LightSword:
-                SetPosition(m_currentHolder.transform, _holderPoss[0]);
-
+            case WeaponType.LightSword:
+                SetPosition(_currentWeapon.transform, _holderPoss[0]);
                 break;
-            case AttackSetting.WeaponType.HeavySword:
-                SetPosition(m_currentHolder.transform, _holderPoss[1]);
+            case WeaponType.HeavySword:
+                SetPosition(_currentWeapon.transform, _holderPoss[1]);
                 break;
             default:
                 break;
         }
-
+        _currentWeapon = null;
     }
 
-    void SetPosition(Transform weapon, Transform to)
+    void SetPosition(Transform parent, Transform to)
     {
-        weapon.SetParent(to);
-        weapon.localPosition = Vector3.zero;
-        weapon.localRotation = Quaternion.identity;
+        parent.SetParent(to);
+        parent.localPosition = Vector3.zero;
+        parent.localRotation = Quaternion.identity;
     }
 }

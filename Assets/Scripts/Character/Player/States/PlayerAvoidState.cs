@@ -1,7 +1,7 @@
 using UnityEngine;
-using State = StateMachine<NewPlayer>.State;
+using State = StateMachine<PlayerStateMachine>.State;
 
-public partial class NewPlayer : CharacterBase
+public partial class PlayerStateMachine : CharacterBase
 {
     public class PlayerAvoidState : State
     {
@@ -13,7 +13,9 @@ public partial class NewPlayer : CharacterBase
             if(owner._debagMode)Debug.Log("InAvoid");
 
             _avoidAxis = owner._moveForward.normalized;
-            owner.PlayAnimation("Avoid");
+            if (owner.IsGround()) owner.PlayAnimation("Avoid");
+            else owner.PlayAnimation("AirDush");
+
             owner._inAvoid = true;
             _avoidTimer = owner._avoidTime;
             _justTimer = owner._justTime;
@@ -39,9 +41,13 @@ public partial class NewPlayer : CharacterBase
             {
                 if (owner.IsGround())
                 {
-                    if (owner._inputAxis.sqrMagnitude < 0.1f) owner.ChangeState(StateEvent.Walk);
+                    if (owner._inputAxis.sqrMagnitude > 0.1f)
+                    {
+                        if (owner._inputProvider.GetAvoidDown()) owner.ChangeState(StateEvent.Sprint);
+                        else owner.ChangeState(StateEvent.Run);
+                    }
                     else owner.ChangeState(StateEvent.Idle);
-                    if (owner._inputProvider.GetJump() && owner._currentJumpCount <= owner._jumpCount) 
+                    if (owner._inputProvider.GetJump() && owner._currentJumpCount < owner._jumpCount) 
                         owner.ChangeState(StateEvent.Jump);
                 }
                 else owner.ChangeState(StateEvent.Fall);
