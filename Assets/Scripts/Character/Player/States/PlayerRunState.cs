@@ -8,7 +8,8 @@ public partial class PlayerStateMachine : CharacterBase {
     {
         protected override void OnEnter(State prevState)
         {
-            if(owner._debagMode)owner.PlayAnimation("Run",0.2f);
+            if (owner._debagMode) Debug.Log("RunState");
+            if(owner._debagMode)owner.PlayAnimation("Sprint",0.2f);
             owner.MoveSpeed = owner._runSpeed;
         }
         protected override void OnUpdate()
