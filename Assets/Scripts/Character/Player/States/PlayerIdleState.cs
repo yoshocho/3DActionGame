@@ -10,8 +10,10 @@ public partial class PlayerStateMachine : CharacterBase
         protected override void OnEnter(State prevState)
         {
             if(owner._debagMode) Debug.Log("InIdle");
-            if (prevState is PlayerWalkState) owner.PlayAnimation("WalkEnd",0.2f);
-            else owner.PlayAnimation("Idle",0.1f);
+            if (prevState is PlayerWalkState) owner.PlayAnimation("RunEnd", 0.2f);
+            else if (prevState is PlayerRunState) owner.PlayAnimation("SprintEnd", 0.1f);
+            else owner.PlayAnimation("Idle", 0.1f);
+
             owner._currentVelocity.x = 0.0f;
             owner._currentVelocity.z = 0.0f;
         }
