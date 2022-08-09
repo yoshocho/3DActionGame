@@ -25,7 +25,7 @@ public partial class GameManager
     ///<summary>現在のゲームステート</summary>
     public GameState CurrentState { get; private set; }
     /// <summary> ゲームの経過時間</summary>
-    public TimeData GameTime = new TimeData();
+    public TimeData GameTime { get; private set; } = new TimeData();
     
     Subject<bool> _onPause = new Subject<bool>();
     /// <summary>ゲームポーズイベント </summary>
@@ -38,17 +38,18 @@ public partial class GameManager
     public Transform LockOnTarget { get; set; } = null;
 
     public void SetUp(GameState state)
-    {
+    {        
         UiManager.Instance.SetUp();
+        InputManager.Instance.SetUp();
 
         switch (state)
         {
             case GameState.Title:
-                //UI
                 break;
             case GameState.InGame:
-
-                InputManager.Instance.SetUp();
+                InputManager.Instance.SetProvider();
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
                 break;
             case GameState.GameOver:
                 break;
@@ -71,9 +72,7 @@ public partial class GameManager
 
                 break;
             case GameState.InGame:
-                Debug.Log("InGame");
-                Cursor.visible = false;
-                Cursor.lockState = CursorLockMode.Locked;
+                
                 break;
             case GameState.GameOver:
                 
