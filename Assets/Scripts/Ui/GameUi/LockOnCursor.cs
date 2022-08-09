@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LockOnEventHandler
+public struct LockOnEventHandler
 {
-    public bool IsLockOn = false;
-    public Transform Target = null;
+    public bool IsLockOn;
+    public Transform Target;
     public LockOnEventHandler(bool lockOn, Transform target = null)
     {
         IsLockOn = lockOn;

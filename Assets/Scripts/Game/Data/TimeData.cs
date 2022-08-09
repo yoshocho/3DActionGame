@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TimeData
+public struct TimeData
 {
     public float ElapsedTime { get; private set; }
     public int Minite { get; private set; }
