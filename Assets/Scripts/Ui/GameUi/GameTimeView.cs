@@ -1,24 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class GameTimeView : ChildUi
 {
     TextMeshWrapper _text;
+    TimeData _time;
     public override void SetUp()
     {
         _text = GetComponent<TextMeshWrapper>();
         _text.SetText("00:00:00");
+        _time = GameManager.Instance.GameTime;
     }
 
     private void Update()
     {
-        if (GameManager.Instance.GameTime == null) return;
-
-        var time = GameManager.Instance.GameTime;
-        _text.SetText(time.Hour.ToString() + ":" + time.Minite.ToString("00")
-            + ":" + time.ElapsedTime.ToString("f2"));
-
+        _text.SetText(_time.Hour.ToString() + ":" +
+            _time.Minite.ToString("00") + ":" +
+            _time.ElapsedTime.ToString("f2"));
     }
 
     public override void Enable()
