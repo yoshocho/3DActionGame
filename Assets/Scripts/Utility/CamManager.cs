@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [ExecuteInEditMode]
 public class CamManager : MonoBehaviour
@@ -17,8 +18,6 @@ public class CamManager : MonoBehaviour
         public Vector3 OffsetAngles;
     }
 
-    public static CameraManager Instance { get; private set; } = null;
-
     [SerializeField]
     Transform _parent;
     [SerializeField]
@@ -30,19 +29,32 @@ public class CamManager : MonoBehaviour
     [SerializeField]
     float _dampingValue = 6.0f;
     [SerializeField]
-    float _verticalSensitivity;
+    float _verticalAngleMinLimit = -30.0f;
     [SerializeField]
-    float _horizontalSensitivity;
+    float _verticalAngleMaxLimit = 50;
+    [SerializeField]
+    float _horizontalAngle = 0.0f;
+    [SerializeField] 
+    float _verticalAngle = 10.0f;
+    [SerializeField]
+    float _verticalSensitivity = 0.5f;
+    [SerializeField]
+    float _horizontalSensitivity = 0.5f;
 
     public CameraParameter Parameter { get { return _parameter;}set { _parameter = value; } }
 
-    public void SetUp()
+    PlayerInput _input;
+    private void Start()
     {
+        _input = InputManager.Instance.PlayerInput;
 
+        _verticalAngle = _parameter.Angles.y;
+        _horizontalAngle = _parameter.Angles.x;
     }
 
     private void FixedUpdate()
     {
+        ControlCam();
         ApplyCam();
     }
 
@@ -68,8 +80,25 @@ public class CamManager : MonoBehaviour
         _parent.position = _parameter.Position;
     }
 
-    void ApplyAxis()
+    void ControlCam()
     {
+        Vector2 axis = _input.Player.CameraAxis.ReadValue<Vector2>();
+        Debug.Log(axis.x + ":" + axis.y);
 
+        _horizontalAngle += axis.x * _horizontalSensitivity;
+        _verticalAngle -= axis.y * _verticalSensitivity;
+
+        _verticalAngle = ClampAngle(_verticalAngle,_verticalAngleMinLimit,_verticalAngleMaxLimit);
+
+        _parameter.Angles = new Vector3(_verticalAngle,_horizontalAngle);
+    }
+
+    private float ClampAngle(float angle, float min, float max)
+    {
+        if (angle < -360f)
+            angle += 360f;
+        if (angle > 360f)
+            angle -= 360f;
+        return Mathf.Clamp(angle, min, max);
     }
 }
