@@ -18,6 +18,13 @@ public class CamManager : MonoBehaviour
         public Vector3 OffsetAngles;
     }
 
+    enum CamState
+    {
+        None,
+        Control,
+        LockOn,
+    }
+
     [SerializeField]
     Transform _parent;
     [SerializeField]
@@ -33,29 +40,50 @@ public class CamManager : MonoBehaviour
     [SerializeField]
     float _verticalAngleMaxLimit = 50;
     [SerializeField]
-    float _horizontalAngle = 0.0f;
-    [SerializeField] 
-    float _verticalAngle = 10.0f;
-    [SerializeField]
     float _verticalSensitivity = 0.5f;
     [SerializeField]
     float _horizontalSensitivity = 0.5f;
 
-    public CameraParameter Parameter { get { return _parameter;}set { _parameter = value; } }
+    [SerializeField]
+    Transform _testTarget;
 
+    public CameraParameter Parameter { get { return _parameter; } set { _parameter = value; } }
+    [SerializeField]
+    CamState _camState;
+    float _horizontalAngle = 0.0f;
+    float _verticalAngle = 10.0f;
     PlayerInput _input;
     private void Start()
     {
         _input = InputManager.Instance.PlayerInput;
 
+        _camState = CamState.LockOn;
         _verticalAngle = _parameter.Angles.y;
         _horizontalAngle = _parameter.Angles.x;
     }
 
     private void FixedUpdate()
     {
-        ControlCam();
+        switch (_camState)
+        {
+            case CamState.None:
+                break;
+            case CamState.Control:
+                ControlCam();
+                break;
+            case CamState.LockOn:
+                LockOn();
+                break;
+            default:
+                break;
+        }
+        
         ApplyCam();
+    }
+
+    void LockOn()
+    {
+        
     }
 
     void ApplyCam()
@@ -83,14 +111,15 @@ public class CamManager : MonoBehaviour
     void ControlCam()
     {
         Vector2 axis = _input.Player.CameraAxis.ReadValue<Vector2>();
-        Debug.Log(axis.x + ":" + axis.y);
+
+        //Debug.Log(axis.x + ":" + axis.y);
 
         _horizontalAngle += axis.x * _horizontalSensitivity;
         _verticalAngle -= axis.y * _verticalSensitivity;
 
-        _verticalAngle = ClampAngle(_verticalAngle,_verticalAngleMinLimit,_verticalAngleMaxLimit);
+        _verticalAngle = ClampAngle(_verticalAngle, _verticalAngleMinLimit, _verticalAngleMaxLimit);
 
-        _parameter.Angles = new Vector3(_verticalAngle,_horizontalAngle);
+        _parameter.Angles = new Vector3(_verticalAngle, _horizontalAngle);
     }
 
     private float ClampAngle(float angle, float min, float max)
