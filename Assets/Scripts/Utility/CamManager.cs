@@ -33,6 +33,7 @@ public class CamManager : MonoBehaviour
     Camera _cam;
     [SerializeField]
     CameraParameter _parameter;
+    public CameraParameter Parameter { get { return _parameter; } set { _parameter = value; } }
     [SerializeField]
     float _dampingValue = 6.0f;
     [SerializeField]
@@ -43,11 +44,14 @@ public class CamManager : MonoBehaviour
     float _verticalSensitivity = 0.5f;
     [SerializeField]
     float _horizontalSensitivity = 0.5f;
+    [SerializeField]
+    float _targetDistance;
 
+    Vector3 _planarDirection;
     [SerializeField]
     Transform _testTarget;
 
-    public CameraParameter Parameter { get { return _parameter; } set { _parameter = value; } }
+    
     [SerializeField]
     CamState _camState;
     float _horizontalAngle = 0.0f;
@@ -57,10 +61,15 @@ public class CamManager : MonoBehaviour
     {
         _input = InputManager.Instance.PlayerInput;
 
-        _camState = CamState.LockOn;
+        _camState = CamState.Control;
         _verticalAngle = _parameter.Angles.y;
         _horizontalAngle = _parameter.Angles.x;
     }
+
+    //private void LateUpdate()
+    //{
+    //    ApplyCam();
+    //}
 
     private void FixedUpdate()
     {
@@ -77,13 +86,17 @@ public class CamManager : MonoBehaviour
             default:
                 break;
         }
-        
+
         ApplyCam();
     }
 
     void LockOn()
     {
+        Vector3 camToTarget = _testTarget.position - _cam.transform.position;
+        Vector3 planarCamToTarget = Vector3.ProjectOnPlane(camToTarget,Vector3.up);
+        Quaternion lookRotation = Quaternion.LookRotation(camToTarget,Vector3.up);
         
+        _planarDirection = planarCamToTarget != Vector3.zero ? planarCamToTarget.normalized : _planarDirection; 
     }
 
     void ApplyCam()
