@@ -45,11 +45,21 @@ public class CamManager : MonoBehaviour
     [SerializeField]
     float _horizontalSensitivity = 0.5f;
     [SerializeField]
-    float _targetDistance;
+    bool _invartX = false;
+    [SerializeField]
+    bool _invartY = false;
+    
 
+
+    Vector3 _targetPos;
+    Quaternion _targetRot;
+    Quaternion _newRotation;
+    float _targetVerticalAngle;
     Vector3 _planarDirection;
     [SerializeField]
     Transform _testTarget;
+
+
 
     
     [SerializeField]
@@ -127,14 +137,22 @@ public class CamManager : MonoBehaviour
 
         //Debug.Log(axis.x + ":" + axis.y);
 
-        _horizontalAngle += axis.x * _horizontalSensitivity;
-        _verticalAngle -= axis.y * _verticalSensitivity;
+        _horizontalAngle += _invartX ? -axis.x * _horizontalSensitivity : axis.x * _horizontalSensitivity;
+        _verticalAngle -= _invartY ? -axis.y * _verticalSensitivity : axis.y * _verticalSensitivity;
 
         _verticalAngle = ClampAngle(_verticalAngle, _verticalAngleMinLimit, _verticalAngleMaxLimit);
 
-        _parameter.Angles = new Vector3(_verticalAngle, _horizontalAngle);
+        Quaternion rot = Quaternion.Euler(new Vector3(_verticalAngle,_horizontalAngle));
+        _parameter.Angles = rot.eulerAngles;
     }
 
+    /// <summary>
+    /// �p�x�����p
+    /// </summary>
+    /// <param name="angle">�p�x</param>
+    /// <param name="min">�ŏ��l</param>
+    /// <param name="max">�ő�l</param>
+    /// <returns></returns>
     private float ClampAngle(float angle, float min, float max)
     {
         if (angle < -360f)
