@@ -71,7 +71,6 @@ public class CamManager : MonoBehaviour
     {
         _input = InputManager.Instance.PlayerInput;
 
-        _camState = CamState.Control;
         _verticalAngle = _parameter.Angles.y;
         _horizontalAngle = _parameter.Angles.x;
     }
@@ -104,9 +103,13 @@ public class CamManager : MonoBehaviour
     {
         Vector3 camToTarget = _testTarget.position - _cam.transform.position;
         Vector3 planarCamToTarget = Vector3.ProjectOnPlane(camToTarget,Vector3.up);
-        Quaternion lookRotation = Quaternion.LookRotation(camToTarget,Vector3.up);
         
-        _planarDirection = planarCamToTarget != Vector3.zero ? planarCamToTarget.normalized : _planarDirection; 
+        _planarDirection = planarCamToTarget != Vector3.zero ? planarCamToTarget.normalized : _planarDirection;
+
+        _targetRot = Quaternion.LookRotation(_planarDirection) * Quaternion.Euler(_targetVerticalAngle,0,0);
+
+        _newRotation = Quaternion.Slerp(_cam.transform.rotation, _targetRot,Time.deltaTime * 9.0f);
+        _parameter.Angles = _newRotation.eulerAngles;
     }
 
     void ApplyCam()
