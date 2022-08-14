@@ -150,11 +150,11 @@ public class CamManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ï¿½pï¿½xï¿½ï¿½ï¿½ï¿½ï¿½p
+    /// Šp“x§ŒÀ—p
     /// </summary>
-    /// <param name="angle">ï¿½pï¿½x</param>
-    /// <param name="min">ï¿½Åï¿½ï¿½l</param>
-    /// <param name="max">ï¿½Å‘ï¿½l</param>
+    /// <param name="angle">Šp“x</param>
+    /// <param name="min">Å¬’l</param>
+    /// <param name="max">Å‘å’l</param>
     /// <returns></returns>
     private float ClampAngle(float angle, float min, float max)
     {
