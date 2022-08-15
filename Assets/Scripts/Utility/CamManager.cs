@@ -112,16 +112,15 @@ public class CamManager : MonoBehaviour
     {
         Vector3 camToTarget = _target.TargetTransform.position - _cam.transform.position;
         Vector3 planarCamToTarget = Vector3.ProjectOnPlane(camToTarget, Vector3.up);
+        Quaternion lookRot = Quaternion.LookRotation(camToTarget,Vector3.up);
 
         _planarDirection = planarCamToTarget != Vector3.zero ? planarCamToTarget.normalized : _planarDirection;
 
         _targetRot = Quaternion.LookRotation(_planarDirection) * Quaternion.Euler(_targetVerticalAngle, 0, 0);
+        _verticalAngle = Mathf.Clamp(lookRot.eulerAngles.x, _verticalAngleMinLimit, _verticalAngleMaxLimit);
 
         _newRotation = Quaternion.Slerp(_cam.transform.rotation, _targetRot, Time.deltaTime * 9.0f);
         _parameter.Angles = _newRotation.eulerAngles;
-
-        _horizontalAngle = _targetRot.eulerAngles.x;
-        _verticalAngle = _targetRot.eulerAngles.y;
     }
 
     void ApplyCam()
@@ -209,10 +208,8 @@ public class CamManager : MonoBehaviour
     /// <returns></returns>
     private float ClampAngle(float angle, float min, float max)
     {
-        if (angle < -360f)
-            angle += 360f;
-        if (angle > 360f)
-            angle -= 360f;
+        if (angle < -360f) angle += 360f;
+        if (angle > 360f) angle -= 360f;
         return Mathf.Clamp(angle, min, max);
     }
 }
