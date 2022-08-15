@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Linq;
 
 [ExecuteInEditMode]
 public class CamManager : MonoBehaviour
@@ -25,6 +26,8 @@ public class CamManager : MonoBehaviour
         LockOn,
     }
 
+    public static CamManager Instance { get; private set; } = null;
+
     [SerializeField]
     Transform _parent;
     [SerializeField]
@@ -40,46 +43,52 @@ public class CamManager : MonoBehaviour
     float _verticalAngleMinLimit = -30.0f;
     [SerializeField]
     float _verticalAngleMaxLimit = 50;
-    [SerializeField]
-    float _verticalSensitivity = 0.5f;
-    [SerializeField]
+
+    [SerializeField, Header("…•½Š´“x")]
     float _horizontalSensitivity = 0.5f;
-    [SerializeField]
+    [SerializeField, Header("‚’¼Š´“x")]
+    float _verticalSensitivity = 0.5f;
+    [SerializeField, Header("…•½‘€ì‹t“]")]
     bool _invartX = false;
-    [SerializeField]
+    [SerializeField, Header("‚’¼‘€ì‹t“]")]
     bool _invartY = false;
-    
 
 
-    Vector3 _targetPos;
+    //LockOn
+    public bool IsLockOn { get; private set; }
     Quaternion _targetRot;
     Quaternion _newRotation;
     float _targetVerticalAngle;
     Vector3 _planarDirection;
-    [SerializeField]
-    Transform _testTarget;
+    ITargetable _target;
+    public ITargetable Target { get => _target; }
 
 
-
-    
     [SerializeField]
     CamState _camState;
     float _horizontalAngle = 0.0f;
     float _verticalAngle = 10.0f;
     PlayerInput _input;
+
+    
     private void Start()
     {
         _input = InputManager.Instance.PlayerInput;
-
+        Instance = this;
         _verticalAngle = _parameter.Angles.y;
         _horizontalAngle = _parameter.Angles.x;
     }
 
+    //ƒfƒoƒbƒO—p
     //private void LateUpdate()
     //{
     //    ApplyCam();
     //}
 
+    private void Update()
+    {
+        
+    }
     private void FixedUpdate()
     {
         switch (_camState)
@@ -90,7 +99,7 @@ public class CamManager : MonoBehaviour
                 ControlCam();
                 break;
             case CamState.LockOn:
-                LockOn();
+                LockOnCam();
                 break;
             default:
                 break;
@@ -99,17 +108,20 @@ public class CamManager : MonoBehaviour
         ApplyCam();
     }
 
-    void LockOn()
+    void LockOnCam()
     {
-        Vector3 camToTarget = _testTarget.position - _cam.transform.position;
-        Vector3 planarCamToTarget = Vector3.ProjectOnPlane(camToTarget,Vector3.up);
-        
+        Vector3 camToTarget = _target.TargetTransform.position - _cam.transform.position;
+        Vector3 planarCamToTarget = Vector3.ProjectOnPlane(camToTarget, Vector3.up);
+
         _planarDirection = planarCamToTarget != Vector3.zero ? planarCamToTarget.normalized : _planarDirection;
 
-        _targetRot = Quaternion.LookRotation(_planarDirection) * Quaternion.Euler(_targetVerticalAngle,0,0);
+        _targetRot = Quaternion.LookRotation(_planarDirection) * Quaternion.Euler(_targetVerticalAngle, 0, 0);
 
-        _newRotation = Quaternion.Slerp(_cam.transform.rotation, _targetRot,Time.deltaTime * 9.0f);
+        _newRotation = Quaternion.Slerp(_cam.transform.rotation, _targetRot, Time.deltaTime * 9.0f);
         _parameter.Angles = _newRotation.eulerAngles;
+
+        _horizontalAngle = _targetRot.eulerAngles.x;
+        _verticalAngle = _targetRot.eulerAngles.y;
     }
 
     void ApplyCam()
@@ -136,17 +148,56 @@ public class CamManager : MonoBehaviour
 
     void ControlCam()
     {
-        Vector2 axis = _input.Player.CameraAxis.ReadValue<Vector2>();
-
         //Debug.Log(axis.x + ":" + axis.y);
+        Vector2 inputAxis = _input.Player.CameraAxis.ReadValue<Vector2>();
 
-        _horizontalAngle += _invartX ? -axis.x * _horizontalSensitivity : axis.x * _horizontalSensitivity;
-        _verticalAngle -= _invartY ? -axis.y * _verticalSensitivity : axis.y * _verticalSensitivity;
+        _horizontalAngle += _invartX ? -inputAxis.x * _horizontalSensitivity : inputAxis.x * _horizontalSensitivity;
+        _verticalAngle -= _invartY ? -inputAxis.y * _verticalSensitivity : inputAxis.y * _verticalSensitivity;
+
 
         _verticalAngle = ClampAngle(_verticalAngle, _verticalAngleMinLimit, _verticalAngleMaxLimit);
 
-        Quaternion rot = Quaternion.Euler(new Vector3(_verticalAngle,_horizontalAngle));
-        _parameter.Angles = rot.eulerAngles;
+        _newRotation = Quaternion.Euler(new Vector3(_verticalAngle, _horizontalAngle));
+        _parameter.Angles = _newRotation.eulerAngles;
+        
+    }
+
+
+    public ITargetable FindTarget(float dis, bool disCenter = false, bool screenCenter = false)
+    {
+        var targets = GameManager.Instance.FieldData.Enemys
+            .Where(e => e.IsVisible)
+            .Where(e => e.IsDeath == false)
+            .Where(e => Vector3.Distance(_parameter.FollowTarget.position, e.transform.position) < dis)
+            .OfType<ITargetable>();
+
+        if (disCenter)
+        {
+            targets = targets.OrderBy(e => Vector3.Distance(_parameter.FollowTarget.position, e.TargetTransform.position));
+        }
+        if (screenCenter)
+        {
+            targets = targets.OrderBy(e => Vector2.Distance(new Vector2(
+            Screen.width / 2.0f, Screen.height / 2.0f), Camera.main.WorldToScreenPoint(e.TargetTransform.position)));
+        }
+        return targets.FirstOrDefault();
+    }
+
+    public void LockOn(bool lockOn,float dis = 20.0f, bool disCenter = false, bool screenCenter = false)
+    {
+        if (lockOn)
+        {
+            _target = FindTarget(dis,disCenter,screenCenter);
+            GameManager.Instance.LockOnTarget = _target.TargetTransform;
+            UiManager.Instance.ReceiveData("gameUi", new LockOnEventHandler(true, _target.TargetTransform.transform));
+            IsLockOn = true;
+            _camState = CamState.LockOn;
+            return;
+        }
+        GameManager.Instance.LockOnTarget = null;
+        UiManager.Instance.ReceiveData("gameUi", new LockOnEventHandler(false));
+        IsLockOn = false;
+        _camState = CamState.Control;
     }
 
     /// <summary>
