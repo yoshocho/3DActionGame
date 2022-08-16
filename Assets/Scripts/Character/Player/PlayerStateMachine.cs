@@ -123,7 +123,7 @@ public partial class PlayerStateMachine : CharacterBase
         ApplyMove();
     }
 
-    public void SetInputProvider(IInputProvider input)
+    public void ReceiveInputProvider(IInputProvider input)
     {
         _inputProvider = input;
     }
@@ -158,22 +158,14 @@ public partial class PlayerStateMachine : CharacterBase
 
     public void LockOn()
     {
-
-        if (GameManager.Instance.LockOnTarget != null)
+        if(CamManager.Instance.IsLockOn == false)
         {
-
-            GameManager.Instance.LockOnTarget = null;
-            UiManager.Instance.ReceiveData("gameUi", new LockOnEventHandler(false));
-            Debug.Log("LockOnâèú");
+            CamManager.Instance.LockOn(true, 30, false, true);
+            Debug.Log("LockOn");
+            return;
         }
-        else
-        {
-            Debug.Log("LockOn!");
-            var targetObj = CameraManager.Instance.FindTarget(transform, 60.0f, false, true);
-            var target = targetObj.GetComponent<CharacterBase>().CenterPos;
-            GameManager.Instance.LockOnTarget = target;
-            UiManager.Instance.ReceiveData("gameUi", new LockOnEventHandler(true, target.transform));
-        }
+        CamManager.Instance.LockOn(false);
+        Debug.Log("LockOnEnd");
     }
     void DoRotate(Vector3 dir)
     {
