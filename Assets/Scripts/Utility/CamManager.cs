@@ -53,21 +53,28 @@ public class CamManager : MonoBehaviour
     [SerializeField, Header("垂直操作逆転")]
     bool _invartY = false;
 
-
+    [SerializeField]
+    float _defaultVerticalAngle = 20.0f;
+    [SerializeField]
+    float _ctrlRotationSharpness = 12.0f;
+    [SerializeField]
+    float _lockOnRotationSharpness = 9.0f;
+    float _rotationSharpness;
     //LockOn
     public bool IsLockOn { get; private set; }
+
     Quaternion _targetRot;
     Quaternion _newRotation;
     float _targetVerticalAngle;
     Vector3 _planarDirection;
     ITargetable _target;
     public ITargetable Target { get => _target; }
-
+    float _inputX;
+    float _inputY;
 
     [SerializeField]
     CamState _camState;
-    float _horizontalAngle = 0.0f;
-    float _verticalAngle = 10.0f;
+    
     PlayerInput _input;
 
     
@@ -75,8 +82,11 @@ public class CamManager : MonoBehaviour
     {
         _input = InputManager.Instance.PlayerInput;
         Instance = this;
-        _verticalAngle = _parameter.Angles.y;
-        _horizontalAngle = _parameter.Angles.x;
+
+        _planarDirection = _parameter.FollowTarget.transform.forward;
+        _targetVerticalAngle = _defaultVerticalAngle;
+        _targetRot = Quaternion.LookRotation(_planarDirection) * Quaternion.Euler(_targetVerticalAngle,0.0f,0.0f);
+
     }
 
     //デバッグ用
@@ -91,6 +101,14 @@ public class CamManager : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        Vector2 inputAxis = _input.Player.CameraAxis.ReadValue<Vector2>();
+
+        _inputX = inputAxis.x * _horizontalSensitivity;
+        _inputY = inputAxis.y * _verticalSensitivity;
+
+        if (_invartX) _inputX *= -1;
+        if (_invartY) _inputY *= -1;
+
         switch (_camState)
         {
             case CamState.None:
@@ -110,17 +128,16 @@ public class CamManager : MonoBehaviour
 
     void LockOnCam()
     {
+        if (_target == null && _target.TargetTransform == null) return;
+
         Vector3 camToTarget = _target.TargetTransform.position - _cam.transform.position;
         Vector3 planarCamToTarget = Vector3.ProjectOnPlane(camToTarget, Vector3.up);
         Quaternion lookRot = Quaternion.LookRotation(camToTarget,Vector3.up);
 
         _planarDirection = planarCamToTarget != Vector3.zero ? planarCamToTarget.normalized : _planarDirection;
+        
+        //_targetVerticalAngle = Mathf.Clamp(lookRot.eulerAngles.x, _verticalAngleMinLimit, _verticalAngleMaxLimit);
 
-        _targetRot = Quaternion.LookRotation(_planarDirection) * Quaternion.Euler(_targetVerticalAngle, 0, 0);
-        _verticalAngle = Mathf.Clamp(lookRot.eulerAngles.x, _verticalAngleMinLimit, _verticalAngleMaxLimit);
-
-        _newRotation = Quaternion.Slerp(_cam.transform.rotation, _targetRot, Time.deltaTime * 9.0f);
-        _parameter.Angles = _newRotation.eulerAngles;
     }
 
     void ApplyCam()
@@ -143,22 +160,19 @@ public class CamManager : MonoBehaviour
                 _parameter.FollowTarget.position, Time.deltaTime * _dampingValue);
         }
         _parent.position = _parameter.Position;
+
+        _targetRot = Quaternion.LookRotation(_planarDirection) * Quaternion.Euler(_targetVerticalAngle, 0.0f, 0.0f);
+        _newRotation = Quaternion.Slerp(_cam.transform.rotation, _targetRot, Time.deltaTime * 9.0f);
+        _parameter.Angles = _newRotation.eulerAngles;
     }
 
     void ControlCam()
     {
         //Debug.Log(axis.x + ":" + axis.y);
-        Vector2 inputAxis = _input.Player.CameraAxis.ReadValue<Vector2>();
+        _planarDirection = Quaternion.Euler(0.0f, _inputX, 0.0f) * _planarDirection;
 
-        _horizontalAngle += _invartX ? -inputAxis.x * _horizontalSensitivity : inputAxis.x * _horizontalSensitivity;
-        _verticalAngle -= _invartY ? -inputAxis.y * _verticalSensitivity : inputAxis.y * _verticalSensitivity;
+        _targetVerticalAngle = Mathf.Clamp(_targetVerticalAngle + _inputY,_verticalAngleMinLimit,_verticalAngleMaxLimit);
 
-
-        _verticalAngle = ClampAngle(_verticalAngle, _verticalAngleMinLimit, _verticalAngleMaxLimit);
-
-        _newRotation = Quaternion.Euler(new Vector3(_verticalAngle, _horizontalAngle));
-        _parameter.Angles = _newRotation.eulerAngles;
-        
     }
 
 
