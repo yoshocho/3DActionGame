@@ -132,12 +132,11 @@ public class CamManager : MonoBehaviour
 
         Vector3 camToTarget = _target.TargetTransform.position - _cam.transform.position;
         Vector3 planarCamToTarget = Vector3.ProjectOnPlane(camToTarget, Vector3.up);
-        Quaternion lookRot = Quaternion.LookRotation(camToTarget,Vector3.up);
+        //Quaternion lookRot = Quaternion.LookRotation(camToTarget,Vector3.up);
 
         _planarDirection = planarCamToTarget != Vector3.zero ? planarCamToTarget.normalized : _planarDirection;
-        
-        //_targetVerticalAngle = Mathf.Clamp(lookRot.eulerAngles.x, _verticalAngleMinLimit, _verticalAngleMaxLimit);
 
+        //_targetVerticalAngle = Mathf.Clamp(lookRot.eulerAngles.x, _verticalAngleMinLimit, _verticalAngleMaxLimit);
     }
 
     void ApplyCam()
@@ -168,11 +167,8 @@ public class CamManager : MonoBehaviour
 
     void ControlCam()
     {
-        //Debug.Log(axis.x + ":" + axis.y);
         _planarDirection = Quaternion.Euler(0.0f, _inputX, 0.0f) * _planarDirection;
-
         _targetVerticalAngle = Mathf.Clamp(_targetVerticalAngle + _inputY,_verticalAngleMinLimit,_verticalAngleMaxLimit);
-
     }
 
 
