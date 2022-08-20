@@ -77,15 +77,19 @@ public class CamManager : MonoBehaviour
     
     PlayerInput _input;
 
-    
+
     private void Start()
+    {
+        SetUp();
+    }
+    void SetUp()
     {
         _input = InputManager.Instance.PlayerInput;
         Instance = this;
 
         _planarDirection = _parameter.FollowTarget.transform.forward;
         _targetVerticalAngle = _defaultVerticalAngle;
-        _targetRot = Quaternion.LookRotation(_planarDirection) * Quaternion.Euler(_targetVerticalAngle,0.0f,0.0f);
+        _targetRot = Quaternion.LookRotation(_planarDirection) * Quaternion.Euler(_targetVerticalAngle, 0.0f, 0.0f);
 
     }
 
@@ -95,12 +99,9 @@ public class CamManager : MonoBehaviour
     //    ApplyCam();
     //}
 
-    private void Update()
-    {
-        
-    }
     private void FixedUpdate()
     {
+        if (_input == null) return;
         Vector2 inputAxis = _input.Player.CameraAxis.ReadValue<Vector2>();
 
         _inputX = inputAxis.x * _horizontalSensitivity;
@@ -133,10 +134,10 @@ public class CamManager : MonoBehaviour
         Vector3 camToTarget = _target.TargetTransform.position - _cam.transform.position;
         Vector3 planarCamToTarget = Vector3.ProjectOnPlane(camToTarget, Vector3.up);
         //Quaternion lookRot = Quaternion.LookRotation(camToTarget,Vector3.up);
-
+        
         _planarDirection = planarCamToTarget != Vector3.zero ? planarCamToTarget.normalized : _planarDirection;
-
-        //_targetVerticalAngle = Mathf.Clamp(lookRot.eulerAngles.x, _verticalAngleMinLimit, _verticalAngleMaxLimit);
+        
+        //_targetVerticalAngle = ClampAngle(lookRot.eulerAngles.x, _verticalAngleMinLimit, _verticalAngleMaxLimit);
     }
 
     void ApplyCam()
@@ -161,14 +162,14 @@ public class CamManager : MonoBehaviour
         _parent.position = _parameter.Position;
 
         _targetRot = Quaternion.LookRotation(_planarDirection) * Quaternion.Euler(_targetVerticalAngle, 0.0f, 0.0f);
-        _newRotation = Quaternion.Slerp(_cam.transform.rotation, _targetRot, Time.deltaTime * 9.0f);
+        _newRotation = Quaternion.Slerp(_cam.transform.rotation, _targetRot, Time.deltaTime * 9.0f); //＊マジックナンバー
         _parameter.Angles = _newRotation.eulerAngles;
     }
 
     void ControlCam()
     {
         _planarDirection = Quaternion.Euler(0.0f, _inputX, 0.0f) * _planarDirection;
-        _targetVerticalAngle = Mathf.Clamp(_targetVerticalAngle + _inputY,_verticalAngleMinLimit,_verticalAngleMaxLimit);
+        _targetVerticalAngle = ClampAngle(_targetVerticalAngle + _inputY,_verticalAngleMinLimit,_verticalAngleMaxLimit);
     }
 
 
