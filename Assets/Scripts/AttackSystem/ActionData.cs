@@ -15,30 +15,15 @@ namespace AttackSetting
 
     public enum WeaponType
     {
-        Hand,
+        None,
         LightSword,
         HeavySword,
-    }
-
-    public enum CamZoom 
-    {
-        Default,
-        In,
-        Out,
-    }
-    
-    [System.Serializable]
-    public class AtkEffect
-    {
-        [Header("ÉJÉÅÇÁÇóhÇÁÇ∑ã≠Ç≥")]
-        public Vector3 CameraShakeVec;
     }
 
     [CreateAssetMenu(fileName = "ActionData", menuName = "ScriptableObjects/ActionData")]
     public class ActionData : ScriptableObject
     {
         public AnimClip AnimSet;
-        public AtkEffect Effect;
         [SerializeReference, SubclassSelector]
         public List<IHitEvent> HitEvents;
         [SerializeReference, SubclassSelector]
