@@ -39,16 +39,16 @@ public class PlayerActionCtrl : MonoBehaviour
         _weaponHolder.SetWeapon(style.WeaponType);
 
         _animCtrl
-            .ChangeClip("Run", style.GetStyleAnim(PlayerStateMachine.StateEvent.Run))
-            .ChangeClip("Sprint", style.GetStyleAnim(PlayerStateMachine.StateEvent.Sprint))
-            .ChangeClip("Idle", style.GetStyleAnim(PlayerStateMachine.StateEvent.Idle))
-            .ChangeClip("Avoid", style.GetStyleAnim(PlayerStateMachine.StateEvent.Avoid))
-            .ChangeClip("Jump", style.GetStyleAnim(PlayerStateMachine.StateEvent.Jump))
-            .ChangeClip("Fall", style.GetStyleAnim(PlayerStateMachine.StateEvent.Fall))
-            .ChangeClip("Land", style.GetStyleAnim(PlayerStateMachine.StateEvent.Land))
-            .ChangeClip("RunEnd",style.Clips[0])       // ステート外でのアニメーションは直接index指定 *修正予定 
-            .ChangeClip("SprintEnd",style.Clips[1])
-            .ChangeClip("AirDush",style.Clips[2]);
+            .ChangeClip("Run", style.GetStyleAnim(PlayerAnimState.Run))
+            .ChangeClip("Sprint", style.GetStyleAnim(PlayerAnimState.Sprint))
+            .ChangeClip("Idle", style.GetStyleAnim(PlayerAnimState.Idle))
+            .ChangeClip("Avoid", style.GetStyleAnim(PlayerAnimState.Avoid))
+            .ChangeClip("Jump", style.GetStyleAnim(PlayerAnimState.Jump))
+            .ChangeClip("Fall", style.GetStyleAnim(PlayerAnimState.Fall))
+            .ChangeClip("Land", style.GetStyleAnim(PlayerAnimState.Land))
+            .ChangeClip("RunEnd",style.GetStyleAnim(PlayerAnimState.RunEnd))
+            .ChangeClip("SprintEnd",style.GetStyleAnim(PlayerAnimState.SprintEnd))
+            .ChangeClip("AirDush",style.GetStyleAnim(PlayerAnimState.AirDush));
 
     }
 }
