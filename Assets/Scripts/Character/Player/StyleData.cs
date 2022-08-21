@@ -4,10 +4,25 @@ using UnityEngine;
 using AttackSetting;
 using System.Linq;
 
+public enum PlayerAnimState
+{
+    Idle,
+    Run,
+    RunEnd,
+    Sprint,
+    SprintEnd,
+    Avoid,
+    AirDush,
+    Jump,
+    Fall,
+    Land,
+
+}
+
 [System.Serializable]
 public class StyleAnim 
 {
-    public PlayerStateMachine.StateEvent PlayerState;
+    public PlayerAnimState AnimState;
     public AnimationClip AnimClip;
 }
 
@@ -21,11 +36,8 @@ public class StyleData : ScriptableObject
     [SerializeField]
     public List<StyleAnim> StyleAnimData = new List<StyleAnim>();
 
-    [SerializeField]
-    public AnimationClip[] Clips;
-
-    public AnimationClip GetStyleAnim(PlayerStateMachine.StateEvent state)
+    public AnimationClip GetStyleAnim(PlayerAnimState state)
     {
-        return StyleAnimData.FirstOrDefault(data => data.PlayerState == state).AnimClip;
+        return StyleAnimData.FirstOrDefault(data => data.AnimState == state).AnimClip;
     }
 }

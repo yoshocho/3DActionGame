@@ -12,7 +12,7 @@ public class UiManager
     {
 
     }
-    public static UiManager Instance => s_instance;
+    public static UiManager Instance => s_instance ??= new UiManager();
     
 
     List<UiPanel> _uiList;
@@ -25,7 +25,7 @@ public class UiManager
 
     public void SetUp()
     {
-        MasterCanvas = GameObject.Find(_canvasName).GetComponent<Canvas>(); 
+        MasterCanvas = GameObject.Find(_canvasName).GetComponent<Canvas>();
         UiPanel[] panels = MasterCanvas.GetComponentsInChildren<UiPanel>();
 
         _uiList = new List<UiPanel>();
