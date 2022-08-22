@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfd1d836e9a9ac64ea88af5799a91683, type: 3}
+  m_Name: HeavySword
+  m_EditorClassIdentifier: 
+  WeaponType: 2
+  AttackData:
+  - WeaponType: 2
+    AttackType: 0
+    ActionDatas:
+    - {fileID: 11400000, guid: 5c6b615010812db4a8c5adb495e115ae, type: 2}
+    - {fileID: 11400000, guid: f8ccb36f682226a41bbf7956f72c113b, type: 2}
+    - {fileID: 11400000, guid: bd79e51ac31965b4e863b72dd15b5081, type: 2}
+  - WeaponType: 2
+    AttackType: 2
+    ActionDatas: []
+  StyleAnimData:
+  - AnimState: 0
+    AnimClip: {fileID: 7400002, guid: 9f91273065fe23e48897e714ff7f8d01, type: 3}
+  - AnimState: 1
+    AnimClip: {fileID: 7400000, guid: 6938046917bdbda4b9a2ab2f93029df6, type: 2}
+  - AnimState: 3
+    AnimClip: {fileID: 7400000, guid: d2dd252247401fc4f99989b4c7671b57, type: 2}
+  - AnimState: 5
+    AnimClip: {fileID: 7400000, guid: bfbf85f195f0f1e4f98407ba0be873be, type: 2}
+  - AnimState: 7
+    AnimClip: {fileID: 7400000, guid: 4529db56d54e9874d9482a0c93cc0a14, type: 2}
+  - AnimState: 8
+    AnimClip: {fileID: 7400000, guid: a388baacc4af24f4da0145473af7cb25, type: 2}
+  - AnimState: 9
+    AnimClip: {fileID: 7400000, guid: d86b5feba9fd64c4e8e268f2e6e92b8b, type: 2}
+  - AnimState: 6
+    AnimClip: {fileID: 7400000, guid: 0eb2bbc291c819e47bc30c0d5010a36b, type: 2}
+  - AnimState: 2
+    AnimClip: {fileID: 7400000, guid: 9a249915baf30614e9c67e1ec53dad04, type: 2}
+  - AnimState: 4
+    AnimClip: {fileID: 7400000, guid: 9a249915baf30614e9c67e1ec53dad04, type: 2}
