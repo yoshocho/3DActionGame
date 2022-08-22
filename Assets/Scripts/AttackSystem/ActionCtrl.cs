@@ -16,7 +16,7 @@ namespace AttackSetting
         public List<AttackData> AttackDatas { get => _attackDatas; set { _attackDatas = value; } }
         
         [SerializeField]
-        NewHitCtrl _hitCtrl;
+        HitCtrl _hitCtrl;
 
         AttackType _prevType;
         
@@ -48,7 +48,7 @@ namespace AttackSetting
         {
             _userTrans = user.transform;
             if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
-            if (!_hitCtrl) _hitCtrl = GetComponentInChildren<NewHitCtrl>();
+            if (!_hitCtrl) _hitCtrl = GetComponentInChildren<HitCtrl>();
 
             _hitCtrl.SetUp(this, user);
         }
@@ -96,20 +96,22 @@ namespace AttackSetting
             if (_prevType != attackType) _actId = 0;
             _prevType = attackType;
 
-            var datas = _attackDatas.FirstOrDefault(t => t.AttackType == attackType);
+            var data = _attackDatas.FirstOrDefault(t => t.AttackType == attackType);
 
-            if(datas == null) 
+            if(data == null) 
             {
                 Debug.LogError("Žw’è‚³‚ê‚½UŒ‚‚ÍŒ©‚Â‚©‚è‚Ü‚¹‚ñ‚Å‚µ‚½");
                 return;
             }
             if (id > -1) _actId = id;
-            if (_actId > datas.ActionDatas.Count)
+            if (_actId > data.ActionDatas.Count)
             {
                 _actId = 0;
                 ComboEnd = true;
             }
-            SetAction(datas.ActionDatas[_actId]);
+
+            if (data.ActionDatas[_actId] == null) return;
+            SetAction(data.ActionDatas[_actId]);
             _actId++;
         }
 
