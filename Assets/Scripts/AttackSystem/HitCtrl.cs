@@ -3,7 +3,7 @@ using UnityEngine;
 namespace AttackSetting
 {
 
-    public class NewHitCtrl : MonoBehaviour
+    public class HitCtrl : MonoBehaviour
     {
         [SerializeField]
         Collider _collider;
