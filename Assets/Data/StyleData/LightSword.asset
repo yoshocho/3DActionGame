@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfd1d836e9a9ac64ea88af5799a91683, type: 3}
+  m_Name: LightSword
+  m_EditorClassIdentifier: 
+  WeaponType: 1
+  AttackData:
+  - WeaponType: 1
+    AttackType: 0
+    ActionDatas:
+    - {fileID: 11400000, guid: 98e9cc74171eaae45af4f18652b262a7, type: 2}
+    - {fileID: 11400000, guid: 1ea59929282789644bb2134558f03c1c, type: 2}
+    - {fileID: 11400000, guid: c6f40105fd07f33408231660e1f5ed83, type: 2}
+    - {fileID: 11400000, guid: 0d6c2602e3824ff43ba167e49a04173c, type: 2}
+    - {fileID: 11400000, guid: 84d09b3f72d5aa8459a0d41393974d89, type: 2}
+  - WeaponType: 1
+    AttackType: 2
+    ActionDatas:
+    - {fileID: 11400000, guid: 98e9cc74171eaae45af4f18652b262a7, type: 2}
+    - {fileID: 11400000, guid: 1ea59929282789644bb2134558f03c1c, type: 2}
+    - {fileID: 11400000, guid: c6f40105fd07f33408231660e1f5ed83, type: 2}
+    - {fileID: 11400000, guid: 0d6c2602e3824ff43ba167e49a04173c, type: 2}
+    - {fileID: 11400000, guid: 84d09b3f72d5aa8459a0d41393974d89, type: 2}
+  StyleAnimData:
+  - AnimState: 0
+    AnimClip: {fileID: 7400000, guid: 2ce8b6b2bce9e1645b751d0a103470fb, type: 2}
+  - AnimState: 1
+    AnimClip: {fileID: 7400000, guid: 83232fb6b2cb2b44895f0a76c80bb372, type: 2}
+  - AnimState: 3
+    AnimClip: {fileID: 7400000, guid: 3d779315f02c7354dabaaaf776bb5240, type: 2}
+  - AnimState: 5
+    AnimClip: {fileID: 7400000, guid: f3441bb2f9c691b47be5826fe9a13f7f, type: 2}
+  - AnimState: 7
+    AnimClip: {fileID: 7400000, guid: a67298e5d2d018745bb586efdb31ea59, type: 2}
+  - AnimState: 8
+    AnimClip: {fileID: 7400000, guid: 3ed80db8535f9c548981ee04f15e87d1, type: 2}
+  - AnimState: 9
+    AnimClip: {fileID: 7400000, guid: 4613aab3aae01db4b80e7d720ac46022, type: 2}
+  - AnimState: 6
+    AnimClip: {fileID: 0}
+  - AnimState: 4
+    AnimClip: {fileID: 7400000, guid: aba1857b331f77d42be495c85cb1a58f, type: 2}
+  - AnimState: 2
+    AnimClip: {fileID: 7400000, guid: f4326541bb23b8446a88b8aeb5f80399, type: 2}
