@@ -8,23 +8,23 @@ public class InputManager
     public static InputManager Instance => s_instance;
 
     PlayerInput _inputActions;
-
+    public PlayerInput PlayerInput => _inputActions;
     public void SetUp()
     {
         _inputActions = new PlayerInput();
         _inputActions.Enable();
-        var player = GameObject.FindGameObjectWithTag("Player").GetComponent<NewPlayer>();
+        
+    }
+
+    public void SetProvider()
+    {
+        var player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerStateMachine>();
         var inputProvider = new InputProvider();
         inputProvider.SetUp(_inputActions);
-        player.SetInputProvider(inputProvider);
-
-        _inputActions.Ui.Escape.started += context => Debug.Log("UiOpen");
-
+        player.ReceiveInputProvider(inputProvider);
     }
+
     public void Disable() => _inputActions?.Disable();
 
-    public void Dispose()
-    {
-        _inputActions?.Dispose(); 
-    }
+    public void Dispose() => _inputActions?.Dispose();
 }
