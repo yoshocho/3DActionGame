@@ -76,6 +76,11 @@ public partial class PlayerStateMachine : CharacterBase
     bool _inAvoid = false;
     bool _keepAir = false;
 
+    private void Start()
+    {
+        SetUp();
+    }
+
     protected override void SetUp()
     {
         base.SetUp();
@@ -84,7 +89,10 @@ public partial class PlayerStateMachine : CharacterBase
     }
     void Init()
     {
+        _inputProvider = ServiceLocator<IInputProvider>.Instance;
         InputManager.Instance.PlayerInput.Player.LockOn.started += context => LockOn();
+        Debug.Log("_inputProvider   :" + _inputProvider);
+        Debug.Log("PlayerInput     :" + InputManager.Instance.PlayerInput);
 
         _selfTrans = transform;
         if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
@@ -123,13 +131,14 @@ public partial class PlayerStateMachine : CharacterBase
         ApplyMove();
     }
 
-    public void ReceiveInputProvider(IInputProvider input)
-    {
-        _inputProvider = input;
-    }
+    //public void ReceiveInputProvider(IInputProvider input)
+    //{
+    //    _inputProvider = input;
+    //}
 
     void ApplyAxis()
     {
+        if (_inputProvider == null) return;
         _inputAxis = _inputProvider.GetInputDirection();
         _moveForward = Camera.main.transform.TransformDirection(_inputAxis);
         _moveForward.y = 0.0f;
