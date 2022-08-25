@@ -6,9 +6,9 @@ using UniRx;
 using System;
 using System.Linq;
 
-public class CameraManager : MonoBehaviour
+public class CinemachineCamManager : MonoBehaviour
 {
-    public static CameraManager Instance { get; private set; } = default;
+    public static CinemachineCamManager Instance { get; private set; } = default;
 
     [SerializeField]
     GameObject _followTarget;
@@ -20,7 +20,6 @@ public class CameraManager : MonoBehaviour
     CinemachineFreeLook _freeCam = default;
 
     CinemachineImpulseSource _impulseSource;
-    GameObject _lockOnTarget;
     float _defaultDistance = default;
 
     [SerializeField]
@@ -39,49 +38,56 @@ public class CameraManager : MonoBehaviour
     void Start()
     {
         _impulseSource = GetComponent<CinemachineImpulseSource>();
-        //_freeCam = GetComponentInChildren<CinemachineFreeLook>();
-        //InputManager.Instance.PlayerInput.Player.LockOn.started += context => 
-        //LookAtTarget(_testTarget.position);
-
-       // _followTarget = GameObject.FindGameObjectWithTag("Player");
-       
+        _freeCam = GetComponentInChildren<CinemachineFreeLook>();
+        InputManager.Instance.PlayerInput.Player.LockOn.started += context =>
+        LookAtTarget(_testTarget.position);
     }
     private void Update()
     {
         if (_isLookAt)
         {
+            _freeCam.m_YAxis.Value = _testTarget.position.y;
             float angle = Mathf.SmoothDamp(_lockOnProgess, _lockOnAngle, ref _lockOnVelocity, _blendTime);
             _freeCam.m_XAxis.Value = angle - _lockOnProgess;
+            
             _lockOnProgess = angle;
+
+            if (Mathf.Abs(_lockOnProgess - _lockOnAngle) <= 0.01f)
+            {
+                _isLookAt = false;
+            }
+
+            _lockOnAngle = angle;
         }
-        
+
     }
 
-    public static void ShakeCam(Vector3 vec = default)
+    public void ShakeCam(Vector3 vec = default)
     {
-        Instance._impulseSource.GenerateImpulse(vec);
+        Debug.Log("CameraShake" + vec);
+        _impulseSource.GenerateImpulse(vec);
     }
 
     public GameObject FindTarget(Transform userTrans ,float dis,bool disCenter = false,bool screenCenter = false)
     {
-        var enemys = GameManager.Instance.FieldData.Enemys
+        var targets = GameManager.Instance.FieldData.Enemys
             .Where(e => e.IsVisible)
             .Where(e => e.IsDeath == false)
             .Where(e => Vector3.Distance(userTrans.position, e.transform.position) < dis);
 
         if (disCenter)
         {
-           enemys = enemys.OrderBy(e => Vector3.Distance(userTrans.position, e.transform.position));
+           targets = targets.OrderBy(e => Vector3.Distance(userTrans.position, e.transform.position));
         }
         if (screenCenter)
         {
-            enemys = enemys.OrderBy(e => Vector2.Distance(new Vector2(
+            targets = targets.OrderBy(e => Vector2.Distance(new Vector2(
             Screen.width / 2.0f, Screen.height / 2.0f), Camera.main.WorldToScreenPoint(e.transform.position)));
         }
-        return enemys.FirstOrDefault().gameObject;
+        return targets.FirstOrDefault().gameObject;
     }
 
-    void LookAtTarget(Vector3 target)
+    public void LookAtTarget(Vector3 target)
     {
         float cameraHeight = _freeCam.transform.position.y;
         Vector3 followPos = new Vector3(_freeCam.Follow.position.x, cameraHeight, _freeCam.Follow.position.z);
