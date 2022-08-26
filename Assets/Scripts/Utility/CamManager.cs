@@ -193,19 +193,21 @@ public class CamManager : MonoBehaviour
         return targets.FirstOrDefault();
     }
 
-    public void LockOn(bool lockOn,float dis = 20.0f, bool disCenter = false, bool screenCenter = false)
+    public void LockOn(bool lockOn, float dis = 20.0f, bool disCenter = false, bool screenCenter = false)
     {
         if (lockOn)
         {
-            _target = FindTarget(dis,disCenter,screenCenter);
+            _target = FindTarget(dis, disCenter, screenCenter);
             GameManager.Instance.LockOnTarget = _target.TargetTransform;
-            UiManager.Instance.ReceiveData("gameUi", new LockOnEventHandler(true, _target.TargetTransform.transform));
+            ServiceLocator<UiManager>.Instance.ReceiveData("gameUi",
+                new LockOnEventHandler(true, _target.TargetTransform.transform));
+
             IsLockOn = true;
             _camState = CamState.LockOn;
             return;
         }
         GameManager.Instance.LockOnTarget = null;
-        UiManager.Instance.ReceiveData("gameUi", new LockOnEventHandler(false));
+        ServiceLocator<UiManager>.Instance.ReceiveData("gameUi", new LockOnEventHandler(false));
         IsLockOn = false;
         _camState = CamState.Control;
     }
