@@ -91,12 +91,9 @@ public partial class PlayerStateMachine : CharacterBase
     {
         _inputProvider = ServiceLocator<IInputProvider>.Instance;
         InputManager.Instance.PlayerInput.Player.LockOn.started += context => LockOn();
-        Debug.Log("_inputProvider   :" + _inputProvider);
-        Debug.Log("PlayerInput     :" + InputManager.Instance.PlayerInput);
 
         _selfTrans = transform;
         if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
-        
         _grandCheck = GetComponent<GroundChecker>();
         _playerActCtrl = GetComponent<PlayerActionCtrl>();
         _playerActCtrl.SetUp();
@@ -130,11 +127,6 @@ public partial class PlayerStateMachine : CharacterBase
         if(!IsGround()) ApplyGravity();
         ApplyMove();
     }
-
-    //public void ReceiveInputProvider(IInputProvider input)
-    //{
-    //    _inputProvider = input;
-    //}
 
     void ApplyAxis()
     {
@@ -221,7 +213,8 @@ public partial class PlayerStateMachine : CharacterBase
             maxHp = Status.MaxHp
         };
         if (_debagMode) Debug.Log(JsonUtility.ToJson(hpData));
-        UiManager.Instance.ReceiveData("gameUi", hpData);
+
+        ServiceLocator<UiManager>.Instance.ReceiveData("gameUi", hpData);
 
         if (IsDeath)
         {
