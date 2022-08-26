@@ -1,10 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.InputSystem;
 using System.Linq;
+using UnityEngine;
 
-[ExecuteInEditMode]
+//[ExecuteInEditMode]
 public class CamManager : MonoBehaviour
 {
     [System.Serializable]
@@ -74,9 +71,13 @@ public class CamManager : MonoBehaviour
 
     [SerializeField]
     CamState _camState;
-    
-    PlayerInput _input;
+    IInputProvider _inputProvider;
 
+    private void Awake()
+    {
+        Instance = this;
+        ServiceLocator<CamManager>.Register(Instance);
+    }
 
     private void Start()
     {
@@ -84,13 +85,10 @@ public class CamManager : MonoBehaviour
     }
     void SetUp()
     {
-        _input = InputManager.Instance.PlayerInput;
-        Instance = this;
-
         _planarDirection = _parameter.FollowTarget.transform.forward;
         _targetVerticalAngle = _defaultVerticalAngle;
         _targetRot = Quaternion.LookRotation(_planarDirection) * Quaternion.Euler(_targetVerticalAngle, 0.0f, 0.0f);
-
+        _inputProvider = ServiceLocator<IInputProvider>.Instance;
     }
 
     //デバッグ用
@@ -101,8 +99,8 @@ public class CamManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (_input == null) return;
-        Vector2 inputAxis = _input.Player.CameraAxis.ReadValue<Vector2>();
+        if (_inputProvider == null) return;
+        Vector2 inputAxis = _inputProvider.GetCameraAxis();
 
         _inputX = inputAxis.x * _horizontalSensitivity;
         _inputY = inputAxis.y * _verticalSensitivity;
@@ -134,9 +132,9 @@ public class CamManager : MonoBehaviour
         Vector3 camToTarget = _target.TargetTransform.position - _cam.transform.position;
         Vector3 planarCamToTarget = Vector3.ProjectOnPlane(camToTarget, Vector3.up);
         //Quaternion lookRot = Quaternion.LookRotation(camToTarget,Vector3.up);
-        
+
         _planarDirection = planarCamToTarget != Vector3.zero ? planarCamToTarget.normalized : _planarDirection;
-        
+
         //_targetVerticalAngle = ClampAngle(lookRot.eulerAngles.x, _verticalAngleMinLimit, _verticalAngleMaxLimit);
     }
 
@@ -169,7 +167,7 @@ public class CamManager : MonoBehaviour
     void ControlCam()
     {
         _planarDirection = Quaternion.Euler(0.0f, _inputX, 0.0f) * _planarDirection;
-        _targetVerticalAngle = ClampAngle(_targetVerticalAngle + _inputY,_verticalAngleMinLimit,_verticalAngleMaxLimit);
+        _targetVerticalAngle = ClampAngle(_targetVerticalAngle + _inputY, _verticalAngleMinLimit, _verticalAngleMaxLimit);
     }
 
 
