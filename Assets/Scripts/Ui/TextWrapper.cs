@@ -5,7 +5,7 @@ public class TextWrapper : MonoBehaviour
 {
     Text _text;
 
-    private void Awake()
+    public void SetUp()
     {
         _text = GetComponent<Text>();
     }
