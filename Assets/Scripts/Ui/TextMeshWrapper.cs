@@ -5,7 +5,7 @@ public class TextMeshWrapper : MonoBehaviour
 {
     TMP_Text _text;
 
-    private void Awake()
+    public void SetUp()
     {
         _text = GetComponent<TMP_Text>();
     }

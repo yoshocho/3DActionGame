@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace InputProviders
@@ -30,6 +31,22 @@ namespace InputProviders
             var axis = _inputAction.Player.Move.ReadValue<Vector2>();
             var inputDir = Vector3.forward * axis.y + Vector3.right * axis.x;
             return inputDir;
+        }
+
+        public bool GetAvoidDown()
+        {
+            return _inputAction.Player.Avoid.IsPressed();
+        }
+
+        public Vector2 GetCameraAxis()
+        {
+            return _inputAction.Player.CameraAxis.ReadValue<Vector2>();
+        }
+
+        public IInputProvider SetCallBack(UnityEngine.InputSystem.InputAction input, Action onCall)
+        {
+            input.started += context => onCall.Invoke();
+            return this;
         }
     }
 }

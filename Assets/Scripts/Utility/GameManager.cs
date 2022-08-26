@@ -38,16 +38,22 @@ public partial class GameManager
     public Transform LockOnTarget { get; set; } = null;
 
     public void SetUp(GameState state)
-    {        
+    {
         UiManager.Instance.SetUp();
-        InputManager.Instance.SetUp();
-
+        if (!ServiceLocator<UiManager>.IsValid())
+        {
+            ServiceLocator<UiManager>.Register(UiManager.Instance);
+        }
+        if (!ServiceLocator<IInputProvider>.IsValid())
+        {
+            InputManager.Instance.SetUp();
+        }
+        
         switch (state)
         {
             case GameState.Title:
                 break;
             case GameState.InGame:
-                InputManager.Instance.SetProvider();
                 Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Locked;
                 break;

@@ -39,7 +39,7 @@ public class WeaponHolder : MonoBehaviour
     {
         switch (_currentType)
         {
-            case WeaponType.Hand:
+            case WeaponType.None:
                 break;
             case WeaponType.LightSword:
                 SetPosition(_currentWeapon.transform, _holderPoss[0]);

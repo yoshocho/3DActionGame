@@ -76,6 +76,11 @@ public partial class PlayerStateMachine : CharacterBase
     bool _inAvoid = false;
     bool _keepAir = false;
 
+    private void Start()
+    {
+        SetUp();
+    }
+
     protected override void SetUp()
     {
         base.SetUp();
@@ -84,11 +89,11 @@ public partial class PlayerStateMachine : CharacterBase
     }
     void Init()
     {
+        _inputProvider = ServiceLocator<IInputProvider>.Instance;
         InputManager.Instance.PlayerInput.Player.LockOn.started += context => LockOn();
 
         _selfTrans = transform;
         if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
-        
         _grandCheck = GetComponent<GroundChecker>();
         _playerActCtrl = GetComponent<PlayerActionCtrl>();
         _playerActCtrl.SetUp();
@@ -123,13 +128,9 @@ public partial class PlayerStateMachine : CharacterBase
         ApplyMove();
     }
 
-    public void ReceiveInputProvider(IInputProvider input)
-    {
-        _inputProvider = input;
-    }
-
     void ApplyAxis()
     {
+        if (_inputProvider == null) return;
         _inputAxis = _inputProvider.GetInputDirection();
         _moveForward = Camera.main.transform.TransformDirection(_inputAxis);
         _moveForward.y = 0.0f;
@@ -212,7 +213,8 @@ public partial class PlayerStateMachine : CharacterBase
             maxHp = Status.MaxHp
         };
         if (_debagMode) Debug.Log(JsonUtility.ToJson(hpData));
-        UiManager.Instance.ReceiveData("gameUi", hpData);
+
+        ServiceLocator<UiManager>.Instance.ReceiveData("gameUi", hpData);
 
         if (IsDeath)
         {

@@ -1,26 +1,19 @@
-using System;
-using System.Collections.Generic;
-
-public class ServiceLocator
+public static class ServiceLocator<T> where T : class
 {
-    private static ServiceLocator s_instance = new ServiceLocator();
-    public static ServiceLocator Instance => s_instance ??= new ServiceLocator();
+    public static bool IsValid => Instance != null;
 
-    private ServiceLocator()
-    {
+    public static T Instance { get; private set; }
 
+    public static void Register(T instance)
+    {
+        Instance = instance;
+    }
+    public static void Remove(T instance)
+    {
+        if (Instance == instance)
+        {
+            Instance = null;
+        }
     }
 
-    private static class Cacher<T>
-    {
-        public static T s_instance;
-    }
-    public T Resolve<T>()
-    {
-        return Cacher<T>.s_instance;
-    }
-    public void Register<T>(T instance)
-    {
-        Cacher<T>.s_instance = instance;
-    }
 }

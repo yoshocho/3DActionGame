@@ -82,9 +82,9 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Lunch"",
+                    ""name"": ""LockOn"",
                     ""type"": ""Button"",
-                    ""id"": ""2bcc0626-5ed0-4af7-a1d7-db885d049d38"",
+                    ""id"": ""bb28292a-2dbb-4897-b269-482b6d17cd67"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -270,23 +270,23 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""da29b534-59b1-40df-8fd1-65cac88ae408"",
-                    ""path"": ""<Keyboard>/e"",
+                    ""id"": ""64168239-e3ea-49fb-9945-f8d8df0cacf6"",
+                    ""path"": ""<Mouse>/rightButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Lunch"",
+                    ""action"": ""LockOn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""dd864c66-c28b-4af5-808f-ad42d021b505"",
-                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""id"": ""1b4beb25-afec-4d82-9184-f1d5f25b3e59"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Lunch"",
+                    ""action"": ""LockOn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -297,9 +297,18 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
             ""id"": ""711cf282-d177-4078-8e74-b3cb5e80bb98"",
             ""actions"": [
                 {
-                    ""name"": ""New action"",
+                    ""name"": ""Escape"",
                     ""type"": ""Button"",
                     ""id"": ""29563da1-0bf0-419a-bd0a-f36be112817f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""New action"",
+                    ""type"": ""Button"",
+                    ""id"": ""eb5044c3-4bf5-4974-980d-965139789fe7"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -310,6 +319,28 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""a388ab2d-6aef-46ff-9e8c-afe779b449c4"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Escape"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""75106c85-77de-451d-93a5-6c65e0f81856"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Escape"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e6365707-1e5c-4b09-9752-b0b23976de09"",
                     ""path"": """",
                     ""interactions"": """",
                     ""processors"": """",
@@ -331,9 +362,10 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
         m_Player_WeaponChange = m_Player.FindAction("WeaponChange", throwIfNotFound: true);
-        m_Player_Lunch = m_Player.FindAction("Lunch", throwIfNotFound: true);
+        m_Player_LockOn = m_Player.FindAction("LockOn", throwIfNotFound: true);
         // Ui
         m_Ui = asset.FindActionMap("Ui", throwIfNotFound: true);
+        m_Ui_Escape = m_Ui.FindAction("Escape", throwIfNotFound: true);
         m_Ui_Newaction = m_Ui.FindAction("New action", throwIfNotFound: true);
     }
 
@@ -400,7 +432,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Attack;
     private readonly InputAction m_Player_WeaponChange;
-    private readonly InputAction m_Player_Lunch;
+    private readonly InputAction m_Player_LockOn;
     public struct PlayerActions
     {
         private @PlayerInput m_Wrapper;
@@ -411,7 +443,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Attack => m_Wrapper.m_Player_Attack;
         public InputAction @WeaponChange => m_Wrapper.m_Player_WeaponChange;
-        public InputAction @Lunch => m_Wrapper.m_Player_Lunch;
+        public InputAction @LockOn => m_Wrapper.m_Player_LockOn;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -439,9 +471,9 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @WeaponChange.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnWeaponChange;
                 @WeaponChange.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnWeaponChange;
                 @WeaponChange.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnWeaponChange;
-                @Lunch.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLunch;
-                @Lunch.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLunch;
-                @Lunch.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLunch;
+                @LockOn.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLockOn;
+                @LockOn.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLockOn;
+                @LockOn.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLockOn;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -464,9 +496,9 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @WeaponChange.started += instance.OnWeaponChange;
                 @WeaponChange.performed += instance.OnWeaponChange;
                 @WeaponChange.canceled += instance.OnWeaponChange;
-                @Lunch.started += instance.OnLunch;
-                @Lunch.performed += instance.OnLunch;
-                @Lunch.canceled += instance.OnLunch;
+                @LockOn.started += instance.OnLockOn;
+                @LockOn.performed += instance.OnLockOn;
+                @LockOn.canceled += instance.OnLockOn;
             }
         }
     }
@@ -475,11 +507,13 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
     // Ui
     private readonly InputActionMap m_Ui;
     private IUiActions m_UiActionsCallbackInterface;
+    private readonly InputAction m_Ui_Escape;
     private readonly InputAction m_Ui_Newaction;
     public struct UiActions
     {
         private @PlayerInput m_Wrapper;
         public UiActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Escape => m_Wrapper.m_Ui_Escape;
         public InputAction @Newaction => m_Wrapper.m_Ui_Newaction;
         public InputActionMap Get() { return m_Wrapper.m_Ui; }
         public void Enable() { Get().Enable(); }
@@ -490,6 +524,9 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         {
             if (m_Wrapper.m_UiActionsCallbackInterface != null)
             {
+                @Escape.started -= m_Wrapper.m_UiActionsCallbackInterface.OnEscape;
+                @Escape.performed -= m_Wrapper.m_UiActionsCallbackInterface.OnEscape;
+                @Escape.canceled -= m_Wrapper.m_UiActionsCallbackInterface.OnEscape;
                 @Newaction.started -= m_Wrapper.m_UiActionsCallbackInterface.OnNewaction;
                 @Newaction.performed -= m_Wrapper.m_UiActionsCallbackInterface.OnNewaction;
                 @Newaction.canceled -= m_Wrapper.m_UiActionsCallbackInterface.OnNewaction;
@@ -497,6 +534,9 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
             m_Wrapper.m_UiActionsCallbackInterface = instance;
             if (instance != null)
             {
+                @Escape.started += instance.OnEscape;
+                @Escape.performed += instance.OnEscape;
+                @Escape.canceled += instance.OnEscape;
                 @Newaction.started += instance.OnNewaction;
                 @Newaction.performed += instance.OnNewaction;
                 @Newaction.canceled += instance.OnNewaction;
@@ -512,10 +552,11 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         void OnJump(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
         void OnWeaponChange(InputAction.CallbackContext context);
-        void OnLunch(InputAction.CallbackContext context);
+        void OnLockOn(InputAction.CallbackContext context);
     }
     public interface IUiActions
     {
+        void OnEscape(InputAction.CallbackContext context);
         void OnNewaction(InputAction.CallbackContext context);
     }
 }

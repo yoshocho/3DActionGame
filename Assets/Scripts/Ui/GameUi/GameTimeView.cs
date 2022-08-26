@@ -5,6 +5,7 @@ public class GameTimeView : ChildUi
     public override void SetUp()
     {
         _text = GetComponent<TextMeshWrapper>();
+        _text.SetUp();
         _text.SetText("00:00:00");
         _time = GameManager.Instance.GameTime;
     }

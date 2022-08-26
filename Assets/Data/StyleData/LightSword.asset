@@ -34,9 +34,9 @@ MonoBehaviour:
   - AnimState: 0
     AnimClip: {fileID: 7400000, guid: 2ce8b6b2bce9e1645b751d0a103470fb, type: 2}
   - AnimState: 1
-    AnimClip: {fileID: 7400000, guid: 83232fb6b2cb2b44895f0a76c80bb372, type: 2}
-  - AnimState: 3
     AnimClip: {fileID: 7400000, guid: 3d779315f02c7354dabaaaf776bb5240, type: 2}
+  - AnimState: 3
+    AnimClip: {fileID: 7400000, guid: a7460b91c9152a040965527d73f75914, type: 2}
   - AnimState: 5
     AnimClip: {fileID: 7400000, guid: f3441bb2f9c691b47be5826fe9a13f7f, type: 2}
   - AnimState: 7
@@ -48,6 +48,6 @@ MonoBehaviour:
   - AnimState: 6
     AnimClip: {fileID: 0}
   - AnimState: 4
-    AnimClip: {fileID: 7400000, guid: aba1857b331f77d42be495c85cb1a58f, type: 2}
+    AnimClip: {fileID: 7400000, guid: f4326541bb23b8446a88b8aeb5f80399, type: 2}
   - AnimState: 2
     AnimClip: {fileID: 7400000, guid: f4326541bb23b8446a88b8aeb5f80399, type: 2}
