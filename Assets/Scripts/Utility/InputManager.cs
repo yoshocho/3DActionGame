@@ -6,11 +6,8 @@ public class InputManager
     private static InputManager s_instance = new InputManager();
     private InputManager() 
     {
-        SetUp();
-        var inputProvider = new InputProvider();
-        inputProvider.SetUp(_inputActions);
-        ServiceLocator<IInputProvider>.Register(inputProvider);
-        Debug.Log("InputProviderをRegist");
+        //SetUp();
+       
     }
     public static InputManager Instance => s_instance;
 
@@ -20,7 +17,10 @@ public class InputManager
     {
         _inputActions = new PlayerInput();
         _inputActions.Enable();
-        
+        var inputProvider = new InputProvider();
+        inputProvider.SetUp(_inputActions);
+        ServiceLocator<IInputProvider>.Register(inputProvider);
+        Debug.Log("InputProviderをRegist");
     }
 
     public void SetProvider()
