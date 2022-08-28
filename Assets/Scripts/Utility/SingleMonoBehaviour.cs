@@ -65,6 +65,9 @@ public class SingleMonoBehaviour<TOwer> : MonoBehaviour where TOwer :SingleMonoB
     
     public static bool IsAlive => Instance != null;
 
+    /// <summary>
+    /// 駐屯オブジェクトにする
+    /// </summary>
     protected void DontDestroyObject()
     {
         gameObject.hideFlags = HideFlags.HideInHierarchy;

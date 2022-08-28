@@ -37,7 +37,7 @@ public class FadeSystem : SingleMonoBehaviour<FadeSystem>
     {
         if (!_fadePanel) _fadePanel = GetComponentInChildren<Image>();
         if (!_canvasGroup) _canvasGroup = GetComponentInChildren<CanvasGroup>();
-        DontDestroyOnLoad(gameObject);
+        DontDestroyObject();
     }
 
     [SerializeField] Image _fadePanel = default;

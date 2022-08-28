@@ -6,7 +6,7 @@ public class SceneChanger : SingleMonoBehaviour<SceneChanger>
 {
     protected override void OnAwake()
     {
-        DontDestroyOnLoad(gameObject);
+        DontDestroyObject();
     }
     public void LoadScene(string sceneName)
     {
