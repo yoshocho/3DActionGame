@@ -112,6 +112,7 @@ public class AnimationCtrl : MonoBehaviour
     /// <param name="layerId">レイヤーId</param>
     public AnimationCtrl ChangeClip(string stateName, AnimationClip clip, int layerId = 0)
     {
+        if (clip == null) return this;
 
         AnimatorStateInfo[] layerInfo = new AnimatorStateInfo[_anim.layerCount];
         for (int i = 0; i < _anim.layerCount; i++)
