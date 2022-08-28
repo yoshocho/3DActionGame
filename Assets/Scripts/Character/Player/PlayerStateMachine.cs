@@ -76,23 +76,17 @@ public partial class PlayerStateMachine : CharacterBase
     bool _inAvoid = false;
     bool _keepAir = false;
 
-    private void Start()
-    {
-        SetUp();
-    }
-
     protected override void SetUp()
-    {
-        base.SetUp();
-        Init();
-        StateCash();
-    }
-    void Init()
-    {
+    {   
         _inputProvider = ServiceLocator<IInputProvider>.Instance;
         InputManager.Instance.PlayerInput.Player.LockOn.started += context => LockOn();
-
         _selfTrans = transform;
+        base.SetUp();
+        ComponentSetUp();
+        StateCash();
+    }
+    void ComponentSetUp()
+    {
         if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
         _grandCheck = GetComponent<GroundChecker>();
         _playerActCtrl = GetComponent<PlayerActionCtrl>();

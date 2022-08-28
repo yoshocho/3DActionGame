@@ -13,15 +13,12 @@ public class CharacterBase : MonoBehaviour,IDamage
     public ObjectData Data { get => _data; protected set { _data = value;} }
     [SerializeField]
     float _moveSpeed = default;
-    [SerializeField]
-    Transform _centerPos;
-    public Transform CenterPos => _centerPos;
     public float MoveSpeed { get => _moveSpeed;protected set { _moveSpeed = value; } }
     public bool IsDeath { get; protected set; } = false;
 
     Rigidbody _rb;
     public Rigidbody RB { get => _rb; protected set { _rb = value; } }
-    
+
     private void Start()
     {
         SetUp();
