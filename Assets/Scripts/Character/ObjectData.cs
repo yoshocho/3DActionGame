@@ -15,7 +15,8 @@ public class ObjectData
     public ObjectType Type;
     [SerializeField]
     public string Name = string.Empty;
-
+    [SerializeField]
+    public Transform CenterPos;
     public void CheckType(GameObject owner)
     {
         if(Type == ObjectType.None)
