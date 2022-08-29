@@ -436,6 +436,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4748500161714675531, guid: 89384cdbaf8323f4791614ebf2422db0,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: 99
+      objectReference: {fileID: 0}
+    - target: {fileID: 4748500162436587137, guid: 89384cdbaf8323f4791614ebf2422db0,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4748500162436587139, guid: 89384cdbaf8323f4791614ebf2422db0,
+        type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4748500162918811537, guid: 89384cdbaf8323f4791614ebf2422db0,
         type: 3}
       propertyPath: _fadePanel
@@ -449,7 +464,7 @@ PrefabInstance:
     - target: {fileID: 4748500162918811542, guid: 89384cdbaf8323f4791614ebf2422db0,
         type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4748500162918811542, guid: 89384cdbaf8323f4791614ebf2422db0,
         type: 3}
@@ -998,7 +1013,7 @@ RectTransform:
   m_Children:
   - {fileID: 1701861150}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1018,7 +1033,7 @@ GameObject:
   - component: {fileID: 1701861152}
   - component: {fileID: 1701861151}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: Title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
