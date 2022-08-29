@@ -1,8 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
-using UnityEngine.UI;
+using UnityEngine;
 
 public class UiManager
 {
@@ -55,9 +53,9 @@ public class UiManager
         var ui = _uiList.FirstOrDefault(p => p.Path == parentName)
             .ChildUis.OfType<IUIEventReceiver<T>>().FirstOrDefault();
 
-        if(ui == null)
+        if (ui == null)
         {
-            Debug.LogWarning(string.Format("Žw’è‚³‚ê‚½UI‚ÍŒ©‚Â‚©‚è‚Ü‚¹‚ñ‚Å‚µ‚½{0},{1}",parentName,arg));
+            Debug.LogWarning(string.Format("Žw’è‚³‚ê‚½UI‚ÍŒ©‚Â‚©‚è‚Ü‚¹‚ñ‚Å‚µ‚½{0},{1}", parentName, arg));
             return;
         }
         ui.ReceiveData(arg);
