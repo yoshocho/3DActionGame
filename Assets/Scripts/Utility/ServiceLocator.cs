@@ -1,6 +1,6 @@
 public static class ServiceLocator<T> where T : class
 {
-    public static bool IsValid => Instance != null;
+    public static bool IsValid() => Instance != null;
 
     public static T Instance { get; private set; }
 
@@ -14,6 +14,11 @@ public static class ServiceLocator<T> where T : class
         {
             Instance = null;
         }
+    }
+
+    public static void Clear()
+    {
+        Instance = null;
     }
 
 }
