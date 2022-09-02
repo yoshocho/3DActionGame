@@ -15,6 +15,10 @@ public class NewFieldManager : MonoBehaviour
     [SerializeField]
     float _spawnTime = 0.5f;
     float _spawnTimer;
+    [SerializeField]
+    float _waveWaitTime = 4.0f;
+    float _waveWaitTimer;
+    bool _waveEnd;
 
     [SerializeField]
     Vector3 _spawnCenter = Vector3.zero;
@@ -23,56 +27,74 @@ public class NewFieldManager : MonoBehaviour
 
     private void Start()
     {
-        
+
 
     }
 
     private void Update()
     {
 
-
-
-        _spawnTimer += Time.deltaTime;
-
-        if (_spawnTimer > _spawnTime)
+        if (_waveWaitTimer > 0.0f)
         {
-            
-            var enemy = _waveData[CurrentWave].Enemys[_spawanCount];
-            Instantiate(enemy, GetRandomPos(), Quaternion.identity);
-            _spawanCount++;
-
-            if (_spawanCount >= _waveData[CurrentWave].Enemys.Count)
+            _waveWaitTimer -= Time.deltaTime;
+            print("waveë“Çøéûä‘");
+            if (_waveWaitTimer < 0.0f)
             {
-                CurrentWave++;
-                _spawanCount = 0;
+                _waveWaitTimer = 0.0f;
             }
 
         }
 
-        //if (Input.GetKeyDown(KeyCode.S))
-        //{
-        //    var testObj =  GameObject.CreatePrimitive(PrimitiveType.Cube);
-        //    Instantiate(testObj, GetRandomPos(), Quaternion.identity);
-        //}
+        if (_waveWaitTimer <= 0.0f)
+        {
+            if (_waveData.Count < CurrentWave) return;
+
+            _spawnTimer += Time.deltaTime;
+
+            if (_spawnTimer > _spawnTime)
+            {
+
+                var enemy = _waveData[CurrentWave].Enemys[_spawanCount];
+                Instantiate(enemy, GetRandomPos(), Quaternion.identity);
+                _spawanCount++;
+                print("ìGê∂ê¨");
+                if (_spawanCount >= _waveData[CurrentWave].Enemys.Count)
+                {
+                    CurrentWave++;
+                    _spawanCount = 0;
+                    _waveWaitTimer = _waveWaitTime;
+                    print("waveèIóπ");
+                }
+                _spawnTimer = 0.0f;
+            }
+        }
+
+
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            var testObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            Instantiate(testObj, GetRandomPos(), Quaternion.identity);
+            //_waveEnd = true;
+        }
     }
 
     Vector3 GetRandomPos()
     {
-        float x = Random.Range(-_spawnLength.x,_spawnLength.x) / 2;
-        float z = Random.Range(-_spawnLength.z,_spawnLength.z) / 2;
+        float x = Random.Range(-_spawnLength.x, _spawnLength.x) / 2;
+        float z = Random.Range(-_spawnLength.z, _spawnLength.z) / 2;
 
 
-        return new Vector3(x,0.5f,z) + _spawnCenter;
+        return new Vector3(x, 0.5f, z) + _spawnCenter;
     }
     [Conditional("UNITY_EDITOR")]
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(_spawnCenter,_spawnLength);
+        Gizmos.DrawWireCube(_spawnCenter, _spawnLength);
     }
 }
 [System.Serializable]
-public class EnemyGroupTest 
+public class EnemyGroupTest
 {
     public List<GameObject> Enemys = new List<GameObject>();
 
