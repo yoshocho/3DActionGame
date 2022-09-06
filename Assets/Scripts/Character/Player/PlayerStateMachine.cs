@@ -66,7 +66,6 @@ public partial class PlayerStateMachine : CharacterBase
     Quaternion _targetRot = Quaternion.identity;
 
     IInputProvider _inputProvider;
-    InputManager _inputManager;
     [SerializeField]
     AnimationCtrl _animCtrl;
     GroundChecker _grandCheck;
