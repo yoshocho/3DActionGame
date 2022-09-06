@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class NewFieldManager : MonoBehaviour
 {
@@ -18,7 +19,7 @@ public class NewFieldManager : MonoBehaviour
     [SerializeField]
     float _waveWaitTime = 4.0f;
     float _waveWaitTimer;
-    bool _waveEnd;
+    bool _waitWave;
 
     [SerializeField]
     Vector3 _spawnCenter = Vector3.zero;
@@ -27,7 +28,6 @@ public class NewFieldManager : MonoBehaviour
 
     private void Start()
     {
-
 
     }
 
@@ -42,16 +42,13 @@ public class NewFieldManager : MonoBehaviour
             {
                 _waveWaitTimer = 0.0f;
             }
-
         }
 
         if (_waveWaitTimer <= 0.0f)
         {
-            if (_waveData.Count < CurrentWave) return;
-
             _spawnTimer += Time.deltaTime;
 
-            if (_spawnTimer > _spawnTime)
+            if (_spawnTimer > _spawnTime && !_waitWave)
             {
 
                 var enemy = _waveData[CurrentWave].Enemys[_spawanCount];
@@ -63,6 +60,8 @@ public class NewFieldManager : MonoBehaviour
                     CurrentWave++;
                     _spawanCount = 0;
                     _waveWaitTimer = _waveWaitTime;
+                    _waitWave = true;
+                   
                     print("waveèIóπ");
                 }
                 _spawnTimer = 0.0f;
@@ -72,9 +71,9 @@ public class NewFieldManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.X))
         {
-            var testObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            Instantiate(testObj, GetRandomPos(), Quaternion.identity);
-            //_waveEnd = true;
+            //var testObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            //Instantiate(testObj, GetRandomPos(), Quaternion.identity);
+            _waitWave = false;
         }
     }
 
