@@ -34,6 +34,12 @@ public class NewFieldManager : MonoBehaviour
     private void Update()
     {
 
+        if(!_waitWave && _waveData.Count <= CurrentWave)
+        {
+            print("ƒQ[ƒ€I—¹");
+            return;
+        }
+
         if (_waveWaitTimer > 0.0f && _waitWave)
         {
             _waveWaitTimer -= Time.deltaTime;
