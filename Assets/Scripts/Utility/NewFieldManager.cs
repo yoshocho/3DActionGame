@@ -34,39 +34,41 @@ public class NewFieldManager : MonoBehaviour
     private void Update()
     {
 
-        if (_waveWaitTimer > 0.0f)
+        if (_waveWaitTimer > 0.0f && _waitWave)
         {
             _waveWaitTimer -= Time.deltaTime;
             print("waveë“Çøéûä‘");
+
             if (_waveWaitTimer < 0.0f)
             {
                 _waveWaitTimer = 0.0f;
             }
         }
 
-        if (_waveWaitTimer <= 0.0f)
+        if (_waveWaitTimer <= 0.0f && !_waitWave)
         {
             _spawnTimer += Time.deltaTime;
 
-            if (_spawnTimer > _spawnTime && !_waitWave)
-            {
-
-                var enemy = _waveData[CurrentWave].Enemys[_spawanCount];
-                Instantiate(enemy, GetRandomPos(), Quaternion.identity);
-                _spawanCount++;
-                print("ìGê∂ê¨");
-                if (_spawanCount >= _waveData[CurrentWave].Enemys.Count)
-                {
-                    CurrentWave++;
-                    _spawanCount = 0;
-                    _waveWaitTimer = _waveWaitTime;
-                    _waitWave = true;
-                   
-                    print("waveèIóπ");
-                }
-                _spawnTimer = 0.0f;
-            }
         }
+        if (_spawnTimer > _spawnTime)
+        {
+
+            var enemy = _waveData[CurrentWave].Enemys[_spawanCount];
+            Instantiate(enemy, GetRandomPos(), Quaternion.identity);
+            _spawanCount++;
+            print("ìGê∂ê¨");
+            if (_spawanCount >= _waveData[CurrentWave].Enemys.Count)
+            {
+                CurrentWave++;
+                _spawanCount = 0;
+                _waveWaitTimer = _waveWaitTime;
+                _waitWave = true;
+
+                print("waveèIóπ");
+            }
+            _spawnTimer = 0.0f;
+        }
+
 
 
         if (Input.GetKeyDown(KeyCode.X))
