@@ -55,6 +55,10 @@ public class RigidMover : MonoBehaviour
         {
             _velocity.y += _gravityScale * Physics.gravity.y * Time.deltaTime;
         }
+        else
+        {
+            _velocity.y = 0.0f;
+        }
     }
     public bool IsGround()
     {
