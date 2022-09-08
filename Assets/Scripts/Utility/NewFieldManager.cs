@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 public class NewFieldManager : MonoBehaviour
 {
     [SerializeField]
-    List<EnemyGroupTest> _waveData = new List<EnemyGroupTest>();
+    GameData _gameData;
 
     public FieldData FieldData { get; private set; } = new FieldData();
 
@@ -34,7 +34,7 @@ public class NewFieldManager : MonoBehaviour
     private void Update()
     {
 
-        if(!_waitWave && _waveData.Count <= CurrentWave)
+        if(!_waitWave && _gameData.WavesData.Count <= CurrentWave)
         {
             print("ƒQ[ƒ€I—¹");
             return;
@@ -59,11 +59,11 @@ public class NewFieldManager : MonoBehaviour
         if (_spawnTimer > _spawnTime)
         {
 
-            var enemy = _waveData[CurrentWave].Enemys[_spawanCount];
+            var enemy = _gameData.WavesData[CurrentWave].Enemys[_spawanCount];
             Instantiate(enemy, GetRandomPos(), Quaternion.identity);
             _spawanCount++;
             print("“G¶¬");
-            if (_spawanCount >= _waveData[CurrentWave].Enemys.Count)
+            if (_spawanCount >= _gameData.WavesData[CurrentWave].Enemys.Count)
             {
                 CurrentWave++;
                 _spawanCount = 0;
