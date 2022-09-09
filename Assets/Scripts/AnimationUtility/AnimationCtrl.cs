@@ -123,6 +123,12 @@ public class AnimationCtrl : MonoBehaviour
         }
         return this;
     }
+    /// <summary>
+    /// アニメーターに対してパラメーターを送るときの関数
+    /// </summary>
+    /// <param name="paramName">パラメーターの名前</param>
+    /// <param name="parameter">パラメーター値</param>
+    /// <returns></returns>
     public AnimationCtrl SetParameter(string paramName, object parameter)
     {
         switch (parameter)
