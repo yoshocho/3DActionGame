@@ -80,7 +80,8 @@ public class AnimationCtrl : MonoBehaviour
     public void Play(string stateName, float dur = 0.1f, int layerId = 0, Action onAnimEnd = null)
     {
         Active();
-        _anim.CrossFadeInFixedTime(stateName, dur, layerId);
+        int hash = Animator.StringToHash(stateName);
+        _anim.CrossFadeInFixedTime(hash, dur, layerId);
 
         if(onAnimEnd != null)StartCoroutine(AnimEndCallBack(layerId, onAnimEnd));
     }
