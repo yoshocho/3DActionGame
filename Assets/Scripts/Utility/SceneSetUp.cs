@@ -12,7 +12,7 @@ public class SceneSetUp : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        GameManager.Instance.SetUp(_gameState);
+        GameManager.Instance.SetUp();
         GameManager.Instance.GameStateEvent(_gameState);
     }
 

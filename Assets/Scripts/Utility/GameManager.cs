@@ -3,33 +3,40 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 using System;
-using System.Linq;
 
 /// <summary>
 /// ゲームを管理するクラス
 /// </summary>
-public partial class GameManager
+public class GameManager
 {
     public enum GameState
     {
         Title,
         InGame,
         GameOver,
-        Loading,
+        GameClear,
     }
 
+    #region singleton
     private static GameManager s_instance = new GameManager();
     private GameManager() { }
     public static GameManager Instance => s_instance ??= s_instance = new GameManager();
-    
+    #endregion
+
     ///<summary>現在のゲームステート</summary>
     public GameState CurrentState { get; private set; }
     /// <summary> ゲームの経過時間</summary>
     public TimeData GameTime { get; private set; } = new TimeData();
+
+    public ScoreData Score { get; private set; } = new ScoreData();
     
     Subject<bool> _onPause = new Subject<bool>();
     /// <summary>ゲームポーズイベント </summary>
     public IObservable<bool> OnPause => _onPause;
+
+    Subject<Unit> _onGameEnd = new Subject<Unit>();
+
+    public IObservable<Unit> OnGameEnd => _onGameEnd;
 
     public bool GameStart { get; private set; } = true;
 
@@ -37,7 +44,7 @@ public partial class GameManager
 
     public Transform LockOnTarget { get; set; } = null;
 
-    public void SetUp(GameState state)
+    public void SetUp()
     {
         UiManager.Instance.SetUp();
         if (!ServiceLocator<UiManager>.IsValid())
@@ -49,23 +56,6 @@ public partial class GameManager
             InputManager.Instance.SetUp();
         }
         
-        switch (state)
-        {
-            case GameState.Title:
-                break;
-            case GameState.InGame:
-                Cursor.visible = false;
-                Cursor.lockState = CursorLockMode.Locked;
-                break;
-            case GameState.GameOver:
-                break;
-            
-            case GameState.Loading:
-
-                break;
-            default:
-                break;
-        }
     }
     public void GameStateEvent(GameState state)
     {
@@ -74,23 +64,28 @@ public partial class GameManager
         switch (state)
         {
             case GameState.Title:
-                Debug.Log("Title");
-
                 break;
             case GameState.InGame:
-                
+                CursorManager.CursorCtrl(false, CursorLockMode.Locked);
                 break;
             case GameState.GameOver:
-                
+                ServiceLocator<UiManager>.Instance.RequestOpen("gameOver");
                 
                 break;
-            case GameState.Loading:
+            case GameState.GameClear:
+                ServiceLocator<UiManager>.Instance.RequestOpen("result");
 
                 break;
             default:
                 break;
         }
     }
+
+    public void SetScore(int score)
+    {
+        Score.SetScore = score;
+    }
+
     void ResetGameTime()
     {
         GameTime.ResetTime();
