@@ -70,20 +70,20 @@ public class GameManager
                 break;
             case GameState.GameOver:
                 ServiceLocator<UiManager>.Instance.RequestOpen("gameOver");
-                
                 break;
             case GameState.GameClear:
-                ServiceLocator<UiManager>.Instance.RequestOpen("result");
-
+                var ui = ServiceLocator<UiManager>.Instance;
+                ui.RequestOpen("result");
+                ui.ReceiveData("result",new ResultData(Score,GameTime));
                 break;
             default:
                 break;
         }
     }
 
-    public void SetScore(int score)
+    public void AddScore(int score)
     {
-        Score.SetScore = score;
+        Score.AddScore(score);
     }
 
     void ResetGameTime()
