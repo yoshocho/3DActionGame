@@ -3,11 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshRenderer))] //OnWillRenderObject‚ðŽg‚¤‚½‚ß
-public class EnemyBase : CharacterBase
+public class EnemyBase : CharacterBase ,ITargetable
 {
     protected Transform _targetTrans;
     protected float _distance;
-    public bool IsVisible { get; private set; }
+    public bool IsVisible { get; private set; } = false;
+
+    public bool Targetable => !IsDeath;
+
+    public Transform TargetTransform => Data.CenterPos;
+
     protected override void SetUp()
     {
         base.SetUp();

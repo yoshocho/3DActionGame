@@ -6,6 +6,9 @@ using AttackSetting;
 [RequireComponent(typeof(ActionCtrl), typeof(GroundChecker))]
 public partial class PlayerStateMachine : CharacterBase
 {
+   /// <summary>
+   /// プレイヤーの行動ステート
+   /// </summary>
     public enum StateEvent : int
     {
         Idle,
@@ -18,6 +21,7 @@ public partial class PlayerStateMachine : CharacterBase
         Land,
         Damage,
     }
+
 
     enum StyleState 
     {
@@ -62,7 +66,6 @@ public partial class PlayerStateMachine : CharacterBase
     Quaternion _targetRot = Quaternion.identity;
 
     IInputProvider _inputProvider;
-    InputManager _inputManager;
     [SerializeField]
     AnimationCtrl _animCtrl;
     GroundChecker _grandCheck;
@@ -107,7 +110,6 @@ public partial class PlayerStateMachine : CharacterBase
             .AddAnyTransition<PlayerFallState>((int)StateEvent.Fall)
             .AddAnyTransition<PlayerLandState>((int)StateEvent.Land)
             .Start<PlayerIdleState>();
-
     }
 
     void Update()

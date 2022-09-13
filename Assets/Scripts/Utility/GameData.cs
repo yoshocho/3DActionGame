@@ -5,15 +5,12 @@ using UnityEngine;
 [System.Serializable]
 public class WaveData
 {
-    public GameObject EnemyPrefab;
-    public int EnemyCount = 3;
+    public List<GameObject> Enemys = new List<GameObject>();
 }
 
-[CreateAssetMenu(fileName = "GameData", menuName = "ScriptableObjects/GameData")]
+[CreateAssetMenu(fileName = "GameData", menuName = "ScriptableObjects/EnemyGroupData")]
 public class GameData : ScriptableObject
 {
     [SerializeField]
-    public int ClearCount = 20;
-    [SerializeField]
-    public List<WaveData> WaveDatas = new List<WaveData>();
+    public List<WaveData> WavesData = new List<WaveData>();
 }

@@ -127,7 +127,7 @@ public class CamManager : MonoBehaviour
 
     void LockOnCam()
     {
-        if (_target == null && _target.TargetTransform == null) return;
+        if (_target == null && _target.TargetTransform == null) _camState = CamState.Control;
 
         Vector3 camToTarget = _target.TargetTransform.position - _cam.transform.position;
         Vector3 planarCamToTarget = Vector3.ProjectOnPlane(camToTarget, Vector3.up);

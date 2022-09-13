@@ -23,6 +23,8 @@ namespace AttackSetting
         public float ReceiveTimer { get; private set; } = 0.0f;
         public float KeepTimer { get; private set; } = 0.0f;
         int _actId = 0;
+
+        GameObject _userObj;
         Transform _userTrans;
 
         public ActionData CurrentAction { get; private set; }
@@ -46,7 +48,7 @@ namespace AttackSetting
         
         public void SetUp(GameObject user)
         {
-            _userTrans = user.transform;
+            _userObj = user;
             if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
             if (!_hitCtrl) _hitCtrl = GetComponentInChildren<HitCtrl>();
 
@@ -153,7 +155,7 @@ namespace AttackSetting
 
             foreach (var item in CurrentAction.HitEvents)
             {
-                item.SetUp(gameObject);
+                item.SetUp(_userObj);
                 item.HitEvent(target);
             }
         }

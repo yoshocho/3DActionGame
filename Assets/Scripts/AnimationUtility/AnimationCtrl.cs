@@ -77,17 +77,14 @@ public class AnimationCtrl : MonoBehaviour
     }
 
 
-    public void Play(string stateName, float dur = 0.1f, int layer = 0, Action onAnimEnd = null)
+    public void Play(string stateName, float dur = 0.1f, int layerId = 0, Action onAnimEnd = null)
     {
         Active();
-        _anim.CrossFadeInFixedTime(stateName, dur, layer);
-        StartCoroutine(AnimEndCallBack(0, onAnimEnd));
+        int hash = Animator.StringToHash(stateName);
+        _anim.CrossFadeInFixedTime(hash, dur, layerId);
+
+        if(onAnimEnd != null)StartCoroutine(AnimEndCallBack(layerId, onAnimEnd));
     }
-    //public void PlayAndCallBack(string stateName, float dur = 0.1f, int layer = 0, Action onAnimEnd = null)
-    //{
-
-    //}
-
     public void SetRootAnim()
     {
         _anim.applyRootMotion = true;
@@ -97,10 +94,10 @@ public class AnimationCtrl : MonoBehaviour
         _anim.applyRootMotion = false;
     }
 
-    public IEnumerator AnimEndCallBack(int layer = 0, Action onAnimEnd = null)
+    public IEnumerator AnimEndCallBack(int layerId = 0, Action onAnimEnd = null)
     {
         yield return null;
-        yield return new WaitUntil(() => !IsPlayingAnimatin(layer));
+        yield return new WaitUntil(() => !IsPlayingAnimatin(layerId));
         onAnimEnd?.Invoke();
     }
     /// <summary>
@@ -127,6 +124,12 @@ public class AnimationCtrl : MonoBehaviour
         }
         return this;
     }
+    /// <summary>
+    /// アニメーターに対してパラメーターを送るときの関数
+    /// </summary>
+    /// <param name="paramName">パラメーターの名前</param>
+    /// <param name="parameter">パラメーター値</param>
+    /// <returns></returns>
     public AnimationCtrl SetParameter(string paramName, object parameter)
     {
         switch (parameter)
