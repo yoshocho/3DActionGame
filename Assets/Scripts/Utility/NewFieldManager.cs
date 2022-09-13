@@ -21,22 +21,34 @@ public class NewFieldManager : MonoBehaviour
     float _waveWaitTimer;
     bool _waitWave;
 
+    int _deathCount = 0;
+    int _fieldCount;
+
     [SerializeField]
     Vector3 _spawnCenter = Vector3.zero;
     [SerializeField]
     Vector3 _spawnLength = new Vector3(30.0f, 0.5f, 30.0f);
 
-    private void Start()
+    private void Awake()
     {
+        ServiceLocator<NewFieldManager>.Register(this);
+    }
 
+    public void DeathRequest(EnemyBase enemy)
+    {
+        GameManager.Instance.FieldData.RemoveEnemy(enemy);
+        _deathCount++;
     }
 
     private void Update()
     {
+        if (GameManager.Instance.CurrentState != GameManager.GameState.InGame) return;
+
+        GameManager.Instance.UpdateGameTime();
 
         if(!_waitWave && _gameData.WavesData.Count <= CurrentWave)
         {
-            print("ゲーム終了");
+            GameManager.Instance.GameStateEvent(GameManager.GameState.GameClear);
             return;
         }
 
@@ -56,6 +68,9 @@ public class NewFieldManager : MonoBehaviour
             _spawnTimer += Time.deltaTime;
 
         }
+
+        CheckWaveClear();
+
         if (_spawnTimer > _spawnTime)
         {
 
@@ -66,11 +81,12 @@ public class NewFieldManager : MonoBehaviour
             if (_spawanCount >= _gameData.WavesData[CurrentWave].Enemys.Count)
             {
                 CurrentWave++;
+                _fieldCount = _spawanCount;
                 _spawanCount = 0;
                 _waveWaitTimer = _waveWaitTime;
                 _waitWave = true;
 
-                print("wave終了");
+                print("wave生成終了");
             }
             _spawnTimer = 0.0f;
         }
@@ -83,6 +99,18 @@ public class NewFieldManager : MonoBehaviour
             //Instantiate(testObj, GetRandomPos(), Quaternion.identity);
             _waitWave = false;
         }
+    }
+
+    bool CheckWaveClear()
+    {
+        if (_fieldCount <= _deathCount) 
+        {
+            _fieldCount = 0;
+            _deathCount = 0;
+            _waitWave = false;
+            return true;
+        }
+        else return false;
     }
 
     Vector3 GetRandomPos()
