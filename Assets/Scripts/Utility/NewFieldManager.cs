@@ -100,10 +100,3 @@ public class NewFieldManager : MonoBehaviour
         Gizmos.DrawWireCube(_spawnCenter, _spawnLength);
     }
 }
-[System.Serializable]
-public class EnemyGroupTest
-{
-    public List<GameObject> Enemys = new List<GameObject>();
-
-}
-
