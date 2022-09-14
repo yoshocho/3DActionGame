@@ -1,111 +1,124 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class FieldManager : MonoBehaviour
 {
-    public static FieldManager Instance { get; private set; }
     [SerializeField]
     GameData _gameData;
-    public GameData GameData => _gameData;
+
+    public FieldData FieldData { get; private set; } = new FieldData();
+
+    public int CurrentWave { get; private set; } = 0;
+    int _spawanCount = 0;
+    [SerializeField]
+    float _spawnTime = 0.5f;
+    float _spawnTimer;
+    [SerializeField]
+    float _waveWaitTime = 4.0f;
+    float _waveWaitTimer;
+    bool _waitWave;
+    bool _waveSpawnEnd;
+    int _deathCount = 0;
+    int _fieldCount;
+    bool _waveClear;
 
     [SerializeField]
-    GameObject _enemyPrefab;
-
+    Vector3 _spawnCenter = Vector3.zero;
     [SerializeField]
-    float _waitTime = 20.0f;
-    List<Transform> _spawnPoints = new List<Transform>();
-    float _timer;
-    int _fieldCount = 0;
-    int _currentWaveCount = 0;
-    int _spawnCount = 0;
-    bool _canSpawn = true;
+    Vector3 _spawnLength = new Vector3(30.0f, 0.5f, 30.0f);
 
     private void Awake()
     {
-        Instance = this;
-    }
-    private void Start()
-    {
-        var points = GameObject.FindGameObjectsWithTag("SpawnPoint");
-        for (int i = 0; i < points.Length; i++)
-        {
-            _spawnPoints.Add(points[i].transform);
-        }
-        _timer = _waitTime;
-        _fieldCount = GameData.WavesData[0].EnemyCount;
-    }
-
-    private void Update()
-    {
-        if (!GameManager.Instance.GameStart) return;
-
-        UpdateEnemy();
-        GameManager.Instance.UpdateGameTime();
+        ServiceLocator<FieldManager>.Register(this);
     }
 
     public void DeathRequest(EnemyBase enemy)
     {
         GameManager.Instance.FieldData.RemoveEnemy(enemy);
-        enemy.Death();
-        _fieldCount--;
+        _deathCount++;
     }
 
-    public void UpdateEnemy()
+    private void Update()
     {
-        #region
-        //if (_spawnCount >= _spawnPoints.Count) return;
-        //if (_fieldCount >= GameData.WavesData[_currentWaveCount].EnemyCount)
-        //{
-        //    for (int i = 0; i < _spawnPoints.Count; i++)
-        //    {
-        //        var enemy = _enemyPool.Get();
-        //        Spawn(enemy.gameObject, _spawnPoints[i].transform.position);
-        //        if (_spawnCount == GameData.WavesData[_currentWaveCount].EnemyCount)
-        //        {
-        //            _spawnCount = 0;
-        //            break;
-        //        }
-        //    }
-        //    _currentWaveCount++;
-        //    _fieldCount = GameData.WavesData[_currentWaveCount].EnemyCount;
-        //    if (_currentWaveCount == GameData.WavesData.Count)
-        //    {
-        //        Debug.Log("終了");
-        //    }
-        //}
-        #endregion
+        if (GameManager.Instance.CurrentState != GameManager.GameState.InGame) return;
 
-        _timer += Time.deltaTime;
-        if(_timer > _waitTime) 
+        GameManager.Instance.UpdateGameTime();
+
+        if(_waveClear && _gameData.WavesData.Count <= CurrentWave)
         {
-            _timer = 0.0f;
-            SpawnEnemy();
+            print("ゲームクリア");
+            GameManager.Instance.GameStateEvent(GameManager.GameState.GameClear);
+            return;
         }
-    }
-    void SpawnEnemy()
-    {
-        for (int i = 0; i < _spawnPoints.Count; i++)
+
+        if (_waitWave)
         {
-            if (_spawnCount == GameData.WavesData[_currentWaveCount].EnemyCount)
+            _waveWaitTimer += Time.deltaTime;
+            print("wave待ち時間");
+
+            if (_waveWaitTimer > _waveWaitTime)
             {
-                _spawnCount = 0;
-                _currentWaveCount++;
-                break;
+
+                _waveSpawnEnd = false;
+                _waitWave = false;
+                _waveWaitTimer = 0.0f;
             }
-            
-            Spawn(GameData.WavesData[_currentWaveCount].EnemyPrefab, _spawnPoints[i].transform.position);
-           
         }
-        if (_currentWaveCount == GameData.WavesData.Count)
+
+        if (!_waitWave && !_waveSpawnEnd)
         {
-            Debug.Log("ゲームクリア");
+            _spawnTimer += Time.deltaTime;
+
+        }
+
+        if (_spawnTimer > _spawnTime)
+        {
+
+            var enemy = _gameData.WavesData[CurrentWave].Enemys[_spawanCount];
+            Instantiate(enemy, GetRandomPos(), Quaternion.identity);
+            _spawanCount++;
+            print("敵生成");
+            if (_spawanCount >= _gameData.WavesData[CurrentWave].Enemys.Count)
+            {
+                _waveClear = false;
+                CurrentWave++;
+                _fieldCount = _spawanCount;
+                _spawanCount = 0;
+                _waveSpawnEnd = true;
+                print("wave生成終了");
+            }
+            _spawnTimer = 0.0f;
+        }
+
+        CheckWaveClear();
+    }
+
+    void CheckWaveClear()
+    {
+        if (_fieldCount <= _deathCount && _waveSpawnEnd)
+        {
+            _fieldCount = 0;
+            _deathCount = 0;
+            _waveClear = true;
+            _waitWave = true;
         }
     }
 
-    void Spawn(GameObject enemyObj, Vector3 point)
+    Vector3 GetRandomPos()
     {
-        var obj = Instantiate(enemyObj,point,Quaternion.identity);
-        _spawnCount++;
+        float x = Random.Range(-_spawnLength.x, _spawnLength.x) / 2;
+        float z = Random.Range(-_spawnLength.z, _spawnLength.z) / 2;
+
+
+        return new Vector3(x, 0.5f, z) + _spawnCenter;
+    }
+    [Conditional("UNITY_EDITOR")]
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireCube(_spawnCenter, _spawnLength);
     }
 }
