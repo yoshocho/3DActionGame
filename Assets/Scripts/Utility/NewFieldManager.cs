@@ -20,9 +20,10 @@ public class NewFieldManager : MonoBehaviour
     float _waveWaitTime = 4.0f;
     float _waveWaitTimer;
     bool _waitWave;
-
+    bool _waveSpawnEnd;
     int _deathCount = 0;
     int _fieldCount;
+    bool _waveClear;
 
     [SerializeField]
     Vector3 _spawnCenter = Vector3.zero;
@@ -46,30 +47,32 @@ public class NewFieldManager : MonoBehaviour
 
         GameManager.Instance.UpdateGameTime();
 
-        if(!_waitWave && _gameData.WavesData.Count <= CurrentWave)
+        if(_waveClear && _gameData.WavesData.Count <= CurrentWave)
         {
+            print("ÉQÅ[ÉÄÉNÉäÉA");
             GameManager.Instance.GameStateEvent(GameManager.GameState.GameClear);
             return;
         }
 
-        if (_waveWaitTimer > 0.0f && _waitWave)
+        if (_waitWave)
         {
-            _waveWaitTimer -= Time.deltaTime;
+            _waveWaitTimer += Time.deltaTime;
             print("waveë“Çøéûä‘");
 
-            if (_waveWaitTimer < 0.0f)
+            if (_waveWaitTimer > _waveWaitTime)
             {
+
+                _waveSpawnEnd = false;
+                _waitWave = false;
                 _waveWaitTimer = 0.0f;
             }
         }
 
-        if (_waveWaitTimer <= 0.0f && !_waitWave)
+        if (!_waitWave && !_waveSpawnEnd)
         {
             _spawnTimer += Time.deltaTime;
 
         }
-
-        CheckWaveClear();
 
         if (_spawnTimer > _spawnTime)
         {
@@ -80,37 +83,28 @@ public class NewFieldManager : MonoBehaviour
             print("ìGê∂ê¨");
             if (_spawanCount >= _gameData.WavesData[CurrentWave].Enemys.Count)
             {
+                _waveClear = false;
                 CurrentWave++;
                 _fieldCount = _spawanCount;
                 _spawanCount = 0;
-                _waveWaitTimer = _waveWaitTime;
-                _waitWave = true;
-
+                _waveSpawnEnd = true;
                 print("waveê∂ê¨èIóπ");
             }
             _spawnTimer = 0.0f;
         }
 
-
-
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            //var testObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            //Instantiate(testObj, GetRandomPos(), Quaternion.identity);
-            _waitWave = false;
-        }
+        CheckWaveClear();
     }
 
-    bool CheckWaveClear()
+    void CheckWaveClear()
     {
-        if (_fieldCount <= _deathCount) 
+        if (_fieldCount <= _deathCount && _waveSpawnEnd)
         {
             _fieldCount = 0;
             _deathCount = 0;
-            _waitWave = false;
-            return true;
+            _waveClear = true;
+            _waitWave = true;
         }
-        else return false;
     }
 
     Vector3 GetRandomPos()
