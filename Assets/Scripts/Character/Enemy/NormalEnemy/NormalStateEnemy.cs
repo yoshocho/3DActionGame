@@ -1,6 +1,5 @@
 using AttackSetting;
 using UnityEngine;
-using State = StateMachine<NormalStateEnemy>.State;
 using System;
 
 [RequireComponent(typeof(GroundChecker), typeof(ActionCtrl))]
@@ -74,6 +73,7 @@ public partial class NormalStateEnemy : EnemyBase
 
     protected override void OnUpdate()
     {
+        if (IsDeath) return;
         base.OnUpdate();
         _stateMachine.Update();
         _mover.Velocity = new Vector3(_currentVelocity.x,_mover.Velocity.y,_currentVelocity.z);
@@ -91,14 +91,15 @@ public partial class NormalStateEnemy : EnemyBase
 
     public override void AddDamage(int damage, AttackType attackType = AttackType.Weak)
     {
+        if (IsDeath) return;
 
         base.AddDamage(damage, attackType);
 
         if (_debagMode) Debug.Log(Status.CurrentHp);
         if (IsDeath)
         {
-            FieldManager.Instance.DeathRequest(this);
+            ServiceLocator<NewFieldManager>.Instance.DeathRequest(this);
+            _animCtrl.Play("Death", 0.2f,onAnimEnd:() => Death());
         }
-        //else ChangeState(StateType.Damage);
     }
 }

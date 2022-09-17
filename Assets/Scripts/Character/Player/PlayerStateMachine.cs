@@ -57,6 +57,8 @@ public partial class PlayerStateMachine : CharacterBase
     [SerializeField]
     List<AnimState> _animSets = new List<AnimState>();
 
+
+    StateEvent _currentState;
     StyleState _currentStyle = StyleState.Common;
     AttackType _attackType;
     Transform _selfTrans;
@@ -77,17 +79,19 @@ public partial class PlayerStateMachine : CharacterBase
     bool _debagMode;
     int _currentJumpCount = 0;
     bool _inAvoid = false;
-    bool _keepAir = false;
+    bool _keepAir = true;
 
     protected override void SetUp()
-    {   
+    {
         _inputProvider = ServiceLocator<IInputProvider>.Instance;
         InputManager.Instance.PlayerInput.Player.LockOn.started += context => LockOn();
+        InputManager.Instance.PlayerInput.Player.WeaponChange.started += context => ChangeWeapon();
         _selfTrans = transform;
         base.SetUp();
         ComponentSetUp();
         StateCash();
     }
+
     void ComponentSetUp()
     {
         if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
@@ -120,7 +124,7 @@ public partial class PlayerStateMachine : CharacterBase
     private void FixedUpdate()
     {
         ApplyRotation();
-        if(!IsGround()) ApplyGravity();
+        ApplyGravity();
         ApplyMove();
     }
 
@@ -145,7 +149,15 @@ public partial class PlayerStateMachine : CharacterBase
     }
     void ApplyGravity()
     {
-        _currentVelocity.y += _gravityScale * Physics.gravity.y * Time.deltaTime;
+        if (!IsGround())
+        {
+            Debug.Log("ApplyGravity");
+            _currentVelocity.y += _gravityScale * Physics.gravity.y * Time.deltaTime;
+        }
+        //else
+        //{
+        //    _currentVelocity.y = 0.0f;
+        //}
     }
 
     bool IsGround()
@@ -164,6 +176,15 @@ public partial class PlayerStateMachine : CharacterBase
         CamManager.Instance.LockOn(false);
         Debug.Log("LockOnEnd");
     }
+
+    private void ChangeWeapon()
+    {
+        if (_currentWeapon == WeaponType.LightSword) _currentWeapon = WeaponType.HeavySword;
+        else if (_currentWeapon == WeaponType.HeavySword) _currentWeapon = WeaponType.LightSword;
+
+        _playerActCtrl.SetStyle(_currentWeapon);
+    }
+
     void DoRotate(Vector3 dir)
     {
         if (dir == Vector3.zero) return;
