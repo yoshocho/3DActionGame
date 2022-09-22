@@ -4,5 +4,7 @@ namespace ObjectPool
     {
         public void SetUp();
         public void Sleep();
+
+        public event System.Action OnRelease;
     }
 }
