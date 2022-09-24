@@ -58,7 +58,6 @@ public partial class PlayerStateMachine : CharacterBase
     List<AnimState> _animSets = new List<AnimState>();
 
 
-    StateEvent _currentState;
     StyleState _currentStyle = StyleState.Common;
     AttackType _attackType;
     Transform _selfTrans;
@@ -71,6 +70,7 @@ public partial class PlayerStateMachine : CharacterBase
     [SerializeField]
     AnimationCtrl _animCtrl;
     GroundChecker _grandCheck;
+    RigidMover _mover;
     PlayerActionCtrl _playerActCtrl;
     ActionCtrl _actionCtrl;
     StateMachine<PlayerStateMachine> _stateMachine;
@@ -80,6 +80,7 @@ public partial class PlayerStateMachine : CharacterBase
     int _currentJumpCount = 0;
     bool _inAvoid = false;
     bool _keepAir = true;
+    bool _canMove = true;
 
     protected override void SetUp()
     {
@@ -95,6 +96,9 @@ public partial class PlayerStateMachine : CharacterBase
     void ComponentSetUp()
     {
         if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
+        _mover = GetComponent<RigidMover>();
+        _mover.SetUp();
+        _mover.SetMoveSpeed = _walkSpeed;
         _grandCheck = GetComponent<GroundChecker>();
         _playerActCtrl = GetComponent<PlayerActionCtrl>();
         _playerActCtrl.SetUp();
@@ -118,16 +122,17 @@ public partial class PlayerStateMachine : CharacterBase
 
     void Update()
     {
+        if (!_canMove)
+        {
+            _mover.Velocity = new Vector3(0.0f,_mover.Velocity.y,0.0f);
+            return;
+        }
+
         ApplyAxis();
         _stateMachine.Update();
+        _mover.SetRot = _targetRot;
+        _mover.Velocity = _currentVelocity;
     }
-    private void FixedUpdate()
-    {
-        ApplyRotation();
-        ApplyGravity();
-        ApplyMove();
-    }
-
     void ApplyAxis()
     {
         if (_inputProvider == null) return;
@@ -136,30 +141,6 @@ public partial class PlayerStateMachine : CharacterBase
         _moveForward.y = 0.0f;
         _moveForward.Normalize();
     }
-    void ApplyMove()
-    {
-        var velocity = Vector3.Scale(_currentVelocity, new Vector3(MoveSpeed, 1.0f, MoveSpeed));
-        RB.velocity = velocity;
-    }
-    void ApplyRotation()
-    {
-        var rot = _selfTrans.rotation;
-        rot = Quaternion.Slerp(rot, _targetRot, _rotateSpeed * Time.deltaTime);
-        _selfTrans.rotation = rot;
-    }
-    void ApplyGravity()
-    {
-        if (!IsGround())
-        {
-            Debug.Log("ApplyGravity");
-            _currentVelocity.y += _gravityScale * Physics.gravity.y * Time.deltaTime;
-        }
-        //else
-        //{
-        //    _currentVelocity.y = 0.0f;
-        //}
-    }
-
     bool IsGround()
     {
         return _grandCheck.IsGround();
@@ -236,6 +217,8 @@ public partial class PlayerStateMachine : CharacterBase
         if (IsDeath)
         {
             GameManager.Instance.GameStateEvent(GameManager.GameState.GameOver);
+            _animCtrl.Play("Death",0.1f);
+            _canMove = false;
         }
     }
 }

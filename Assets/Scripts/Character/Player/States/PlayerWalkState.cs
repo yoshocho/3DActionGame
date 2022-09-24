@@ -11,7 +11,7 @@ public partial class PlayerStateMachine : CharacterBase
         {
            if(owner._debagMode) Debug.Log("InWalk");
             owner.PlayAnimation("Run",0.1f);
-            owner.MoveSpeed = owner._walkSpeed;
+            owner._mover.SetMoveSpeed = owner._walkSpeed;
         }
         protected override void OnUpdate()
         {
