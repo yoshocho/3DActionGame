@@ -40,7 +40,11 @@ public partial class PlayerStateMachine : CharacterBase
     [SerializeField]
     float _jumpPower = 10;
     [SerializeField]
+    float _jumpTime = 2.0f;
+    [SerializeField]
     int _jumpCount = 1;
+    [SerializeField]
+    float _airDeceleration = 0.3f;
     [SerializeField]
     int _airDushCount = 1;
     [SerializeField]
@@ -62,7 +66,7 @@ public partial class PlayerStateMachine : CharacterBase
     AttackType _attackType;
     Transform _selfTrans;
     Vector3 _moveForward = Vector3.zero;
-    Vector3 _currentVelocity = Vector3.zero;
+    //Vector3 _currentVelocity = Vector3.zero;
     Vector3 _inputAxis = Vector3.zero;
     Quaternion _targetRot = Quaternion.identity;
 
@@ -97,7 +101,7 @@ public partial class PlayerStateMachine : CharacterBase
     {
         if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
         _mover = GetComponent<RigidMover>();
-        _mover.SetUp();
+        _mover.SetUp(_selfTrans);
         _mover.SetMoveSpeed = _walkSpeed;
         _grandCheck = GetComponent<GroundChecker>();
         _playerActCtrl = GetComponent<PlayerActionCtrl>();
@@ -131,7 +135,7 @@ public partial class PlayerStateMachine : CharacterBase
         ApplyAxis();
         _stateMachine.Update();
         _mover.SetRot = _targetRot;
-        _mover.Velocity = _currentVelocity;
+        //_mover.Velocity = _currentVelocity;
     }
     void ApplyAxis()
     {
@@ -188,19 +192,8 @@ public partial class PlayerStateMachine : CharacterBase
 
         if (_inAvoid)
         {
-
+            //
             return;
-        }
-
-        switch (attackType)
-        {
-            case AttackType.Weak:
-                break;
-            case AttackType.Heavy:
-
-                break;
-            default:
-                break;
         }
 
         base.AddDamage(damage, attackType);

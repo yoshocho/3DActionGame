@@ -35,7 +35,7 @@ public partial class PlayerStateMachine : CharacterBase
                 if (owner._inputAxis.sqrMagnitude < 0.05) _avoidAxis = owner._selfTrans.forward * owner._avoidSpeed;
                 _avoidAxis.y = 0.0f;
                 owner._targetRot = Quaternion.LookRotation(_avoidAxis);
-                owner._currentVelocity = _avoidAxis * owner._avoidSpeed;
+                owner._mover.Velocity = _avoidAxis * owner._avoidSpeed;
             }
             else
             {

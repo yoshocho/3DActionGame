@@ -19,8 +19,8 @@ public partial class PlayerStateMachine : CharacterBase {
                 if (owner._inputAxis.sqrMagnitude > 0.1f)
                 {
                     owner._targetRot = Quaternion.LookRotation(owner._moveForward);
-                    owner._currentVelocity = new Vector3(owner._selfTrans.forward.x, owner._currentVelocity.y,
-                        owner._selfTrans.forward.z);
+                    owner._mover.Velocity = new Vector3(owner._selfTrans.forward.x, owner.
+                       _mover.Velocity.y, owner._selfTrans.forward.z);
                 }
                 else owner.ChangeState(StateEvent.Idle);
 

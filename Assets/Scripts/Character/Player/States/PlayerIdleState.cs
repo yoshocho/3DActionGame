@@ -14,8 +14,9 @@ public partial class PlayerStateMachine : CharacterBase
             else if (prevState is PlayerRunState) owner.PlayAnimation("SprintEnd", 0.1f);
             else owner.PlayAnimation("Idle", 0.1f);
 
-            owner._currentVelocity.x = 0.0f;
-            owner._currentVelocity.z = 0.0f;
+            //owner._currentVelocity.x = 0.0f;
+            //owner._currentVelocity.z = 0.0f;
+            owner._mover.Velocity = new Vector3(0.0f,owner._mover.Velocity.y,0.0f);
         }
         protected override void OnUpdate()
         {
