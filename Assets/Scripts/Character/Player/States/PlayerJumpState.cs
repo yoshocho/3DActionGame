@@ -30,7 +30,10 @@ partial class PlayerStateMachine : CharacterBase
             if (owner._inputAxis.sqrMagnitude > 0.1f)
             {
                 owner._targetRot = Quaternion.LookRotation(owner._moveForward);
-                //owner._currentVelocity = new Vector3(owner._moveForward.x * owner._jumpAcceleration,owner.)
+                owner._mover.Velocity = new Vector3(
+                    owner._moveForward.x * owner._airDeceleration,
+                    owner._mover.Velocity.y,
+                    owner._moveForward.z);
             }
             if (_jumpTimer < 0.0f)
             {
