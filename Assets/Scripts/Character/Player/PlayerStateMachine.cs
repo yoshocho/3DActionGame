@@ -91,6 +91,7 @@ public partial class PlayerStateMachine : CharacterBase
         _inputProvider = ServiceLocator<IInputProvider>.Instance;
         InputManager.Instance.PlayerInput.Player.LockOn.started += context => LockOn();
         InputManager.Instance.PlayerInput.Player.WeaponChange.started += context => ChangeWeapon();
+        InputManager.Instance.PlayerInput.Player.Teleport.started += context => Teleport();
         _selfTrans = transform;
         base.SetUp();
         ComponentSetUp();
@@ -135,7 +136,6 @@ public partial class PlayerStateMachine : CharacterBase
         ApplyAxis();
         _stateMachine.Update();
         _mover.SetRot = _targetRot;
-        //_mover.Velocity = _currentVelocity;
     }
     void ApplyAxis()
     {
@@ -150,7 +150,7 @@ public partial class PlayerStateMachine : CharacterBase
         return _grandCheck.IsGround();
     }
 
-    public void LockOn()
+    void LockOn()
     {
         if(CamManager.Instance.IsLockOn == false)
         {
@@ -160,6 +160,17 @@ public partial class PlayerStateMachine : CharacterBase
         }
         CamManager.Instance.LockOn(false);
         Debug.Log("LockOnEnd");
+    }
+
+    void Teleport()
+    {
+        if (GameManager.Instance.LockOnTarget == null) return;
+
+        Transform targetPos = GameManager.Instance.LockOnTarget;
+
+        Vector3 vec = targetPos.position + -targetPos.forward;
+        vec.y = targetPos.position.y;
+        _selfTrans.transform.position = vec;
     }
 
     private void ChangeWeapon()
