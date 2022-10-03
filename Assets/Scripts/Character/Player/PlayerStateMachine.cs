@@ -40,7 +40,11 @@ public partial class PlayerStateMachine : CharacterBase
     [SerializeField]
     float _jumpPower = 10;
     [SerializeField]
+    float _jumpTime = 2.0f;
+    [SerializeField]
     int _jumpCount = 1;
+    [SerializeField]
+    float _airDeceleration = 0.3f;
     [SerializeField]
     int _airDushCount = 1;
     [SerializeField]
@@ -58,12 +62,11 @@ public partial class PlayerStateMachine : CharacterBase
     List<AnimState> _animSets = new List<AnimState>();
 
 
-    StateEvent _currentState;
     StyleState _currentStyle = StyleState.Common;
     AttackType _attackType;
     Transform _selfTrans;
     Vector3 _moveForward = Vector3.zero;
-    Vector3 _currentVelocity = Vector3.zero;
+    //Vector3 _currentVelocity = Vector3.zero;
     Vector3 _inputAxis = Vector3.zero;
     Quaternion _targetRot = Quaternion.identity;
 
@@ -71,6 +74,7 @@ public partial class PlayerStateMachine : CharacterBase
     [SerializeField]
     AnimationCtrl _animCtrl;
     GroundChecker _grandCheck;
+    RigidMover _mover;
     PlayerActionCtrl _playerActCtrl;
     ActionCtrl _actionCtrl;
     StateMachine<PlayerStateMachine> _stateMachine;
@@ -80,12 +84,14 @@ public partial class PlayerStateMachine : CharacterBase
     int _currentJumpCount = 0;
     bool _inAvoid = false;
     bool _keepAir = true;
+    bool _canMove = true;
 
     protected override void SetUp()
     {
         _inputProvider = ServiceLocator<IInputProvider>.Instance;
         InputManager.Instance.PlayerInput.Player.LockOn.started += context => LockOn();
         InputManager.Instance.PlayerInput.Player.WeaponChange.started += context => ChangeWeapon();
+        InputManager.Instance.PlayerInput.Player.Teleport.started += context => Teleport();
         _selfTrans = transform;
         base.SetUp();
         ComponentSetUp();
@@ -95,6 +101,9 @@ public partial class PlayerStateMachine : CharacterBase
     void ComponentSetUp()
     {
         if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
+        _mover = GetComponent<RigidMover>();
+        _mover.SetUp(_selfTrans);
+        _mover.SetMoveSpeed = _walkSpeed;
         _grandCheck = GetComponent<GroundChecker>();
         _playerActCtrl = GetComponent<PlayerActionCtrl>();
         _playerActCtrl.SetUp();
@@ -118,16 +127,16 @@ public partial class PlayerStateMachine : CharacterBase
 
     void Update()
     {
+        if (!_canMove)
+        {
+            _mover.Velocity = new Vector3(0.0f,_mover.Velocity.y,0.0f);
+            return;
+        }
+
         ApplyAxis();
         _stateMachine.Update();
+        _mover.SetRot = _targetRot;
     }
-    private void FixedUpdate()
-    {
-        ApplyRotation();
-        ApplyGravity();
-        ApplyMove();
-    }
-
     void ApplyAxis()
     {
         if (_inputProvider == null) return;
@@ -136,36 +145,12 @@ public partial class PlayerStateMachine : CharacterBase
         _moveForward.y = 0.0f;
         _moveForward.Normalize();
     }
-    void ApplyMove()
-    {
-        var velocity = Vector3.Scale(_currentVelocity, new Vector3(MoveSpeed, 1.0f, MoveSpeed));
-        RB.velocity = velocity;
-    }
-    void ApplyRotation()
-    {
-        var rot = _selfTrans.rotation;
-        rot = Quaternion.Slerp(rot, _targetRot, _rotateSpeed * Time.deltaTime);
-        _selfTrans.rotation = rot;
-    }
-    void ApplyGravity()
-    {
-        if (!IsGround())
-        {
-            Debug.Log("ApplyGravity");
-            _currentVelocity.y += _gravityScale * Physics.gravity.y * Time.deltaTime;
-        }
-        //else
-        //{
-        //    _currentVelocity.y = 0.0f;
-        //}
-    }
-
     bool IsGround()
     {
         return _grandCheck.IsGround();
     }
 
-    public void LockOn()
+    void LockOn()
     {
         if(CamManager.Instance.IsLockOn == false)
         {
@@ -175,6 +160,17 @@ public partial class PlayerStateMachine : CharacterBase
         }
         CamManager.Instance.LockOn(false);
         Debug.Log("LockOnEnd");
+    }
+
+    void Teleport()
+    {
+        if (GameManager.Instance.LockOnTarget == null) return;
+
+        Transform targetPos = GameManager.Instance.LockOnTarget;
+
+        Vector3 vec = targetPos.position + -targetPos.forward;
+        vec.y = targetPos.position.y;
+        _selfTrans.transform.position = vec;
     }
 
     private void ChangeWeapon()
@@ -207,19 +203,8 @@ public partial class PlayerStateMachine : CharacterBase
 
         if (_inAvoid)
         {
-
+            //
             return;
-        }
-
-        switch (attackType)
-        {
-            case AttackType.Weak:
-                break;
-            case AttackType.Heavy:
-
-                break;
-            default:
-                break;
         }
 
         base.AddDamage(damage, attackType);
@@ -236,6 +221,8 @@ public partial class PlayerStateMachine : CharacterBase
         if (IsDeath)
         {
             GameManager.Instance.GameStateEvent(GameManager.GameState.GameOver);
+            _animCtrl.Play("Death",0.1f);
+            _canMove = false;
         }
     }
 }

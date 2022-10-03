@@ -10,7 +10,8 @@ public partial class PlayerStateMachine : CharacterBase
         const float _extendTime = 0.25f;
         protected override void OnEnter(State prevState)
         {
-            owner._currentVelocity = Vector3.zero;
+            //owner._currentVelocity = Vector3.zero;
+            owner._mover.Velocity = Vector3.zero;
             owner._currentStyle = StyleState.Strafe;
             owner._playerActCtrl.SetStyle(owner._currentWeapon);
             owner._actionCtrl.RequestAction(owner._attackType);
@@ -45,7 +46,7 @@ public partial class PlayerStateMachine : CharacterBase
         }
         void AttackAssist()
         {
-            Vector3 dir = owner._currentVelocity;
+            Vector3 dir = owner._mover.Velocity;
             if(GameManager.Instance.LockOnTarget != null)
             {
                 dir = GameManager.Instance.LockOnTarget.position - owner._selfTrans.position;

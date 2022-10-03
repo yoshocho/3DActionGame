@@ -15,8 +15,13 @@ public partial class PlayerStateMachine : CharacterBase
         protected override void OnUpdate()
         {
             if (owner._inputAxis.sqrMagnitude > 0.1f)
+            {
                 owner._targetRot = Quaternion.LookRotation(owner._moveForward);
-            //アニメジャンプ && 制限
+                owner._mover.Velocity = new Vector3(
+                    owner._moveForward.x * owner._airDeceleration,
+                    owner._mover.Velocity.y,
+                    owner._moveForward.z);
+            }
             if (owner._inputProvider.GetJump() && owner._currentJumpCount < owner._jumpCount)
                 owner.ChangeState(StateEvent.Jump);
             //制限

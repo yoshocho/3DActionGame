@@ -9,20 +9,22 @@ public class RigidMover : MonoBehaviour
     float _gravityScale = 0.98f;
     [SerializeField]
     float _rotateSpeed = 10.0f;
-    GroundChecker _groundChecker;
     Rigidbody _rb;
     Vector3 _velocity = default;
     Quaternion _targetRot;
     [SerializeField]
     bool _useGravity = true;
+    Transform _selfTans;
 
+    GroundChecker _groundChecker;
     public bool UseGravity { set { _useGravity = value; } }
     public Vector3 Velocity { get => _velocity; set { _velocity = value; } }
     public float SetMoveSpeed { set { _moveSpeed = value; } }
     public Quaternion SetRot { set { _targetRot = value; } }
     public float SetRotateSpeed { set { _rotateSpeed = value; } }
-    public void SetUp()
+    public void SetUp(Transform userTrans)
     {
+        _selfTans = userTrans;
         _rb = GetComponent<Rigidbody>();
         _groundChecker = GetComponent<GroundChecker>();
     }
@@ -45,7 +47,7 @@ public class RigidMover : MonoBehaviour
     }
     void ApplyRotate()
     {
-        var rot = transform.rotation;
+        var rot = _selfTans.rotation;
         rot = Quaternion.Slerp(rot, _targetRot, _rotateSpeed * Time.deltaTime);
         transform.rotation = rot;
     }

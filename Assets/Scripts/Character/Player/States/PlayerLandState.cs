@@ -10,7 +10,7 @@ public partial class PlayerStateMachine : CharacterBase
         protected override void OnEnter(State prevState)
         {
             if(owner._debagMode)Debug.Log("InLand");
-            owner._currentVelocity = Vector3.zero;
+            owner._mover.Velocity = Vector3.zero;
             owner.PlayAnimation("Land",0.1f);
             owner._currentJumpCount = 0;
         }
