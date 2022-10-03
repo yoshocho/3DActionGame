@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class SetAttackEffect : IAttackEffect
 {
-    Transform OwnerPos;
-    public void SetUp(GameObject owner)
+    [SerializeField]
+    string _effectName;
+    Transform _ownerTrans;
+    public void SetUp(Transform ownerTrans)
     {
-        OwnerPos = owner.transform;
+        _ownerTrans = ownerTrans;
     }
     public void SetEffect()
     {
-
+        //EffectManager.PlayEffect(_effectName,);
     }
 }

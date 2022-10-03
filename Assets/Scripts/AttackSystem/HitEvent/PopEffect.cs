@@ -2,17 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Name("エフェクト")]
+[System.Serializable]
 public class PopEffect : IHitEvent
 {
     [SerializeField]
     GameObject EffectPrefab;
-    public Transform OwnerPos { get; set; }
-    public void SetUp(GameObject owner)
+    public Transform OwnerTrans { get; set; }
+    public void SetUp(Transform ownerTrans)
     {
-        OwnerPos = owner.transform;
+        OwnerTrans = ownerTrans;
     }
     public void HitEvent(Collider col)
     {
-        if (EffectPrefab) EffectManager.PlayEffect(EffectPrefab, col.ClosestPoint(OwnerPos.position));
+        if (EffectPrefab) EffectManager.PlayEffect(EffectPrefab, col.ClosestPoint(OwnerTrans.position));
     }
 }

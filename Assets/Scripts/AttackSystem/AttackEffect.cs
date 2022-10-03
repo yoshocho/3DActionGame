@@ -44,7 +44,7 @@ namespace AttackSetting {
                 Debug.LogWarning(string.Format("指定されたエフェクトを設定していません{0}", effect));
                 return;
             }
-            ef.SetUp(gameObject);
+            ef.SetUp(_userTrans);
             ef.SetEffect();
         }
     }

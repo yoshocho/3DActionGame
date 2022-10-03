@@ -48,7 +48,7 @@ namespace AttackSetting
         
         public void SetUp(GameObject user)
         {
-            _userObj = user;
+            _userTrans = user.transform;
             if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
             if (!_hitCtrl) _hitCtrl = GetComponentInChildren<HitCtrl>();
 
@@ -122,6 +122,9 @@ namespace AttackSetting
             TriggerDisable();
             KeepTimer = 0.0f;
             ReceiveTimer = 0.0f;
+            ActionKeep = false;
+            InReceiveTime = false;
+            ReserveAction = false;
             _actId = 0;
         }
         /// <summary>
@@ -155,7 +158,7 @@ namespace AttackSetting
 
             foreach (var item in CurrentAction.HitEvents)
             {
-                item.SetUp(_userObj);
+                item.SetUp(_userTrans);
                 item.HitEvent(target);
             }
         }

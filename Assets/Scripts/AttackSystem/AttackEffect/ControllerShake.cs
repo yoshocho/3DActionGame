@@ -8,7 +8,8 @@ public class ControllerShake : IAttackEffect
     Vector2 ShakeVec;
     [SerializeField, Header("コントローラー振動の持続時間")]
     public float Duration;
-    public void SetUp(GameObject owner)
+
+    public void SetUp(Transform ownerTrans)
     {
 
     }

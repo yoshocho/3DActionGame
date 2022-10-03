@@ -6,7 +6,7 @@ public class Knock : IHitEvent
 {
     [SerializeField]
     Vector3 PowerVec;
-    public void SetUp(GameObject owner)
+    public void SetUp(Transform ownerTrans)
     {
 
     }

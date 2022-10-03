@@ -6,8 +6,8 @@ public class HitStop : IHitEvent
 {
     [SerializeField, Range(0f, 5.0f)]
     [Header("ヒットストップの値")]
-    float HitStopPower = 0.0f;
-    public void SetUp(GameObject owner)
+    float HitStopPower = 0.6f;
+    public void SetUp(Transform ownerTrans)
     {
 
     }

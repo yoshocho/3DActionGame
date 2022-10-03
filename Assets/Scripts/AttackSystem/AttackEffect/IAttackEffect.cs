@@ -4,6 +4,6 @@ using UnityEngine;
 
 public interface IAttackEffect
 {
-    void SetUp(GameObject owner);
+    void SetUp(Transform ownerTrans);
     void SetEffect();
 }

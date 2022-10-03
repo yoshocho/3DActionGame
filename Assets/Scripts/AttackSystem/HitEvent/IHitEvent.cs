@@ -4,6 +4,6 @@ using UnityEngine;
 
 public interface IHitEvent
 {
-    void SetUp(GameObject owner);
+    void SetUp(Transform ownerTrans);
     void HitEvent(Collider col);
 }
