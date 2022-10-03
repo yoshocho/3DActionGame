@@ -46,6 +46,8 @@ public class UiPanel : MonoBehaviour
             childUi.Enable();
         }
         _canvasGroup.alpha = 1.0f;
+        _canvasGroup.interactable = true;
+
     }
     public virtual void Close()
     {
@@ -54,5 +56,6 @@ public class UiPanel : MonoBehaviour
             childUi.Disable();
         }
         _canvasGroup.alpha = 0.0f;
+        _canvasGroup.interactable = false;
     }
 }

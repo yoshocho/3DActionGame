@@ -4,10 +4,9 @@ using UnityEngine;
 
 public abstract class ChildUi : MonoBehaviour
 {
-
     public abstract void SetUp();
 
-    public abstract void Enable();
+    public virtual void Enable() { }
 
-    public abstract void Disable();
+    public virtual void Disable() { }
 }
