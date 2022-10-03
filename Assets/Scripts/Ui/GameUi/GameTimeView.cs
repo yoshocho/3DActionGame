@@ -16,13 +16,4 @@ public class GameTimeView : ChildUi
             _time.Minite.ToString("00") + ":" +
             _time.ElapsedTime.ToString("f2"));
     }
-
-    public override void Enable()
-    {
-        _text.Enable();
-    }
-    public override void Disable()
-    {
-        _text.Disable();
-    }
 }
