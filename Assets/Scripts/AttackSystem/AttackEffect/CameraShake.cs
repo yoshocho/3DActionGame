@@ -1,23 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-[Name("ƒJƒƒ‰")]
 public class CameraShake : IAttackEffect
 {
-    [Header("X•ûŒü‚Ì—h‚ê‚Ì‹­‚³"),Range(0,0.3f)]
-    public float XShakeVec;
-    [Header("Y•ûŒü‚Ì—h‚ê‚Ì‹­‚³"), Range(0, 0.3f)]
-    public float YShakeVec;
-    [Header("Z•ûŒü‚Ì—h‚ê‚Ì‹­‚³"), Range(0, 0.3f)]
-    public float ZShakeVec;
-
-    public void SetUp(Transform ownerTrans)
-    {
-        throw new System.NotImplementedException();
-    }
+    [Header("—h‚ê‚ÌU‚ê•")]
+    [SerializeField]
+    float _width = 0.2f;
+    [Header("—h‚ê‚Ì‰ñ”")]
+    [SerializeField, Range(0, 10)]
+    int _count = 2;
+    [Header("—h‚ê‚ÌŠÔŠu")]
+    [SerializeField, Range(0.0f, 1.0f)]
+    float _duration = 0.2f;
+    public void SetUp(Transform ownerTrans) { }
     public void SetEffect()
     {
-        //CameraManager.Instance.ShakeCam(new Vector3(XShakeVec,YShakeVec,ZShakeVec));
+        CamManager.Instance.Shake(_width, _count, _duration);
     }
 }
