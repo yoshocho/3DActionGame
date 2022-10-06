@@ -1,5 +1,6 @@
 using System.Linq;
 using UnityEngine;
+using DG.Tweening;
 
 //[ExecuteInEditMode]
 public class CamManager : MonoBehaviour
@@ -36,6 +37,7 @@ public class CamManager : MonoBehaviour
     public CameraParameter Parameter { get { return _parameter; } set { _parameter = value; } }
     [SerializeField]
     float _dampingValue = 6.0f;
+    public bool Damping { get; set; } = true;
     [SerializeField]
     float _verticalAngleMinLimit = -30.0f;
     [SerializeField]
@@ -50,6 +52,7 @@ public class CamManager : MonoBehaviour
     [SerializeField, Header("‚’¼‘€ì‹t“]")]
     bool _invartY = false;
 
+
     [SerializeField]
     float _defaultVerticalAngle = 20.0f;
     [SerializeField]
@@ -57,15 +60,17 @@ public class CamManager : MonoBehaviour
     [SerializeField]
     float _lockOnRotationSharpness = 9.0f;
     float _rotationSharpness;
-    //LockOn
-    public bool IsLockOn { get; private set; }
 
+    #region LockOn
+    public bool IsLockOn { get; private set; }
     Quaternion _targetRot;
     Quaternion _newRotation;
     float _targetVerticalAngle;
     Vector3 _planarDirection;
     ITargetable _target;
     public ITargetable Target { get => _target; }
+    #endregion
+
     float _inputX;
     float _inputY;
 
@@ -127,15 +132,15 @@ public class CamManager : MonoBehaviour
 
     void LockOnCam()
     {
-        if (_target == null && _target.TargetTransform == null) _camState = CamState.Control;
+        if (_target == null || _target.TargetTransform == null) LockOn(false);
 
         Vector3 camToTarget = _target.TargetTransform.position - _cam.transform.position;
         Vector3 planarCamToTarget = Vector3.ProjectOnPlane(camToTarget, Vector3.up);
-        //Quaternion lookRot = Quaternion.LookRotation(camToTarget,Vector3.up);
+        Quaternion lookRot = Quaternion.LookRotation(camToTarget,Vector3.up);
 
         _planarDirection = planarCamToTarget != Vector3.zero ? planarCamToTarget.normalized : _planarDirection;
 
-        //_targetVerticalAngle = ClampAngle(lookRot.eulerAngles.x, _verticalAngleMinLimit, _verticalAngleMaxLimit);
+        _targetVerticalAngle = ClampAngle(lookRot.eulerAngles.x, _verticalAngleMinLimit, _verticalAngleMaxLimit);
     }
 
     void ApplyCam()
@@ -154,8 +159,9 @@ public class CamManager : MonoBehaviour
 
         if (_parameter.FollowTarget != null)
         {
-            _parameter.Position = Vector3.Lerp(_parameter.Position,
-                _parameter.FollowTarget.position, Time.deltaTime * _dampingValue);
+            _parameter.Position = Damping ? Vector3.Lerp(_parameter.Position,
+                _parameter.FollowTarget.position, Time.deltaTime * _dampingValue)
+                : _parameter.FollowTarget.position;
         }
         _parent.position = _parameter.Position;
 
@@ -177,7 +183,8 @@ public class CamManager : MonoBehaviour
             .Where(e => e.IsVisible)
             .Where(e => e.IsDeath == false)
             .Where(e => Vector3.Distance(_parameter.FollowTarget.position, e.transform.position) < dis)
-            .OfType<ITargetable>();
+            .OfType<ITargetable>()
+            .Where(t => t.Targetable);
 
         if (disCenter)
         {
@@ -189,6 +196,24 @@ public class CamManager : MonoBehaviour
             Screen.width / 2.0f, Screen.height / 2.0f), Camera.main.WorldToScreenPoint(e.TargetTransform.position)));
         }
         return targets.FirstOrDefault();
+    }
+
+    public void Shake(float width,int count,float duration)
+    {
+        var camTrans = _cam.transform;
+        var seq = DOTween.Sequence();
+
+        var partDuration = duration / count / 2.0f;
+        var widthHalf = width / 2.0f;
+        //Vector2 widthHalf = new Vector2(widthHalf.x / 2.0);
+
+        for (int i = 0; i < count - 1; i++)
+        {
+            seq.Append(camTrans.DOLocalRotate(new Vector3(-widthHalf,0.0f),partDuration));
+            seq.Append(camTrans.DOLocalRotate(new Vector3(widthHalf, 0.0f), partDuration));
+        }
+        seq.Append(camTrans.DOLocalRotate(new Vector3(-widthHalf, 0.0f), partDuration));
+        seq.Append(camTrans.DOLocalRotate(Vector3.zero, partDuration));
     }
 
     public void LockOn(bool lockOn, float dis = 20.0f, bool disCenter = false, bool screenCenter = false)
