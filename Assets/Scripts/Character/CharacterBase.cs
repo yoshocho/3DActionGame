@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using AttackSetting;
 
+
 public class CharacterBase : MonoBehaviour,IDamage
 {
     [SerializeField]
@@ -11,13 +12,7 @@ public class CharacterBase : MonoBehaviour,IDamage
     ObjectData _data = new ObjectData();
     public CharaStatusModel Status { get => _status; protected set { _status = value;} } 
     public ObjectData Data { get => _data; protected set { _data = value;} }
-    [SerializeField]
-    float _moveSpeed = default;
-    public float MoveSpeed { get => _moveSpeed;protected set { _moveSpeed = value; } }
     public bool IsDeath { get; protected set; } = false;
-
-    Rigidbody _rb;
-    public Rigidbody RB { get => _rb; protected set { _rb = value; } }
 
     private void Start()
     {
@@ -26,7 +21,6 @@ public class CharacterBase : MonoBehaviour,IDamage
 
     protected virtual void SetUp()
     {
-        _rb = GetComponent<Rigidbody>();
         _status.SetUp();
         if(_data.Type == ObjectType.None) _data.CheckType(gameObject);
     }
