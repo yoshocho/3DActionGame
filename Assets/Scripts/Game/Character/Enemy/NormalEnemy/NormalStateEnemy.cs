@@ -1,6 +1,7 @@
 using AttackSetting;
 using UnityEngine;
 using System;
+using UniRx;
 
 [RequireComponent(typeof(GroundChecker), typeof(ActionCtrl))]
 public partial class NormalStateEnemy : EnemyBase
@@ -10,6 +11,7 @@ public partial class NormalStateEnemy : EnemyBase
         Idle,
         Chase,
         Attack,
+        Death,
         Damage,
     }
     enum Attack
@@ -25,7 +27,10 @@ public partial class NormalStateEnemy : EnemyBase
     float _gravityScale = 0.98f;
     [SerializeField]
     float _rotateSpeed;
+    [SerializeField]
+    float _runSpeed = 3.0f;
 
+    bool _canMove = true;
 
     Transform _selfTrans;
     
@@ -47,16 +52,18 @@ public partial class NormalStateEnemy : EnemyBase
         base.SetUp();
         _selfTrans = transform;
         ComponentSetUp();
+        GameManager.Instance.OnGameEnd.Subscribe(_ => _canMove = false);
         StateCash();
     }
+
     void ComponentSetUp()
     {
         if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
         _actCtrl = GetComponent<ActionCtrl>();
         _actCtrl.SetUp(gameObject);
         _mover = GetComponent<RigidMover>();
-        _mover.SetUp();
-        _mover.SetMoveSpeed = MoveSpeed;
+        _mover.SetUp(_selfTrans);
+        _mover.SetMoveSpeed = _runSpeed;
     }
 
     private void StateCash()
@@ -68,12 +75,19 @@ public partial class NormalStateEnemy : EnemyBase
             .AddAnyTransition<NormalEnemyMoveState>((int)StateType.Chase)
             .AddAnyTransition<NormalEnemyAttackState>((int)StateType.Attack)
             .AddAnyTransition<NormalEnemyDamageState>((int)StateType.Damage)
+            .AddAnyTransition<NormalEnemyDeathState>((int)StateType.Death)
             .Start<NormalEnemyIdleState>();
     }
 
     protected override void OnUpdate()
     {
-        if (IsDeath) return;
+        if (!_canMove) 
+        {
+            _currentVelocity.x = 0.0f;
+            _currentVelocity.z = 0.0f;
+            return;
+        }
+
         base.OnUpdate();
         _stateMachine.Update();
         _mover.Velocity = new Vector3(_currentVelocity.x,_mover.Velocity.y,_currentVelocity.z);
@@ -98,8 +112,8 @@ public partial class NormalStateEnemy : EnemyBase
         if (_debagMode) Debug.Log(Status.CurrentHp);
         if (IsDeath)
         {
-            ServiceLocator<NewFieldManager>.Instance.DeathRequest(this);
-            _animCtrl.Play("Death", 0.2f,onAnimEnd:() => Death());
+            ServiceLocator<FieldManager>.Instance.DeathRequest(this);
+            ChangeState(StateType.Death);
         }
     }
 }

@@ -13,6 +13,9 @@ public class EnemyBase : CharacterBase ,ITargetable
 
     public Transform TargetTransform => Data.CenterPos;
 
+    [SerializeField]
+    int _score = 100;
+
     protected override void SetUp()
     {
         base.SetUp();
@@ -22,6 +25,7 @@ public class EnemyBase : CharacterBase ,ITargetable
     
     public virtual void Death()
     {
+        GameManager.Instance.AddScore(_score);
         Destroy(gameObject);
     }
 

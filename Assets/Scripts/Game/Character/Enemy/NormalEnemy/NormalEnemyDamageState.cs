@@ -9,9 +9,17 @@ public partial class NormalStateEnemy : EnemyBase
     {
         protected override void OnEnter(State prevState)
         {
-            base.OnEnter(prevState);
+            owner.PlayAnim("Damage",0.1f);
+            
         }
-
+        protected override void OnUpdate()
+        {
+            
+        }
+        protected override void OnExit(State nextState)
+        {
+            
+        }
 
     }
 }

@@ -1,14 +1,16 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NormalAnimation : StateMachineBehaviour
+public class AnimStateSetting : StateMachineBehaviour
 {
-    //OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
+    [SerializeField]
+    bool _applyRootAnimation = false;
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        animator.applyRootMotion = false;
-        //animator.gameObject.transform.localPosition = Vector3.zero;
+        animator.applyRootMotion = _applyRootAnimation;
+        
+        //animator.ApplyBuiltinRootMotion();
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -20,7 +22,7 @@ public class NormalAnimation : StateMachineBehaviour
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     //override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     //{
-    //    
+    //    animator.applyRootMotion = false;
     //}
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

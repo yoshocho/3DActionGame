@@ -85,15 +85,10 @@ public class AnimationCtrl : MonoBehaviour
 
         if(onAnimEnd != null)StartCoroutine(AnimEndCallBack(layerId, onAnimEnd));
     }
-    public void SetRootAnim()
+    public void RootAnim(bool rootAnim)
     {
-        _anim.applyRootMotion = true;
+        _anim.applyRootMotion = rootAnim;
     }
-    public void SetNormalAnim()
-    {
-        _anim.applyRootMotion = false;
-    }
-
     public IEnumerator AnimEndCallBack(int layerId = 0, Action onAnimEnd = null)
     {
         yield return null;

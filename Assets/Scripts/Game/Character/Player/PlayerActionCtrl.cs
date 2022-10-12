@@ -38,17 +38,9 @@ public class PlayerActionCtrl : MonoBehaviour
         _actCtrl.AttackDatas = style.AttackData;
         _weaponHolder.SetWeapon(style.WeaponType);
 
-        _animCtrl
-            .ChangeClip("Run", style.GetStyleAnim(PlayerAnimState.Run))
-            .ChangeClip("Sprint", style.GetStyleAnim(PlayerAnimState.Sprint))
-            .ChangeClip("Idle", style.GetStyleAnim(PlayerAnimState.Idle))
-            .ChangeClip("Avoid", style.GetStyleAnim(PlayerAnimState.Avoid))
-            .ChangeClip("Jump", style.GetStyleAnim(PlayerAnimState.Jump))
-            .ChangeClip("Fall", style.GetStyleAnim(PlayerAnimState.Fall))
-            .ChangeClip("Land", style.GetStyleAnim(PlayerAnimState.Land))
-            .ChangeClip("RunEnd",style.GetStyleAnim(PlayerAnimState.RunEnd))
-            .ChangeClip("SprintEnd",style.GetStyleAnim(PlayerAnimState.SprintEnd))
-            .ChangeClip("AirDush",style.GetStyleAnim(PlayerAnimState.AirDush));
-
+        foreach (var item in style.StyleAnimData)
+        {
+            _animCtrl.ChangeClip(item.AnimState.ToString(), style.GetStyleAnim(item.AnimState));
+        }
     }
 }

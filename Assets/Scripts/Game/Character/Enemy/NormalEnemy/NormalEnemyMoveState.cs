@@ -20,9 +20,7 @@ public partial class NormalStateEnemy : EnemyBase
             {
                 _axis = (owner._targetTrans.position - owner._selfTrans.position).normalized;
                 _axis.y = 0.0f;
-                //owner._mover.SetRot = Quaternion.LookRotation(_axis);
-                owner._targetRot = Quaternion.LookRotation(_axis);
-                //owner._mover.Velocity = new Vector3(_axis.x, owner._mover.Velocity.y, _axis.z);
+                owner._targetRot = Quaternion.LookRotation(_axis);  
                 owner._currentVelocity = new(_axis.x, owner._mover.Velocity.y, _axis.z);
                 if (owner._distance < owner._attackRange) owner.ChangeState(StateType.Attack);
             }
