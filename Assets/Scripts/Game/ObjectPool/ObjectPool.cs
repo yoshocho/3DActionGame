@@ -63,8 +63,8 @@ namespace ObjectPool
             foreach (var obj in _objcts)
             {
                 Object.Destroy(obj.gameObject);
-                _objcts.Clear();
             }
+            _objcts.Clear();
         }
     }
 }
