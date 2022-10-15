@@ -11,7 +11,8 @@ public class GameManager
 {
     public enum GameState
     {
-        Title,
+        None,
+        GameStart,
         InGame,
         GameOver,
         GameClear,
@@ -29,7 +30,7 @@ public class GameManager
     public TimeData GameTime { get; private set; } = new TimeData();
 
     public ScoreData Score { get; private set; } = new ScoreData();
-    
+
     Subject<bool> _onPause = new Subject<bool>();
     /// <summary>ゲームポーズイベント </summary>
     public IObservable<bool> OnPause => _onPause;
@@ -47,15 +48,9 @@ public class GameManager
     public void SetUp()
     {
         UiManager.Instance.SetUp();
-        if (!ServiceLocator<UiManager>.IsValid())
-        {
-            ServiceLocator<UiManager>.Register(UiManager.Instance);
-        }
-        if (!ServiceLocator<IInputProvider>.IsValid())
-        {
-            InputManager.Instance.SetUp();
-        }
-        
+        ServiceLocator<UiManager>.Register(UiManager.Instance);
+        InputManager.SetUp();
+
     }
     public void GameStateEvent(GameState state)
     {
@@ -63,22 +58,37 @@ public class GameManager
 
         switch (state)
         {
-            case GameState.Title:
+            case GameState.GameStart:
+
                 break;
             case GameState.InGame:
                 CursorManager.CursorCtrl(false, CursorLockMode.Locked);
                 break;
             case GameState.GameOver:
+                _onGameEnd.OnNext(Unit.Default);
+                CursorManager.CursorCtrl(true, CursorLockMode.None);
                 ServiceLocator<UiManager>.Instance.RequestOpen("gameOver");
                 break;
             case GameState.GameClear:
+                Debug.Log("GameClear");
                 var ui = ServiceLocator<UiManager>.Instance;
                 ui.RequestOpen("result");
-                ui.ReceiveData("result",new ResultData(Score,GameTime));
+                ui.ReceiveData("result", new ResultData(Score, GameTime));
+                CursorManager.CursorCtrl(true, CursorLockMode.None);
                 break;
             default:
                 break;
         }
+    }
+
+
+    public void ChangeScene(string name)
+    {
+        Score = new ScoreData();
+        GameTime = new TimeData();
+        InputManager.Dispose();
+        LockOnTarget = null;
+        SceneChanger.Instance.FadeScene(name);
     }
 
     public void AddScore(int score)
