@@ -2,9 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(MeshRenderer))] //OnWillRenderObject‚ðŽg‚¤‚½‚ß
-public class EnemyBase : CharacterBase ,ITargetable
+[System.Serializable]
+public class ActionParam
 {
+    [SerializeField, Range(0.5f, 20.0f)]
+    float _attackCoolTime;
+    [SerializeField, Range(0, 10.0f)]
+    float _attackRange;
+    [SerializeField]
+    float _battleArea;
+    public float AttackRange => _attackRange;
+    public float AttackCoolTime => _attackCoolTime;
+    public float BattleArea => _battleArea;
+}
+[RequireComponent(typeof(MeshRenderer))] //OnWillRenderObject‚ðŽg‚¤‚½‚ß
+public class EnemyBase : CharacterBase , ITargetable
+{
+    [SerializeField]
+    private ActionParam _actionParam = new ActionParam();
+    public ActionParam ActionParam => _actionParam;
     protected Transform _targetTrans;
     protected float _distance;
     public bool IsVisible { get; private set; } = false;
