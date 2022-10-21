@@ -8,7 +8,7 @@ namespace AttackSetting {
     /// <summary>
     /// 攻撃のエフェクトのタイプ
     /// </summary>
-    public enum AttackEffect
+    public enum AtkEffectType
     {
         CameraShake,
         ControllerShake,
@@ -21,19 +21,19 @@ namespace AttackSetting {
         /// アニメーションイベント用のエフェクト再生関数
         /// </summary>
         /// <param name="effect">タイプ</param>
-        public void SetEf(AttackEffect effect)
+        public void SetEf(AtkEffectType effect)
         {
             IAttackEffect ef = null;
             switch (effect)
             {
-                case AttackEffect.CameraShake:
+                case AtkEffectType.CameraShake:
                     ef = CurrentAction.AttackEffects.FirstOrDefault(e => e is CameraShake);
                     break;
-                case AttackEffect.ControllerShake:
+                case AtkEffectType.ControllerShake:
                     //ef = CurrentAction.AttackEffects.OfType<ControllerShake>().First();
                     ef = CurrentAction.AttackEffects.FirstOrDefault(e => e is ControllerShake);
                     break;
-                case AttackEffect.SetEffect:
+                case AtkEffectType.SetEffect:
                     ef = CurrentAction.AttackEffects.FirstOrDefault(e => e is SetAttackEffect);
                     break;
                 default:
