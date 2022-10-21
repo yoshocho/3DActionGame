@@ -9,7 +9,7 @@ public partial class NormalStateEnemy : EnemyBase
     enum StateType
     {
         Idle,
-        Chase,
+        Move,
         Attack,
         Death,
         Damage,
@@ -19,10 +19,15 @@ public partial class NormalStateEnemy : EnemyBase
         Single,
         Combo,
     }
-    [SerializeField, Range(0.5f, 5.0f)]
-    float _attackRange = 1.5f;
-    [SerializeField, Range(2.0f, 20f)]
-    float _waitTime = 2.0f;
+   
+    enum MoveType 
+    {
+        Walk,
+        Stafe,
+        Run,
+        Stop,
+    }
+
     [SerializeField]
     float _gravityScale = 0.98f;
     [SerializeField]
@@ -32,13 +37,12 @@ public partial class NormalStateEnemy : EnemyBase
 
     bool _canMove = true;
 
+    MoveType _moveType;
+    bool _attackCoolTime = false;
+    //float _attackTimer;
     Transform _selfTrans;
-    
     Quaternion _targetRot;
-    Vector3 _currentVelocity;
-
     Attack _attackType = Attack.Single;
-
     StateMachine<NormalStateEnemy> _stateMachine;
     ActionCtrl _actCtrl;
     AnimationCtrl _animCtrl;
@@ -72,7 +76,7 @@ public partial class NormalStateEnemy : EnemyBase
 
         _stateMachine
             .AddAnyTransition<NormalEnemyIdleState>((int)StateType.Idle)
-            .AddAnyTransition<NormalEnemyMoveState>((int)StateType.Chase)
+            .AddAnyTransition<NormalEnemyMoveState>((int)StateType.Move)
             .AddAnyTransition<NormalEnemyAttackState>((int)StateType.Attack)
             .AddAnyTransition<NormalEnemyDamageState>((int)StateType.Damage)
             .AddAnyTransition<NormalEnemyDeathState>((int)StateType.Death)
@@ -83,14 +87,12 @@ public partial class NormalStateEnemy : EnemyBase
     {
         if (!_canMove) 
         {
-            _currentVelocity.x = 0.0f;
-            _currentVelocity.z = 0.0f;
+            _mover.Velocity = Vector3.zero;
             return;
         }
 
         base.OnUpdate();
         _stateMachine.Update();
-        _mover.Velocity = new Vector3(_currentVelocity.x,_mover.Velocity.y,_currentVelocity.z);
         _mover.SetRot = _targetRot;
     }
      
