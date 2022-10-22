@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 using System;
+using GameUtility;
+using System.Linq;
 
 /// <summary>
 /// ƒQ[ƒ€‚ğŠÇ—‚·‚éƒNƒ‰ƒX
@@ -51,6 +53,15 @@ public class GameManager
         ServiceLocator<UiManager>.Register(UiManager.Instance);
         InputManager.SetUp();
 
+        List<IManager> managers = new List<IManager>();
+        foreach (IManager m in GameObjectExtensions.FindObjectOfInterfaces<IManager>())
+        {
+            managers.Add(m);
+        }
+        managers.OrderBy(m => m.Priority);
+        managers.ForEach(m => {
+            m.SetUp();
+        });
     }
     public void GameStateEvent(GameState state)
     {
