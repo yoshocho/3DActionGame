@@ -24,7 +24,11 @@ public class SetAttackEffect : IAttackEffect
                 _ownerTrans.right * _offsetPos.x +
                 _ownerTrans.forward * _offsetPos.z;
 
-        GameObject effctObj = EffectManager.PlayEffect(_effectName, pos, Quaternion.Euler(_targetRotation + _ownerTrans.localEulerAngles));
+        GameObject effctObj = ServiceLocator<EffectManager>.Instance
+            .PlayEffect(_effectName, pos, Quaternion.Euler(_targetRotation + _ownerTrans.localEulerAngles));
+
+        if (!effctObj) return;
+
         if (_setParent) effctObj.transform.SetParent(_ownerTrans);
     }
 }

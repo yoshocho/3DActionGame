@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[Name("エフェクト")]
 [System.Serializable]
 public class PopEffect : IHitEvent
 {
@@ -15,6 +14,7 @@ public class PopEffect : IHitEvent
     }
     public void HitEvent(Collider col)
     {
-        if (EffectPrefab) EffectManager.PlayEffect(EffectPrefab, col.ClosestPoint(OwnerTrans.position));
+        if (EffectPrefab) ServiceLocator<EffectManager>.Instance.
+                PlayEffect(EffectPrefab, col.ClosestPoint(OwnerTrans.position));
     }
 }
