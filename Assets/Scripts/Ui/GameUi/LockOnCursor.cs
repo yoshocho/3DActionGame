@@ -16,6 +16,8 @@ public struct LockOnEventHandler
 
 public class LockOnCursor : ChildUi, IUIEventReceiver<LockOnEventHandler>
 {
+    [SerializeReference, SubclassSelector]
+    IScreenSpaseSet _screenSpase;
     [SerializeField]
     Image _cursor;
     RectTransform _tarns;
@@ -35,8 +37,7 @@ public class LockOnCursor : ChildUi, IUIEventReceiver<LockOnEventHandler>
             return;
         }
 
-
-        _tarns.position = RectTransformUtility.WorldToScreenPoint(Camera.main, _target.position);
+        _screenSpase.SetScreenPosition(ref _tarns,_target);
     }
     public void ReceiveData(LockOnEventHandler data)
     {

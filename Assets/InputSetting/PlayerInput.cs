@@ -89,6 +89,15 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Teleport"",
+                    ""type"": ""Button"",
+                    ""id"": ""fc9687f8-850f-4b10-a5c1-0739c1859f22"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -289,6 +298,17 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""action"": ""LockOn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2c53496f-01b1-40f1-b5b3-6362d456b3a6"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Teleport"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -363,6 +383,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
         m_Player_WeaponChange = m_Player.FindAction("WeaponChange", throwIfNotFound: true);
         m_Player_LockOn = m_Player.FindAction("LockOn", throwIfNotFound: true);
+        m_Player_Teleport = m_Player.FindAction("Teleport", throwIfNotFound: true);
         // Ui
         m_Ui = asset.FindActionMap("Ui", throwIfNotFound: true);
         m_Ui_Escape = m_Ui.FindAction("Escape", throwIfNotFound: true);
@@ -433,6 +454,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Attack;
     private readonly InputAction m_Player_WeaponChange;
     private readonly InputAction m_Player_LockOn;
+    private readonly InputAction m_Player_Teleport;
     public struct PlayerActions
     {
         private @PlayerInput m_Wrapper;
@@ -444,6 +466,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         public InputAction @Attack => m_Wrapper.m_Player_Attack;
         public InputAction @WeaponChange => m_Wrapper.m_Player_WeaponChange;
         public InputAction @LockOn => m_Wrapper.m_Player_LockOn;
+        public InputAction @Teleport => m_Wrapper.m_Player_Teleport;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -474,6 +497,9 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @LockOn.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLockOn;
                 @LockOn.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLockOn;
                 @LockOn.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLockOn;
+                @Teleport.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTeleport;
+                @Teleport.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTeleport;
+                @Teleport.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTeleport;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -499,6 +525,9 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @LockOn.started += instance.OnLockOn;
                 @LockOn.performed += instance.OnLockOn;
                 @LockOn.canceled += instance.OnLockOn;
+                @Teleport.started += instance.OnTeleport;
+                @Teleport.performed += instance.OnTeleport;
+                @Teleport.canceled += instance.OnTeleport;
             }
         }
     }
@@ -553,6 +582,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         void OnAttack(InputAction.CallbackContext context);
         void OnWeaponChange(InputAction.CallbackContext context);
         void OnLockOn(InputAction.CallbackContext context);
+        void OnTeleport(InputAction.CallbackContext context);
     }
     public interface IUiActions
     {
