@@ -10,14 +10,15 @@ namespace AttackSetting
     {
 
         [SerializeField]
-        AnimationCtrl _animCtrl;
-        [SerializeField]
         List<AttackData> _attackDatas = new List<AttackData>();
         public List<AttackData> AttackDatas { get => _attackDatas; set { _attackDatas = value; } }
         
         [SerializeField]
         HitCtrl _hitCtrl;
-
+        [SerializeField]
+        AnimationCtrl _animCtrl;
+        [SerializeField]
+        CharaAnimEventCtrl _animEventCtrl;
         AttackType _prevType;
         
         public float ReceiveTimer { get; private set; } = 0.0f;
@@ -51,6 +52,9 @@ namespace AttackSetting
             _userTrans = user.transform;
             if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
             if (!_hitCtrl) _hitCtrl = GetComponentInChildren<HitCtrl>();
+            if (!_animEventCtrl) _animEventCtrl = GetComponentInChildren<CharaAnimEventCtrl>();
+            _animEventCtrl.SetEffectEvent(SetEf);
+            _animEventCtrl.SetTriggerEvent(TriggerActive);
 
             _hitCtrl.SetUp(this, user);
         }
@@ -119,7 +123,7 @@ namespace AttackSetting
 
         public void EndAttack()
         {
-            TriggerDisable();
+            TriggerActive(AnimBool.False);
             KeepTimer = 0.0f;
             ReceiveTimer = 0.0f;
             ActionKeep = false;
@@ -165,16 +169,10 @@ namespace AttackSetting
         /// <summary>
         /// 攻撃の当たり判定を出すアニメーションイベント用関数
         /// </summary>
-        private void TriggerEnable()
+        private void TriggerActive(AnimBool enable)
         {
-            _hitCtrl.TriggerEnable();
-        }
-        /// <summary>
-        /// 攻撃の当たり判定を消すアニメーションイベント用関数
-        /// </summary>
-        private void TriggerDisable()
-        {
-            _hitCtrl.TriggerDisable();
+            if (enable is AnimBool.True) _hitCtrl.TriggerEnable();
+            else _hitCtrl.TriggerDisable();
         }
     }
 }
