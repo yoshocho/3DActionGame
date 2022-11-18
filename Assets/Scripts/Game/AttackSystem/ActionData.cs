@@ -28,6 +28,9 @@ namespace AttackSetting
         public List<IHitEvent> HitEvents;
         [SerializeReference, SubclassSelector]
         public List<IAttackEffect> AttackEffects;
+        [SerializeReference, SubclassSelector]
+        List<IAttackAction> _attackAction = new List<IAttackAction>();
+        public List<IAttackAction> AttackAction => _attackAction;
         [Header("ダメージ数")]
         public int Damage;
         [Header("攻撃タイプ")]
@@ -40,10 +43,15 @@ namespace AttackSetting
     }
 
     [System.Serializable]
-    public class AttackData
+    public class AttackList
     {
         public WeaponType WeaponType;
         public AttackType AttackType;
         public List<ActionData> ActionDatas = new List<ActionData>();
+
+        public ActionData this[int index]
+        {
+            get => ActionDatas[index];
+        }
     }
 }
