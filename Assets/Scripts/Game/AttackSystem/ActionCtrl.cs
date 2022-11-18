@@ -10,30 +10,27 @@ namespace AttackSetting
     {
 
         [SerializeField]
-        List<AttackData> _attackDatas = new List<AttackData>();
-        public List<AttackData> AttackDatas { get => _attackDatas; set { _attackDatas = value; } }
+        List<AttackList> _attackDatas = new List<AttackList>();
+        public List<AttackList> AttackDatas { get => _attackDatas; set { _attackDatas = value; } }
         
         [SerializeField]
-        HitCtrl _hitCtrl;
+        protected HitCtrl _hitCtrl;
         [SerializeField]
-        AnimationCtrl _animCtrl;
+        protected AnimationCtrl _animCtrl;
         [SerializeField]
         CharaAnimEventCtrl _animEventCtrl;
-        AttackType _prevType;
+        RigidMover _mover;
+        protected AttackType _prevType;
         
         public float ReceiveTimer { get; private set; } = 0.0f;
         public float KeepTimer { get; private set; } = 0.0f;
         int _actId = 0;
 
         GameObject _userObj;
-        Transform _userTrans;
+        protected Transform _userTrans;
 
         public ActionData CurrentAction { get; private set; }
         public bool ReserveAction { get; private set; } = false;
-        public bool InReceiveTime { get; private set; } = false;
-
-        public bool ActionKeep { get; private set; } = false;
-
         public bool ComboEnd { get; private set; } = false;
 
         /// <summary>
@@ -47,12 +44,13 @@ namespace AttackSetting
 
         ClipName _clipName = ClipName.First;
         
-        public void SetUp(GameObject user)
+        public virtual void SetUp(GameObject user)
         {
             _userTrans = user.transform;
             if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
             if (!_hitCtrl) _hitCtrl = GetComponentInChildren<HitCtrl>();
             if (!_animEventCtrl) _animEventCtrl = GetComponentInChildren<CharaAnimEventCtrl>();
+            if (!_mover) _mover = GetComponent<RigidMover>();
             _animEventCtrl.SetEffectEvent(SetEf);
             _animEventCtrl.SetTriggerEvent(TriggerActive);
 
@@ -64,24 +62,20 @@ namespace AttackSetting
             {
                 KeepTimer -= Time.deltaTime;
 
-                ActionKeep = true;
                 ComboEnd = false;
                 if (KeepTimer <= 0.0f)
                 {
                     KeepTimer = 0.0f;
-                    ActionKeep = false;
                     ReserveAction = false;
                 }
             }
             else if (ReceiveTimer > 0.0f)
             {
-                InReceiveTime = true;
                 ReceiveTimer -= Time.deltaTime;
 
                 if (ReceiveTimer <= 0.0f)
                 {
                     ReceiveTimer = 0.0f;
-                    InReceiveTime = false;
                 }
             }
 
@@ -91,6 +85,20 @@ namespace AttackSetting
             }
 
         }
+
+        public bool IsActionKeep()
+        {
+            if(KeepTimer <= 0.0f) return false;
+
+            return KeepTimer > 0.0f;
+        }
+
+        public bool IsReserveInput()
+        {
+            if(ReceiveTimer <= 0.0f) return false;
+            return ReceiveTimer > 0.0f;
+        }
+
         /// <summary>
         /// アクションを選定する
         /// </summary>
@@ -106,7 +114,7 @@ namespace AttackSetting
 
             if(data == null) 
             {
-                Debug.LogError("指定された攻撃は見つかりませんでした");
+                Debug.LogError("指定されたタイプは見つかりませんでした");
                 return;
             }
             if (id > -1) _actId = id;
@@ -126,8 +134,6 @@ namespace AttackSetting
             TriggerActive(AnimBool.False);
             KeepTimer = 0.0f;
             ReceiveTimer = 0.0f;
-            ActionKeep = false;
-            InReceiveTime = false;
             ReserveAction = false;
             _actId = 0;
         }
@@ -173,6 +179,15 @@ namespace AttackSetting
         {
             if (enable is AnimBool.True) _hitCtrl.TriggerEnable();
             else _hitCtrl.TriggerDisable();
+        }
+
+        void AttackAction()
+        {
+            CurrentAction.AttackAction.ForEach(action =>
+            {
+                action.SetUp(_mover);
+                action.AttackAction();
+            });
         }
     }
 }
