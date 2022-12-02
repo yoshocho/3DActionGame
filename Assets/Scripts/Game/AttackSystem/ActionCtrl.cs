@@ -124,8 +124,8 @@ namespace AttackSetting
                 ComboEnd = true;
             }
 
-            if (data.ActionDatas[_actId] == null) return;
-            SetAction(data.ActionDatas[_actId]);
+            if (data[_actId] == null) return;
+            SetAction(data[_actId]);
             _actId++;
         }
 
