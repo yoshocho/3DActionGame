@@ -31,8 +31,6 @@ public class AnimState
 /// </summary>
 public class AnimationCtrl : MonoBehaviour
 {
-    public delegate void CallBack(int param);
-    CallBack _eventCallBack;
     [SerializeField]
     Transform _owerPos;
     public Transform OwerPos => _owerPos;
@@ -85,9 +83,10 @@ public class AnimationCtrl : MonoBehaviour
 
         if(onAnimEnd != null)StartCoroutine(AnimEndCallBack(layerId, onAnimEnd));
     }
-    public void RootAnim(bool rootAnim)
+    public AnimationCtrl RootAnim(bool rootAnim)
     {
         _anim.applyRootMotion = rootAnim;
+        return this;
     }
     public IEnumerator AnimEndCallBack(int layerId = 0, Action onAnimEnd = null)
     {
@@ -150,15 +149,4 @@ public class AnimationCtrl : MonoBehaviour
         if (state.loop) return true;
         return state.normalizedTime < 1.0f;
     }
-
-    public void SetEventDelegate(CallBack cb)
-    {
-        _eventCallBack = cb;
-    }
-
-    public void AnimationEvent(int evtType)
-    {
-        _eventCallBack?.Invoke(evtType);
-    }
-
 }

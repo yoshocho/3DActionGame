@@ -32,7 +32,7 @@ public class StyleData : ScriptableObject
     [SerializeField]
     public WeaponType WeaponType;
     [SerializeField]
-    public List<AttackData> AttackData = new List<AttackData>();
+    public List<AttackList> AttackData = new List<AttackList>();
     [SerializeField]
     public List<StyleAnim> StyleAnimData = new List<StyleAnim>();
 
