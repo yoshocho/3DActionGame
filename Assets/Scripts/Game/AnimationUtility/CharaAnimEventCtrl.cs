@@ -19,6 +19,8 @@ public class CharaAnimEventCtrl : MonoBehaviour
     AtkEfCallBack _effectCallBack;
     public delegate void TriggerActiveEvent(AnimBool enable);
     TriggerActiveEvent _triggerEvent;
+
+    Action _atkAction;
     public void SetEffectEvent(AtkEfCallBack callBack)
     {
         _effectCallBack = callBack;
@@ -34,5 +36,14 @@ public class CharaAnimEventCtrl : MonoBehaviour
     public void TriggerEnable(AnimBool enable)
     {
         _triggerEvent?.Invoke(enable);
+    }
+
+    public void SetAttackAction(Action atkAction)
+    {
+        _atkAction = atkAction;
+    }
+    public void AttackAction()
+    {
+        _atkAction?.Invoke();
     }
 }
