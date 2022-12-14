@@ -19,9 +19,9 @@ public partial class PlayerStateMachine : CharacterBase
             if(owner._inputAxis.magnitude > 0.1f) owner.ChangeState(StateEvent.Run);
             else if (!owner._animCtrl.IsPlayingAnimatin()) owner.ChangeState(StateEvent.Idle);
 
-            if (owner._inputProvider.GetAvoid()) owner.ChangeState(StateEvent.Avoid);
-            if (owner._inputProvider.GetAttack()) owner.ChangeState(StateEvent.Attack);
-            if (owner._inputProvider.GetJump()) owner.ChangeState(StateEvent.Jump);
+            if (owner._inputProvider.GetAvoid(InputType.Down)) owner.ChangeState(StateEvent.Avoid);
+            if (owner._inputProvider.GetAttack(InputType.Down)) owner.ChangeState(StateEvent.Attack);
+            if (owner._inputProvider.GetJump(InputType.Down)) owner.ChangeState(StateEvent.Jump);
         }
         protected override void OnExit(State nextState)
         {

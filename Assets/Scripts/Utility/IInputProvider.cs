@@ -6,15 +6,14 @@ public enum InputType
 {
     None,
     Down,
+    Pressed,
     Up,
-    Pressed
 }
 public interface IInputProvider
 {
-    bool GetJump();
-    bool GetAttack();
-    bool GetAvoid();
-    bool GetAvoidDown();
+    bool GetJump(InputType type);
+    bool GetAttack(InputType type);
+    bool GetAvoid(InputType type);
     Vector3 GetInputDirection();
     Vector2 GetCameraAxis();
 

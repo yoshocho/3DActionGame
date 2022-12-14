@@ -10,8 +10,10 @@ public partial class PlayerStateMachine : CharacterBase
         const float _extendTime = 0.25f;
         protected override void OnEnter(State prevState)
         {
+
             //owner._currentVelocity = Vector3.zero;
-            owner._mover.Velocity = Vector3.zero;
+            if (owner._debagMode) Debug.Log("InAttackState");
+            owner._mover.Velocity = new Vector3(0.0f,owner._mover.Velocity.y,0.0f);
             owner._currentStyle = StyleState.Strafe;
             owner._playerActCtrl.SetStyle(owner._currentWeapon);
             owner._actionCtrl.RequestAction(owner._attackType);
@@ -20,7 +22,7 @@ public partial class PlayerStateMachine : CharacterBase
         protected override void OnUpdate()
         {
             bool stickMove = owner._inputAxis.sqrMagnitude > 0.1f;
-            if (owner._inputProvider.GetAttack() && !owner._actionCtrl.ActionKeep)
+            if (owner._inputProvider.GetAttack(InputType.Down) && !owner._actionCtrl.IsActionKeep())
             {
                 if (owner.IsGround()) owner._actionCtrl.RequestAction(owner._attackType);
                 else owner._actionCtrl.RequestAction(AttackType.Airial);
@@ -34,10 +36,10 @@ public partial class PlayerStateMachine : CharacterBase
                     owner.ChangeState(StateEvent.Run);
                 else if (!owner._animCtrl.IsPlayingAnimatin()) owner.ChangeState(StateEvent.Idle);
             }
-            else if (!owner._actionCtrl.ActionKeep) owner.ChangeState(StateEvent.Fall);
+            else if (!owner._actionCtrl.IsActionKeep()) owner.ChangeState(StateEvent.Fall);
 
-            if (owner._inputProvider.GetAvoid()) owner.ChangeState(StateEvent.Avoid);
-            if (owner._inputProvider.GetJump() && owner._currentJumpCount < owner._jumpCount)
+            if (owner._inputProvider.GetAvoid(InputType.Down)) owner.ChangeState(StateEvent.Avoid);
+            if (owner._inputProvider.GetJump(InputType.Down) && owner._currentJumpCount < owner._jumpCount)
                 owner.ChangeState(StateEvent.Jump);
         }
         protected override void OnExit(State nextState)
