@@ -6,9 +6,11 @@ using System;
 
 namespace AttackSetting
 {
+    /// <summary>
+    /// 攻撃アクションの管理クラス
+    /// </summary>
     public partial class ActionCtrl : MonoBehaviour
     {
-
         [SerializeField]
         List<AttackList> _attackDatas = new List<AttackList>();
         public List<AttackList> AttackDatas { get => _attackDatas; set { _attackDatas = value; } }
@@ -53,6 +55,7 @@ namespace AttackSetting
             if (!_mover) _mover = GetComponent<RigidMover>();
             _animEventCtrl.SetEffectEvent(SetEf);
             _animEventCtrl.SetTriggerEvent(TriggerActive);
+            _animEventCtrl.SetAttackAction(AttackAction);
 
             _hitCtrl.SetUp(this, user);
         }

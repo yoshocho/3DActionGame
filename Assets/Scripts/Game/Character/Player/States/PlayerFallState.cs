@@ -22,11 +22,11 @@ public partial class PlayerStateMachine : CharacterBase
                     owner._mover.Velocity.y,
                     owner._moveForward.z);
             }
-            if (owner._inputProvider.GetJump() && owner._currentJumpCount < owner._jumpCount)
+            if (owner._inputProvider.GetJump(InputType.Down) && owner._currentJumpCount < owner._jumpCount)
                 owner.ChangeState(StateEvent.Jump);
             //§ŒÀ
-            if (owner._inputProvider.GetAvoid()) owner.ChangeState(StateEvent.Avoid);
-            if (owner._inputProvider.GetAttack()) owner.ChangeState(StateEvent.Attack);
+            if (owner._inputProvider.GetAvoid(InputType.Down)) owner.ChangeState(StateEvent.Avoid);
+            if (owner._inputProvider.GetAttack(InputType.Down)) owner.ChangeState(StateEvent.Attack);
             if (owner.IsGround()) owner.ChangeState(StateEvent.Land);
 
         }

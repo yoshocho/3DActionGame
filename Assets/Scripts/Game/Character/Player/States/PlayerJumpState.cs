@@ -41,9 +41,9 @@ partial class PlayerStateMachine : CharacterBase
             }
 
             if (owner._mover.Velocity.y < 0.0f) owner.ChangeState(StateEvent.Fall);
-            if (owner._inputProvider.GetAvoid()) owner.ChangeState(StateEvent.Avoid);
-            if (owner._inputProvider.GetAttack()) owner.ChangeState(StateEvent.Attack);
-            if (owner._inputProvider.GetJump() && _canJump && owner._currentJumpCount < owner._jumpCount)
+            if (owner._inputProvider.GetAvoid(InputType.Down)) owner.ChangeState(StateEvent.Avoid);
+            if (owner._inputProvider.GetAttack(InputType.Down)) owner.ChangeState(StateEvent.Attack);
+            if (owner._inputProvider.GetJump(InputType.Down) && _canJump && owner._currentJumpCount < owner._jumpCount)
                 owner.ChangeState(StateEvent.Jump);
         }
         protected override void OnExit(State nextState)

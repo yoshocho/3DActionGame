@@ -34,7 +34,8 @@ public partial class PlayerStateMachine : CharacterBase
             {
                 if (owner._inputAxis.sqrMagnitude < 0.05) _avoidAxis = owner._selfTrans.forward * owner._avoidSpeed;
                 _avoidAxis.y = 0.0f;
-                owner._targetRot = Quaternion.LookRotation(_avoidAxis);
+                //owner._targetRot = Quaternion.LookRotation(_avoidAxis);
+                owner.DoRotate(_avoidAxis);
                 owner._mover.Velocity = _avoidAxis * owner._avoidSpeed;
             }
             else
@@ -43,11 +44,11 @@ public partial class PlayerStateMachine : CharacterBase
                 {
                     if (owner._inputAxis.sqrMagnitude > 0.1f)
                     {
-                        if (owner._inputProvider.GetAvoidDown()) owner.ChangeState(StateEvent.Sprint);
+                        if (owner._inputProvider.GetAvoid(InputType.Pressed)) owner.ChangeState(StateEvent.Sprint);
                         else owner.ChangeState(StateEvent.Run);
                     }
                     else owner.ChangeState(StateEvent.Idle);
-                    if (owner._inputProvider.GetJump() && owner._currentJumpCount < owner._jumpCount) 
+                    if (owner._inputProvider.GetJump(InputType.Down) && owner._currentJumpCount < owner._jumpCount) 
                         owner.ChangeState(StateEvent.Jump);
                 }
                 else owner.ChangeState(StateEvent.Fall);

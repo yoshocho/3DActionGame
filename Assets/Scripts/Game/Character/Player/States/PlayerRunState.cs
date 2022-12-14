@@ -24,9 +24,9 @@ public partial class PlayerStateMachine : CharacterBase {
                 }
                 else owner.ChangeState(StateEvent.Idle);
 
-                if (owner._inputProvider.GetAttack()) owner.ChangeState(StateEvent.Attack);
-                if (owner._inputProvider.GetAvoid()) owner.ChangeState(StateEvent.Avoid);
-                if (owner._inputProvider.GetJump()) owner.ChangeState(StateEvent.Jump);
+                if (owner._inputProvider.GetAttack(InputType.Down)) owner.ChangeState(StateEvent.Attack);
+                if (owner._inputProvider.GetAvoid(InputType.Down)) owner.ChangeState(StateEvent.Avoid);
+                if (owner._inputProvider.GetJump(InputType.Down)) owner.ChangeState(StateEvent.Jump);
             }
             else owner.ChangeState(StateEvent.Fall);
         }
