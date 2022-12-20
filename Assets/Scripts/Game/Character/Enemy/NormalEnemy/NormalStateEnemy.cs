@@ -105,17 +105,22 @@ public partial class NormalStateEnemy : EnemyBase
         _stateMachine.Dispatch((int)state);
     }
 
-    public override void AddDamage(int damage, AttackType attackType = AttackType.Weak)
+    public override void AddDamage(int damage)
     {
         if (IsDeath) return;
 
-        base.AddDamage(damage, attackType);
+        base.AddDamage(damage);
 
         if (_debagMode) Debug.Log(Status.CurrentHp);
+
         if (IsDeath)
         {
             ServiceLocator<FieldManager>.Instance.DeathRequest(this);
             ChangeState(StateType.Death);
+        }
+        else
+        {
+            ChangeState(StateType.Damage);
         }
     }
 }
