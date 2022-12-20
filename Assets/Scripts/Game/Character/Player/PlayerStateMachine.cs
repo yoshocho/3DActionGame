@@ -197,7 +197,7 @@ public partial class PlayerStateMachine : CharacterBase
         if (!_animCtrl) return;
         _animCtrl.Play(name, dur, layer, onAnimEnd);
     }
-    public override void AddDamage(int damage, AttackType attackType = AttackType.Weak)
+    public override void AddDamage(int damage)
     {
         if (_invincible) return;
 
@@ -207,7 +207,7 @@ public partial class PlayerStateMachine : CharacterBase
             return;
         }
 
-        base.AddDamage(damage, attackType);
+        base.AddDamage(damage);
 
         PlayerHPEventHandler hpData = new PlayerHPEventHandler
         {

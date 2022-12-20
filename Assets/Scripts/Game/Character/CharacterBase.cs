@@ -25,7 +25,7 @@ public class CharacterBase : MonoBehaviour,IDamage
         if(_data.Type == ObjectType.None) _data.CheckType(gameObject);
     }
 
-    public virtual void AddDamage(int damage, AttackType attackType = AttackType.Weak)
+    public virtual void AddDamage(int damage)
     {
         var hp = Mathf.Max(_status.CurrentHp.Value - damage, 0);
         _status.UpdateHp(hp);

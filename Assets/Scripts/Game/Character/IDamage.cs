@@ -9,5 +9,5 @@ public interface IDamage
     /// ダメージ処理
     /// </summary>
     /// <param name="damage">ダメージ数</param>
-    void AddDamage(int damage,AttackType attackType = default);
+    void AddDamage(int damage);
 }
