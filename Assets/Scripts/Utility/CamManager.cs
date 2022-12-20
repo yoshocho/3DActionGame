@@ -68,6 +68,7 @@ public class CamManager : MonoBehaviour
     float _targetVerticalAngle;
     Vector3 _planarDirection;
     ITargetable _target;
+    float _framingLerp;
     public ITargetable Target { get => _target; }
     #endregion
 
@@ -138,9 +139,14 @@ public class CamManager : MonoBehaviour
         Vector3 planarCamToTarget = Vector3.ProjectOnPlane(camToTarget, Vector3.up);
         Quaternion lookRot = Quaternion.LookRotation(camToTarget,Vector3.up);
 
+        _framingLerp = Mathf.Clamp01(_framingLerp + Time.deltaTime * 4);
+
         _planarDirection = planarCamToTarget != Vector3.zero ? planarCamToTarget.normalized : _planarDirection;
 
-        _targetVerticalAngle = ClampAngle(lookRot.eulerAngles.x, _verticalAngleMinLimit, _verticalAngleMaxLimit);
+        //_targetVerticalAngle = ClampAngle(lookRot.eulerAngles.x, _verticalAngleMinLimit, _verticalAngleMaxLimit);
+
+        _targetVerticalAngle = lookRot.eulerAngles.x;
+        if(_targetVerticalAngle > 180) _targetVerticalAngle = _targetVerticalAngle - 360;
     }
 
     void ApplyCam()
