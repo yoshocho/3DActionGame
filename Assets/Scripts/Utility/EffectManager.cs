@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using GameUtility;
 
 /// <summary>
 /// 攻撃エフェクトなどの管理クラス
 /// </summary>
-public class EffectManager : MonoBehaviour
+public class EffectManager : MonoBehaviour,IManager
 {
     [System.Serializable]
     public class Effect
@@ -16,6 +17,11 @@ public class EffectManager : MonoBehaviour
     }
 
     public static EffectManager Instance { get; private set; } = null;
+
+    [SerializeField]
+    int _priority;
+    public int Priority => _priority;
+
     Dictionary<string, GameObject> _effectDic = new Dictionary<string, GameObject>();
 
     [SerializeField]
@@ -33,6 +39,10 @@ public class EffectManager : MonoBehaviour
         Instance = this;
         _timeScale = Time.timeScale;
         _effects.ForEach(ef => _effectDic.Add(ef.Name,ef.EfObject));
+    }
+    public void SetUp()
+    {
+        ServiceLocator<EffectManager>.Register(this);
     }
 
     private void Update()
@@ -60,18 +70,18 @@ public class EffectManager : MonoBehaviour
         _isHitStop = true;
     }
 
-    public static GameObject PlayEffect(string key, Vector3 pos,Quaternion rot = default)
+    public GameObject PlayEffect(string key, Vector3 pos,Quaternion rot = default)
     {
         if (!Instance._effectDic.ContainsKey(key)) return null;
         return Instantiate(Instance._effectDic[key],pos,rot);
     }
 
-    public static GameObject PlayEffect(GameObject effectObj,Vector3 pos,Quaternion rot = default)
+    public GameObject PlayEffect(GameObject effectObj,Vector3 pos,Quaternion rot = default)
     {
         return Instantiate(effectObj,pos,rot);
     }
 
-    public static void DamageUiPop(GameObject target, int damage,Color color)
+    public void DamageUiPop(GameObject target, int damage,Color color)
     {
         var go = Instantiate(Instance._damageUi.gameObject, Instance.transform.parent);
         var dmg = go.GetComponent<DamageUi>();

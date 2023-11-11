@@ -16,7 +16,7 @@ public class SceneChangeButton : ChildButton
         _button.OnClickAsObservable()
             .Where(_ => _sceneName.Length >= 0)
             .ThrottleFirst(TimeSpan.FromSeconds(WaitTime))
-            .Subscribe(_ => SceneChanger.Instance.FadeScene(_sceneName))
+            .Subscribe(_ => GameManager.Instance.ChangeScene(_sceneName))
             .AddTo(this);
     }
 }

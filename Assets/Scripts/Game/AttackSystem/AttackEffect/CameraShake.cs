@@ -14,6 +14,6 @@ public class CameraShake : IAttackEffect
     public void SetUp(Transform ownerTrans) { }
     public void SetEffect()
     {
-        CamManager.Instance.Shake(_width, _count, _duration);
+        ServiceLocator<CamManager>.Instance.Shake(_width, _count, _duration);   
     }
 }

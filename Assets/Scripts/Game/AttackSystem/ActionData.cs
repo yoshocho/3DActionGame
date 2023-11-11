@@ -31,6 +31,10 @@ namespace AttackSetting
         [SerializeReference, SubclassSelector]
         List<IAttackAction> _attackAction = new List<IAttackAction>();
         public List<IAttackAction> AttackAction => _attackAction;
+        [SerializeReference,SubclassSelector]
+        List<IHitEventTask> _hitTasks = new List<IHitEventTask>();
+        public List<IHitEventTask> HitTasks => _hitTasks;
+
         [Header("ダメージ数")]
         public int Damage;
         [Header("攻撃タイプ")]

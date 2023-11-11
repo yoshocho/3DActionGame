@@ -8,9 +8,6 @@ public class FieldManager : MonoBehaviour
 {
     [SerializeField]
     GameData _gameData;
-
-    public FieldData FieldData { get; private set; } = new FieldData();
-
     public int CurrentWave { get; private set; } = 0;
     int _spawanCount = 0;
     [SerializeField]
@@ -22,7 +19,7 @@ public class FieldManager : MonoBehaviour
     bool _waitWave;
     bool _waveSpawnEnd;
     int _deathCount = 0;
-    int _fieldCount;
+    int _targetCount;
     bool _waveClear;
 
     [SerializeField]
@@ -33,6 +30,7 @@ public class FieldManager : MonoBehaviour
     private void Awake()
     {
         ServiceLocator<FieldManager>.Register(this);
+        //print(_gameData.WavesData.Count);
     }
 
     public void DeathRequest(EnemyBase enemy)
@@ -47,7 +45,7 @@ public class FieldManager : MonoBehaviour
 
         GameManager.Instance.UpdateGameTime();
 
-        if(_waveClear && _gameData.WavesData.Count <= CurrentWave)
+        if(_waveClear && _gameData.WavesData.Count - 1 <= CurrentWave)
         {
             print("ゲームクリア");
             GameManager.Instance.GameStateEvent(GameManager.GameState.GameClear);
@@ -58,15 +56,17 @@ public class FieldManager : MonoBehaviour
         {
             _waveWaitTimer += Time.deltaTime;
             print("wave待ち時間");
-
+            
             if (_waveWaitTimer > _waveWaitTime)
             {
-
+                _waveClear = false;
                 _waveSpawnEnd = false;
                 _waitWave = false;
                 _waveWaitTimer = 0.0f;
             }
         }
+
+        CheckWaveClear();
 
         if (!_waitWave && !_waveSpawnEnd)
         {
@@ -83,9 +83,8 @@ public class FieldManager : MonoBehaviour
             print("敵生成");
             if (_spawanCount >= _gameData.WavesData[CurrentWave].Enemys.Count)
             {
-                _waveClear = false;
+                _targetCount = _gameData.WavesData[CurrentWave].Enemys.Count;
                 CurrentWave++;
-                _fieldCount = _spawanCount;
                 _spawanCount = 0;
                 _waveSpawnEnd = true;
                 print("wave生成終了");
@@ -93,14 +92,15 @@ public class FieldManager : MonoBehaviour
             _spawnTimer = 0.0f;
         }
 
-        CheckWaveClear();
+        
     }
 
     void CheckWaveClear()
     {
-        if (_fieldCount <= _deathCount && _waveSpawnEnd)
+        if (_targetCount <= _deathCount && _waveSpawnEnd && !_waitWave)
         {
-            _fieldCount = 0;
+            print("Waveクリア");
+            _targetCount = 0;
             _deathCount = 0;
             _waveClear = true;
             _waitWave = true;

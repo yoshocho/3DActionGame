@@ -47,6 +47,7 @@ public class UiPanel : MonoBehaviour
         }
         _canvasGroup.alpha = 1.0f;
         _canvasGroup.interactable = true;
+        _canvasGroup.blocksRaycasts = true;
 
     }
     public virtual void Close()
@@ -57,5 +58,6 @@ public class UiPanel : MonoBehaviour
         }
         _canvasGroup.alpha = 0.0f;
         _canvasGroup.interactable = false;
+        _canvasGroup.blocksRaycasts = false;
     }
 }

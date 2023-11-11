@@ -44,4 +44,8 @@ public class SceneChanger : SingleMonoBehaviour<SceneChanger>
     {
         FadeSystem.FadeOut(fadeTime, () => LoadScene(sceneName));
     }
+    //public void FadeSceneAsync(string sceneName) 
+    //{
+    //    StartCoroutine()
+    //}
 }

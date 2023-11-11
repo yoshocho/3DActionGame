@@ -22,7 +22,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: bd79e51ac31965b4e863b72dd15b5081, type: 2}
   - WeaponType: 2
     AttackType: 2
-    ActionDatas: []
+    ActionDatas:
+    - {fileID: 11400000, guid: 450aed40e37e12f4ea2ed0a825d37f75, type: 2}
   StyleAnimData:
   - AnimState: 0
     AnimClip: {fileID: 7400002, guid: 9f91273065fe23e48897e714ff7f8d01, type: 3}

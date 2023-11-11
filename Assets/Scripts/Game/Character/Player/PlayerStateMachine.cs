@@ -3,12 +3,12 @@ using UnityEngine;
 using System;
 using AttackSetting;
 
-[RequireComponent(typeof(ActionCtrl), typeof(GroundChecker))]
+[RequireComponent(typeof(RigidMover))]
 public partial class PlayerStateMachine : CharacterBase
 {
-   /// <summary>
-   /// プレイヤーの行動ステート
-   /// </summary>
+    /// <summary>
+    /// プレイヤーの行動ステート
+    /// </summary>
     public enum StateEvent : int
     {
         Idle,
@@ -20,13 +20,6 @@ public partial class PlayerStateMachine : CharacterBase
         Fall,
         Land,
         Damage,
-    }
-
-
-    enum StyleState 
-    {
-        Common, 　
-        Strafe,  //武器を持っている状態
     }
 
     [SerializeField]
@@ -63,6 +56,7 @@ public partial class PlayerStateMachine : CharacterBase
 
 
     StyleState _currentStyle = StyleState.Common;
+    [SerializeField]
     AttackType _attackType;
     Transform _selfTrans;
     Vector3 _moveForward = Vector3.zero;
@@ -73,7 +67,6 @@ public partial class PlayerStateMachine : CharacterBase
     IInputProvider _inputProvider;
     [SerializeField]
     AnimationCtrl _animCtrl;
-    GroundChecker _grandCheck;
     RigidMover _mover;
     PlayerActionCtrl _playerActCtrl;
     ActionCtrl _actionCtrl;
@@ -85,13 +78,13 @@ public partial class PlayerStateMachine : CharacterBase
     bool _inAvoid = false;
     bool _keepAir = true;
     bool _canMove = true;
-
+    bool _useAnimVelo = false;
     protected override void SetUp()
     {
         _inputProvider = ServiceLocator<IInputProvider>.Instance;
         InputManager.Instance.PlayerInput.Player.LockOn.started += context => LockOn();
         InputManager.Instance.PlayerInput.Player.WeaponChange.started += context => ChangeWeapon();
-        InputManager.Instance.PlayerInput.Player.Teleport.started += context => Teleport();
+        //InputManager.Instance.PlayerInput.Player.Teleport.started += context => Teleport();
         _selfTrans = transform;
         base.SetUp();
         ComponentSetUp();
@@ -101,10 +94,10 @@ public partial class PlayerStateMachine : CharacterBase
     void ComponentSetUp()
     {
         if (!_animCtrl) _animCtrl = GetComponentInChildren<AnimationCtrl>();
+        //_animCtrl.SetOnAnimEv(AnimatorMove);
         _mover = GetComponent<RigidMover>();
         _mover.SetUp(_selfTrans);
         _mover.SetMoveSpeed = _walkSpeed;
-        _grandCheck = GetComponent<GroundChecker>();
         _playerActCtrl = GetComponent<PlayerActionCtrl>();
         _playerActCtrl.SetUp();
         _actionCtrl = GetComponent<ActionCtrl>();
@@ -129,7 +122,7 @@ public partial class PlayerStateMachine : CharacterBase
     {
         if (!_canMove)
         {
-            _mover.Velocity = new Vector3(0.0f,_mover.Velocity.y,0.0f);
+            _mover.Velocity = new Vector3(0.0f, _mover.Velocity.y, 0.0f);
             return;
         }
 
@@ -147,12 +140,12 @@ public partial class PlayerStateMachine : CharacterBase
     }
     bool IsGround()
     {
-        return _grandCheck.IsGround();
+        return _mover.IsGround();
     }
 
     void LockOn()
     {
-        if(CamManager.Instance.IsLockOn == false)
+        if (CamManager.Instance.IsLockOn == false)
         {
             CamManager.Instance.LockOn(true, 30, false, true);
             Debug.Log("LockOn");
@@ -160,6 +153,18 @@ public partial class PlayerStateMachine : CharacterBase
         }
         CamManager.Instance.LockOn(false);
         Debug.Log("LockOnEnd");
+    }
+
+    private void AnimatorMove()
+    {
+        //if (_useAnimVelo)
+        //{
+        //    Vector3 deltapos = _animCtrl.Animator.deltaPosition;
+        //    deltapos.y = _mover.Velocity.y;
+
+        //    transform.position += deltapos;
+        //}
+
     }
 
     void Teleport()
@@ -221,7 +226,7 @@ public partial class PlayerStateMachine : CharacterBase
         if (IsDeath)
         {
             GameManager.Instance.GameStateEvent(GameManager.GameState.GameOver);
-            _animCtrl.Play("Death",0.1f);
+            _animCtrl.Play("Death", 0.1f);
             _canMove = false;
         }
     }

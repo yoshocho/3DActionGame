@@ -12,11 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b610f271bdf99f43a5d502a26e08bc5, type: 3}
   m_Name: GameDataTest
   m_EditorClassIdentifier: 
-  ClearCount: 20
-  WaveDatas:
-  - EnemyPrefab: {fileID: 0}
-    EnemyCount: 3
-  - EnemyPrefab: {fileID: 0}
-    EnemyCount: 3
-  - EnemyPrefab: {fileID: 0}
-    EnemyCount: 3
+  WavesData:
+  - Enemys:
+    - {fileID: 3398522694738517045, guid: 81e835debeaaf904aa8f2b9cd0bf9f66, type: 3}
+    - {fileID: 3398522694738517045, guid: 81e835debeaaf904aa8f2b9cd0bf9f66, type: 3}
+    - {fileID: 3398522694738517045, guid: 81e835debeaaf904aa8f2b9cd0bf9f66, type: 3}
+    - {fileID: 3398522694738517045, guid: 81e835debeaaf904aa8f2b9cd0bf9f66, type: 3}
+  - Enemys:
+    - {fileID: 3398522694738517045, guid: 81e835debeaaf904aa8f2b9cd0bf9f66, type: 3}
+    - {fileID: 3398522694738517045, guid: 81e835debeaaf904aa8f2b9cd0bf9f66, type: 3}
+    - {fileID: 3398522694738517045, guid: 81e835debeaaf904aa8f2b9cd0bf9f66, type: 3}
+    - {fileID: 3398522694738517045, guid: 81e835debeaaf904aa8f2b9cd0bf9f66, type: 3}
+  - Enemys:
+    - {fileID: 3398522694738517045, guid: 81e835debeaaf904aa8f2b9cd0bf9f66, type: 3}
+    - {fileID: 3398522694738517045, guid: 81e835debeaaf904aa8f2b9cd0bf9f66, type: 3}
+    - {fileID: 3398522694738517045, guid: 81e835debeaaf904aa8f2b9cd0bf9f66, type: 3}
+    - {fileID: 3398522694738517045, guid: 81e835debeaaf904aa8f2b9cd0bf9f66, type: 3}
+  - Enemys:
+    - {fileID: 3398522694738517045, guid: 81e835debeaaf904aa8f2b9cd0bf9f66, type: 3}
+    - {fileID: 3398522694738517045, guid: 81e835debeaaf904aa8f2b9cd0bf9f66, type: 3}
+    - {fileID: 3398522694738517045, guid: 81e835debeaaf904aa8f2b9cd0bf9f66, type: 3}
+    - {fileID: 3398522694738517045, guid: 81e835debeaaf904aa8f2b9cd0bf9f66, type: 3}

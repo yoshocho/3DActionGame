@@ -9,16 +9,14 @@ public class InputManager
 
     PlayerInput _inputActions;
     public PlayerInput PlayerInput => _inputActions;
-    public void SetUp()
+    public static void SetUp()
     {
-        _inputActions = new PlayerInput();
-        _inputActions.Enable();
+        s_instance._inputActions = new PlayerInput();
+        s_instance._inputActions.Enable();
         var inputProvider = new InputProvider();
-        inputProvider.SetUp(_inputActions);
+        inputProvider.SetUp(s_instance._inputActions);
         ServiceLocator<IInputProvider>.Register(inputProvider);
-        Debug.Log("InputProviderをRegist");
     }
-    public void Disable() => _inputActions?.Disable();
-
-    public void Dispose() => _inputActions?.Dispose();
+    public static void Disable() =>s_instance._inputActions?.Disable();
+    public static void Dispose() =>s_instance._inputActions?.Dispose();
 }

@@ -13,24 +13,22 @@ MonoBehaviour:
   m_Name: Infight1
   m_EditorClassIdentifier: 
   AnimSet:
-    Clip: {fileID: 7400000, guid: 4dbc80a66d8ac2c4bad8bc6bff1ac7bd, type: 2}
+    Clip: {fileID: 7400000, guid: 73f07e7583c478045ba574d1ad9e0d04, type: 2}
     Duration: 0.1
     Speed: 1
     UseRootMotion: 1
-  Effect:
-    HitEff: {fileID: 0}
-    CameraShakeVec: {x: 0, y: 0, z: 0}
-    ControllerEf:
-      ShakeVec: {x: 0, y: 0}
-      Duration: 0
-    ZoomSet: 0
-  AttackType: 0
-  HitStopPower: 0
+  HitEvents:
+  - rid: 7703008544902086657
+  AttackEffects: []
   Damage: 44
+  AttackType: 0
   Id: 0
   KeepTime: 0.81
   ReceiveTime: 0
-  KnockPower:
-    ForwardPower: 0
-    UpPower: 0
-    DownPower: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 7703008544902086657
+      type: {class: HitStop, ns: , asm: Assembly-CSharp}
+      data:
+        HitStopPower: 0.6

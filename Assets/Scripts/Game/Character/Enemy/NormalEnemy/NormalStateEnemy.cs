@@ -29,12 +29,10 @@ public partial class NormalStateEnemy : EnemyBase
     }
 
     [SerializeField]
-    float _gravityScale = 0.98f;
-    [SerializeField]
     float _rotateSpeed;
     [SerializeField]
     float _runSpeed = 3.0f;
-
+    [SerializeField]
     bool _canMove = true;
 
     MoveType _moveType;
@@ -85,9 +83,9 @@ public partial class NormalStateEnemy : EnemyBase
 
     protected override void OnUpdate()
     {
-        if (!_canMove) 
+        if (!_canMove)
         {
-            _mover.Velocity = Vector3.zero;
+            _mover.Velocity = new Vector3(0.0f,_mover.Velocity.y,0.0f);
             return;
         }
 

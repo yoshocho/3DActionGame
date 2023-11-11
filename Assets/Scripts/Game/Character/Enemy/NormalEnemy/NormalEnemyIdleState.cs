@@ -8,7 +8,7 @@ public partial class NormalStateEnemy : EnemyBase
     public class NormalEnemyIdleState : State
     {
         protected override void OnEnter(State prevState)
-        {
+        {   
             if (owner._debagMode) Debug.Log("InIdle");
             owner._mover.Velocity = new Vector3(0.0f, owner._mover.Velocity.y, 0.0f);
             owner.PlayAnim("Idle");

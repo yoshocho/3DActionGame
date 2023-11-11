@@ -20,7 +20,7 @@ public class PlayerActionCtrl : MonoBehaviour
     public void SetUp()
     {
         _actCtrl = GetComponent<ActionCtrl>();
-        _animCtrl = GetComponent<AnimationCtrl>();
+        _animCtrl = GetComponentInChildren<AnimationCtrl>();
         _weaponHolder = GetComponent<WeaponHolder>();
     }
 

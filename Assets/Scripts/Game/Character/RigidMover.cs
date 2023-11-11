@@ -17,8 +17,15 @@ public class RigidMover : MonoBehaviour
     Transform _selfTans;
 
     GroundChecker _groundChecker;
+
+    public bool IsControl { get; set; } = false;
+
+    public Rigidbody Rb => _rb;
     public bool UseGravity { set { _useGravity = value; } }
-    public Vector3 Velocity { get => _velocity; set { _velocity = value; } }
+    public Vector3 Velocity { get => _velocity; set {
+            if (IsControl) return;
+            _velocity = value;
+        } }
     public float SetMoveSpeed { set { _moveSpeed = value; } }
     public Quaternion SetRot { set { _targetRot = value; } }
     public float SetRotateSpeed { set { _rotateSpeed = value; } }
@@ -36,6 +43,8 @@ public class RigidMover : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        if (IsControl) return;
+
         ApplyRotate();
         if (_useGravity) ApplyGravity();
         ApplyMove();
@@ -65,5 +74,10 @@ public class RigidMover : MonoBehaviour
     public bool IsGround()
     {
         return _groundChecker.IsGround();
+    }
+
+    public void SetPosition(Vector3 pos)
+    {
+        _rb.position = pos;
     }
 }

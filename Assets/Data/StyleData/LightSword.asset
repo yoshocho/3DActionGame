@@ -17,11 +17,10 @@ MonoBehaviour:
   - WeaponType: 1
     AttackType: 0
     ActionDatas:
-    - {fileID: 11400000, guid: 98e9cc74171eaae45af4f18652b262a7, type: 2}
-    - {fileID: 11400000, guid: 1ea59929282789644bb2134558f03c1c, type: 2}
-    - {fileID: 11400000, guid: c6f40105fd07f33408231660e1f5ed83, type: 2}
-    - {fileID: 11400000, guid: 0d6c2602e3824ff43ba167e49a04173c, type: 2}
-    - {fileID: 11400000, guid: 84d09b3f72d5aa8459a0d41393974d89, type: 2}
+    - {fileID: 11400000, guid: bf33eaaf1e05ac141ade28265af4ade2, type: 2}
+    - {fileID: 11400000, guid: b2da5cad7a45b1a419ba28a7b5d05f50, type: 2}
+    - {fileID: 11400000, guid: a12471821325eb542aed007c56540ce7, type: 2}
+    - {fileID: 11400000, guid: 8f3acacd9b6a03543a58bff799776a60, type: 2}
   - WeaponType: 1
     AttackType: 2
     ActionDatas:
@@ -30,6 +29,10 @@ MonoBehaviour:
     - {fileID: 11400000, guid: c6f40105fd07f33408231660e1f5ed83, type: 2}
     - {fileID: 11400000, guid: 0d6c2602e3824ff43ba167e49a04173c, type: 2}
     - {fileID: 11400000, guid: 84d09b3f72d5aa8459a0d41393974d89, type: 2}
+  - WeaponType: 1
+    AttackType: 3
+    ActionDatas:
+    - {fileID: 11400000, guid: 11d98f9686b49d246848105a60a5115c, type: 2}
   StyleAnimData:
   - AnimState: 0
     AnimClip: {fileID: 7400000, guid: 2ce8b6b2bce9e1645b751d0a103470fb, type: 2}
@@ -45,8 +48,6 @@ MonoBehaviour:
     AnimClip: {fileID: 7400000, guid: 3ed80db8535f9c548981ee04f15e87d1, type: 2}
   - AnimState: 9
     AnimClip: {fileID: 7400000, guid: 4613aab3aae01db4b80e7d720ac46022, type: 2}
-  - AnimState: 6
-    AnimClip: {fileID: 0}
   - AnimState: 4
     AnimClip: {fileID: 7400000, guid: f4326541bb23b8446a88b8aeb5f80399, type: 2}
   - AnimState: 2

@@ -17,12 +17,12 @@ MonoBehaviour:
     Duration: 0.1
     Speed: 1
     UseRootMotion: 1
-  Effect:
-    CameraShakeVec: {x: 0, y: 0.2, z: 0}
   HitEvents:
   - rid: 7052827333616467971
+  - rid: 3891530215620608003
   AttackEffects:
   - rid: 7052827800610537473
+  - rid: 6665817443891937281
   Damage: 132
   AttackType: 1
   Id: 2
@@ -31,6 +31,18 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: 3891530215620608003
+      type: {class: PopEffect, ns: , asm: Assembly-CSharp}
+      data:
+        EffectPrefab: {fileID: 6044788435274338992, guid: f42cdeccd6dd6104ba233caa5a3b5ff8,
+          type: 3}
+    - rid: 6665817443891937281
+      type: {class: SetAttackEffect, ns: , asm: Assembly-CSharp}
+      data:
+        _effectName: Slash
+        _offsetPos: {x: 0, y: 1, z: 0}
+        _targetRotation: {x: 0, y: 0, z: 87.554}
+        _setParent: 1
     - rid: 7052827333616467971
       type: {class: HitStop, ns: , asm: Assembly-CSharp}
       data:
@@ -38,6 +50,6 @@ MonoBehaviour:
     - rid: 7052827800610537473
       type: {class: CameraShake, ns: , asm: Assembly-CSharp}
       data:
-        XShakeVec: 0
-        YShakeVec: 0.2
-        ZShakeVec: 0
+        _width: 0.3
+        _count: 3
+        _duration: 0.2

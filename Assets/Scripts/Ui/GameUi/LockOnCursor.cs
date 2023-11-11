@@ -19,13 +19,13 @@ public class LockOnCursor : ChildUi, IUIEventReceiver<LockOnEventHandler>
     [SerializeReference, SubclassSelector]
     IScreenSpaseSet _screenSpase;
     [SerializeField]
-    Image _cursor;
+    Image _cursorImage;
     RectTransform _tarns;
     Transform _target;
     public override void SetUp()
     {
-        _cursor = GetComponent<Image>();
-        _cursor.enabled = false;
+        _cursorImage = GetComponent<Image>();
+        _cursorImage.enabled = false;
 
         _tarns = GetComponent<RectTransform>();
     }
@@ -54,10 +54,10 @@ public class LockOnCursor : ChildUi, IUIEventReceiver<LockOnEventHandler>
     }
     public override void Enable()
     {
-        _cursor.enabled = true;
+        _cursorImage.enabled = true;
     }
     public override void Disable()
     {
-        _cursor.enabled = false;
+        _cursorImage.enabled = false;
     }
 }

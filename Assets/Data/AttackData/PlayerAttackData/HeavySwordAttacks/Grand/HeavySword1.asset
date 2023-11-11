@@ -17,12 +17,14 @@ MonoBehaviour:
     Duration: 0.1
     Speed: 1
     UseRootMotion: 1
-  Effect:
-    CameraShakeVec: {x: 0.05, y: 0.05, z: 0.1}
   HitEvents:
   - rid: 7052827333616467968
+  - rid: 3891530215620608000
   AttackEffects:
-  - rid: 7052827443609468928
+  - rid: 6665816836486201344
+  - rid: 6665816902059425792
+  _attackAction:
+  - rid: 8294414867589496832
   Damage: 90
   AttackType: 1
   Id: 0
@@ -31,13 +33,30 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: 3891530215620608000
+      type: {class: PopEffect, ns: , asm: Assembly-CSharp}
+      data:
+        EffectPrefab: {fileID: 6044788435274338992, guid: f42cdeccd6dd6104ba233caa5a3b5ff8,
+          type: 3}
+    - rid: 6665816836486201344
+      type: {class: SetAttackEffect, ns: , asm: Assembly-CSharp}
+      data:
+        _effectName: Slash
+        _offsetPos: {x: 0, y: 1, z: 0}
+        _targetRotation: {x: 0, y: 0, z: 15.722}
+        _setParent: 1
+    - rid: 6665816902059425792
+      type: {class: CameraShake, ns: , asm: Assembly-CSharp}
+      data:
+        _width: 0.2
+        _count: 2
+        _duration: 0.2
     - rid: 7052827333616467968
       type: {class: HitStop, ns: , asm: Assembly-CSharp}
       data:
         HitStopPower: 2.4
-    - rid: 7052827443609468928
-      type: {class: CameraShake, ns: , asm: Assembly-CSharp}
+    - rid: 8294414867589496832
+      type: {class: LaunchAction, ns: , asm: Assembly-CSharp}
       data:
-        XShakeVec: 0.05
-        YShakeVec: 0.05
-        ZShakeVec: 0.1
+        _upPower: 7
+        _duration: 0.3

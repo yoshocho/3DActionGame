@@ -39,7 +39,7 @@ public class CinemachineCamManager : MonoBehaviour
     {
         _impulseSource = GetComponent<CinemachineImpulseSource>();
         _freeCam = GetComponentInChildren<CinemachineFreeLook>();
-        InputManager.Instance.PlayerInput.Player.LockOn.started += context =>
+        //InputManager.Instance.PlayerInput.Player.LockOn.started += context =>
         LookAtTarget(_testTarget.position);
     }
     private void Update()

@@ -13,31 +13,37 @@ MonoBehaviour:
   m_Name: HeavySwordArial1
   m_EditorClassIdentifier: 
   AnimSet:
-    Clip: {fileID: 0}
+    Clip: {fileID: 7400000, guid: 7f0ebe1826ca2814c934bd8f9ada92be, type: 2}
     Duration: 0.1
     Speed: 1
     UseRootMotion: 1
-  Effect:
-    CameraShakeVec: {x: 0, y: 0, z: 0}
-    ControllerEf:
-      ShakeVec: {x: 0, y: 0}
-      Duration: 0
-    ZoomSet: 0
   HitEvents:
-  - rid: 7052827406631698436
-  AttackEffects:
-  - rid: -2
-  Damage: 150
-  AttackType: 0
+  - rid: 8294414502190907392
+  - rid: 8294414502190907393
+  AttackEffects: []
+  _attackAction:
+  - rid: 8294414867589496833
+  _hitTasks: []
+  Damage: 142
+  AttackType: 1
   Id: 0
-  KeepTime: 0
-  ReceiveTime: 0
+  KeepTime: 0.85
+  ReceiveTime: 0.68
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 7052827406631698436
+    - rid: 8294414502190907392
       type: {class: HitStop, ns: , asm: Assembly-CSharp}
       data:
-        HitStopPower: 0
+        HitStopPower: 1.04
+    - rid: 8294414502190907393
+      type: {class: Knock, ns: , asm: Assembly-CSharp}
+      data:
+        PowerVec: {x: 0, y: 0, z: 0}
+    - rid: 8294414867589496833
+      type: {class: LaunchAction, ns: , asm: Assembly-CSharp}
+      data:
+        _upPower: 7
+        _duration: 0.25

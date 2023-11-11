@@ -9,9 +9,10 @@ public class ScreenSpaseCam : IScreenSpaseSet
     [SerializeField]
     Camera _canvasCam;
     [SerializeField]
-    RectTransform _rectTrans;
+    RectTransform _canvasRectTrans;
     public void SetScreenPosition(ref RectTransform targetTrans, Transform worldTrans)
     {
-        targetTrans.localPosition = CameraUtilsExtensions.WorldToScreenSpaceCamera(_worldCam,_canvasCam,_rectTrans,worldTrans.position);
+        targetTrans.localPosition = CameraUtilsExtensions.WorldToScreenSpaceCamera(
+            _worldCam,_canvasCam,_canvasRectTrans,worldTrans.position);
     }
 }

@@ -20,7 +20,7 @@ public partial class NormalStateEnemy : EnemyBase
         }
         protected override void OnUpdate()
         {
-            if (!owner._actCtrl.ActionKeep)
+            if (!owner._actCtrl.IsActionKeep())
             {
                 if (owner._distance > owner.ActionParam.AttackRange)
                     owner.ChangeState(StateType.Move);

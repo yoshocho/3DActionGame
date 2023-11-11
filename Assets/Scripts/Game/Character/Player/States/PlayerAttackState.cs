@@ -53,9 +53,9 @@ public partial class PlayerStateMachine : CharacterBase
             {
                 dir = GameManager.Instance.LockOnTarget.position - owner._selfTrans.position;
             }
-            else
+            else if(owner._inputAxis.sqrMagnitude > 0.1f)
             {
-                if (owner._inputAxis.sqrMagnitude > 0.1f)
+                
                     dir = owner._moveForward;
             }
             owner.DoRotate(dir);

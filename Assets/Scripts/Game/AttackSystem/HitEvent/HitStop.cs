@@ -13,6 +13,6 @@ public class HitStop : IHitEvent
     }
     public void HitEvent(Collider col)
     {
-        EffectManager.Instance.HitStop(HitStopPower);
+        ServiceLocator<EffectManager>.Instance.HitStop(HitStopPower);
     }
 }
